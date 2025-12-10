@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
@@ -12,10 +13,14 @@ public class Outtake {
     public Launcher launcher;
     public Turret turret;
     public enum OuttakeState {
+        OFF,
         IDLE,
         SLEEP,
-        START_FEEDING,
-        LAUNCHING,
+        START_FEEDING_RAPID_FIRE,
+        RAPID_FIRE,
+        PRECISE_SHOOT_FEEDING,
+        PRECISE_SHOOT,
+
         STOP
     }
     public OuttakeState outtakeState = OuttakeState.IDLE;
@@ -25,23 +30,42 @@ public class Outtake {
         launcher = new Launcher(robot.hw,sensors);
 
     }
-    public void start_feed(double target,double hood) {
+    public void start_feed_rapid(double target,double hood) {
         launcher.setTarget(target,hood);
-        outtakeState = OuttakeState.START_FEEDING;
+        outtakeState = OuttakeState.START_FEEDING_RAPID_FIRE;
     }
 
+    public void
+    start_feed_precise(double target,double hood) {
+        launcher.setTarget(target,hood);
+        outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
+    }
     public void update() {
         switch (outtakeState) {
+            case OFF:
+                break;
             case IDLE:
                 launcher.launcherState = Launcher.LauncherState.OFF;
                 break;
-            case START_FEEDING:
+            case START_FEEDING_RAPID_FIRE:
                 if(launcher.isReady()) {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
-                    outtakeState = OuttakeState.LAUNCHING;
+                    outtakeState = OuttakeState.RAPID_FIRE;
                 }
                 break;
-            case LAUNCHING:
+            case RAPID_FIRE:
+                break;
+            case PRECISE_SHOOT_FEEDING:
+                if(launcher.isReady()) {
+                    robot.intakeTransfer.rampState = IntakeTransfer.RampState.OPEN;
+                    robot.intakeTransfer.setPowerForTime(IntakeConstants.preciseShotPower, IntakeConstants.preciseShotDelay);
+                    outtakeState = OuttakeState.PRECISE_SHOOT;
+                }
+                break;
+            case PRECISE_SHOOT:
+                if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) {
+                    outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
+                }
                 break;
             case STOP:
                 launcher.launcherState = Launcher.LauncherState.OFF;
@@ -55,6 +79,9 @@ public class Outtake {
         turret.update();
     }
 
+    public boolean isLaunching() {
+        return outtakeState != OuttakeState.STOP && outtakeState != OuttakeState.IDLE;
+    }
     public DcMotorEx getShooterMotor() {
         return launcher.motor1;
     }

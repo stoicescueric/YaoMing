@@ -36,6 +36,7 @@ public class FlyWheelPID {
     // PID gains (feedback control)
     public double Kp = 0.00278;  // proportional gain
     public double Ki = 0.0;      // integral gain
+    public double normalize_voltage = 12.0;
     public double Kd = 0.0;      // derivative gain
 
     // Feedforward gains
@@ -80,7 +81,7 @@ public class FlyWheelPID {
      *
      * @param targetTicksPerSec Desired flywheel velocity in encoder ticks per second.
      */
-    public double update(double targetTicksPerSec,double velocity) {
+    public double update(double targetTicksPerSec,double velocity,double current_voltage) {
 
         // Pull latest config each cycle
         double KpCfg = OuttakePositions.kP;
@@ -115,6 +116,7 @@ public class FlyWheelPID {
 
         // Compute total output and clamp
         double output = proportional + integral + derivative + feedforward;
+        output= output * (normalize_voltage/current_voltage);
         output = clamp(output, minPowerCfg, maxPowerCfg);
 
         // Apply power to both motors

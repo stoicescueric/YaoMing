@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Controllers.FlyWheelPID;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 
+@Config
 public  class Launcher implements Module {
     private HardwareMap hw;
     CachingDcMotorEx motor1,motor2;
@@ -44,8 +46,12 @@ public  class Launcher implements Module {
         this.sensors = sensors;
     }
 
+    public static double target_tilt = 0.5;
+    public static double power;
 
-
+    public double getPower() {
+        return power;
+    }
     @Override
     public void update() {
         currentVel = motor1.getVelocity();
@@ -55,13 +61,13 @@ public  class Launcher implements Module {
                 motor2.setPower(0);
                 break;
             case SPIN_UP:
-                double power = pid.update(target,currentVel);
+                power = pid.update(target,currentVel,sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
 
         }
-
+        tilt.setPosition(target_tilt);
     }
 
     public void increaseDecreaseTarget(double delta) {
@@ -69,12 +75,12 @@ public  class Launcher implements Module {
     }
     public void setTarget(double target,double hood_tilt) {
         this.target = target;
-        tilt.setPosition(hood_tilt);
+        target_tilt = hood_tilt;
         launcherState = LauncherState.SPIN_UP;
     }
 
 
-    public boolean isReady(){
+    public boolean  isReady(){
         if(Math.abs(currentVel - target) < OuttakePositions.errorVelThreeshold){
             return true;
         }

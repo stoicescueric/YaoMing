@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.BinaryDeque;
 
 public  class IntakeTransfer implements Module {
     public CachingDcMotorEx motor1,motor2;
@@ -26,6 +27,8 @@ public  class IntakeTransfer implements Module {
         INTAKE,
         REVERSE,
         START_TRANSFER,
+        POWER_FOR_TIME,
+        OFF_OPEN,
         SLEEP,
         TRANSFER,
         HOLD
@@ -48,6 +51,7 @@ public  class IntakeTransfer implements Module {
     double sleeptime = 0;
     IntakeState nextState = IntakeState.OFF;
 
+    BinaryDeque deq = new BinaryDeque();
     public IntakeTransfer(Robot robot, Sensors sensors) {
         this.robot = robot;
         motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"conveyor1"),0);
@@ -63,6 +67,8 @@ public  class IntakeTransfer implements Module {
 
     }
 
+    public double power_time = 0.5;
+    public double time_power = 500;
     @Override
     public void update()
     {
@@ -72,23 +78,34 @@ public  class IntakeTransfer implements Module {
                 motor1.setPower(0);
                 motor2.setPower(0);
                 break;
+            case OFF_OPEN:
+                rampState = RampState.OPEN;
+                motor1.setPower(0);
+                motor2.setPower(0);
+                break;
             case INTAKE:
                 rampState = RampState.CLOSE;
                 servoIntakeState = ServoIntakeState.LOW;
                 motor1.setPower(IntakeConstants.intakePower);
                 motor2.setPower(IntakeConstants.intakePower);
-                if(motor1.isOverCurrent()){
-                    intakeState=IntakeState.OFF;
+                deq.slide(motor1.isOverCurrent() ? 1 : 0);
+                if(deq.isAboveThreshold()) {
+                    intakeState = IntakeState.OFF;
                 }
                 break;
             case REVERSE:
                 rampState = RampState.CLOSE;
-                motor1.setPower(IntakeConstants.reversePower);
-                motor2.setPower(IntakeConstants.reversePower);
+                motor1.setPower(-IntakeConstants.reversePower);
+                motor2.setPower(-IntakeConstants.reversePower);
                 break;
             case START_TRANSFER:
                 rampState = RampState.OPEN;
                 sleep(250,IntakeState.TRANSFER);
+                break;
+            case POWER_FOR_TIME:
+                motor1.setPower(power_time);
+                motor2.setPower(power_time);
+                sleep(time_power,IntakeState.OFF_OPEN);
                 break;
             case TRANSFER:
                 motor1.setPower(IntakeConstants.transferPower);
@@ -130,6 +147,11 @@ public  class IntakeTransfer implements Module {
         this.servoIntakeState = servoIntakeState;
     }
 
+    public void setPowerForTime(double power,double time) {
+        this.power_time = power;
+        this.time_power = time;
+        intakeState = IntakeState.POWER_FOR_TIME;
+    }
     private void sleep(double time,IntakeState nextState) {
         startSleep = System.currentTimeMillis();
         intakeState = nextState;
