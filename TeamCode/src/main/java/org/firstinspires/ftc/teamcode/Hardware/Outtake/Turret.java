@@ -19,7 +19,7 @@ public class Turret implements Module {
     public double mechRatio = 1;
 
     // Expose target for dashboard drawing
-    public double targetX = -68.1;
+    public double targetX = -64.1;
     public double targetY = -60.1;
 
     public enum TurretState {

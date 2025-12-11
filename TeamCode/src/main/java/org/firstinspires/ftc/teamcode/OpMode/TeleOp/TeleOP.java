@@ -18,6 +18,9 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 public class TeleOP extends LinearOpMode
 {
     public static boolean turretTracking = false;
+    public static boolean robotCentric = false;
+    public static boolean flipFieldFrame = false;
+    public static double driverFrameOffsetDeg = -90;
     GamePadController gg;
     Robot robot;
     @Override
@@ -50,7 +53,24 @@ public class TeleOP extends LinearOpMode
         double forward = -gg.left_stick_y;
         double strafe = -gg.left_stick_x;
         double rotate = -gg.right_stick_x;
-        robot.drive.setTeleOpDrive(forward, strafe, rotate, false);
+
+        double offsetRad = Math.toRadians(driverFrameOffsetDeg) + (flipFieldFrame ? Math.PI : 0.0);
+        if (offsetRad != 0.0) {
+            double f = forward * Math.cos(offsetRad) - strafe * Math.sin(offsetRad);
+            double s = forward * Math.sin(offsetRad) + strafe * Math.cos(offsetRad);
+            forward = f;
+            strafe = s;
+        }
+
+
+        robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
+        if (gg.leftStickButtonOnce()) {
+            Pose p = robot.drive.getPose();
+            robot.drive.setStartingPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
+            robot.drive.update();
+            return;
+        }
+
         robot.drive.update();
     }
 
