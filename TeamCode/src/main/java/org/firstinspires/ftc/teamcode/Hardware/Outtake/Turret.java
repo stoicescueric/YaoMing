@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Hardware.Module;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
@@ -28,7 +29,7 @@ public class Turret implements Module {
         TRACKING
     }
 
-    public double fixedPos = 0.5;
+    public static double centerPose = 0.5;
     public TurretState turretState = TurretState.FIXED_ANGLE;
     public Turret(HardwareMap hw, Sensors sensors){
         servoLeft = new CachingServo(hw.get(Servo.class,"turretLeft"));
@@ -44,8 +45,8 @@ public class Turret implements Module {
                 servoRight.setPosition(0);
                 break;
             case FIXED_ANGLE:
-                servoLeft.setPosition(fixedPos);
-                servoRight.setPosition(fixedPos);
+                servoLeft.setPosition(centerPose);
+                servoRight.setPosition(centerPose);
                 break;
             case TRACKING:
                 double robotX = sensors.getX();
@@ -62,21 +63,18 @@ public class Turret implements Module {
                     break;
                 }
 
-                double globalAngle = Math.atan2(dy, dx); // [-PI, PI]
+                double globalAngle = Math.atan2(dy, dx);
 
-                double delta = Math.atan2(Math.sin(robotHeading - globalAngle), Math.cos(robotHeading - globalAngle));
+                double relativeAngle = Math.atan2(Math.sin(globalAngle - robotHeading), Math.cos(globalAngle - robotHeading));
 
-                double baseScale = 0.5 / Math.PI; // 0.25 pos -> 90deg
-                double scale = baseScale * mechRatio;
-
-                double pos = 0.5 - (delta * scale);
-
-                if (pos < 0.05) pos = 0.05;
-                if (pos > 0.95) pos = 0.95;
-
+                double pos = angleToTurretPosition(relativeAngle);
                 servoLeft.setPosition(pos);
                 servoRight.setPosition(pos);
                 break;
         }
+    }
+    private double angleToTurretPosition(double angle) {
+        double position = Range.scale(angle, OuttakePositions.MIN_TURRET_ANGLE,OuttakePositions.MAX_TURRET_ANGLE,OuttakePositions.MIN_TURRET_POSITION, OuttakePositions.MAX_TURRET_POSITION);
+        return Range.clip(position, OuttakePositions.MIN_TURRET_POSITION,OuttakePositions.MAX_TURRET_POSITION);
     }
 }

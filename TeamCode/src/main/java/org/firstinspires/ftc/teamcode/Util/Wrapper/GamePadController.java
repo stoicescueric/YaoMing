@@ -11,7 +11,7 @@ public class GamePadController {
     public boolean climb_mode = false;
     private static final double triggerThreshold = 0.8;
     private static final double joystickThreshold = 0.75; // Warning, X box controller rightStick +Y seems to max out at ~0.8, probably broken
-    private static final int longDuration = 8;
+    private static final int longDuration = 15;
 
     private boolean active = true;
 

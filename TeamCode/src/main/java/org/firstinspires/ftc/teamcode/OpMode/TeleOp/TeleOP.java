@@ -67,7 +67,8 @@ public class TeleOP extends LinearOpMode
             robot.outtake.launcher.setTargetTPS(pidTargetClosezone);
         }
     }
-
+    public static double translationalSlow = 0.8;
+    public static double rotateSlow = 0.5;
     public void updateDrive() {
         double forward = -gg.left_stick_y;
         double strafe = -gg.left_stick_x;
@@ -81,8 +82,14 @@ public class TeleOP extends LinearOpMode
             strafe = s;
         }
 
-
+        if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTAKE
+                || robot.outtake.isLaunching()){
+            forward*=translationalSlow;
+            strafe*=translationalSlow;
+            rotate*=rotateSlow;
+        }
         robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
+
         if (gg.rightStickButtonOnce()) {
             Pose p = robot.drive.getPose();
             if(!switchToRedTeam){
@@ -99,11 +106,20 @@ public class TeleOP extends LinearOpMode
     }
 
     public void intakeUpdate() {
-        if(gg.rightBumperOnce()) {
-            if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF) {
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-            } else {
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+        if(gg.rightBumper()) {
+            if(gg.rightBumperLong()){
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.REVERSE);
+            }
+            if(gg.rightBumperOnce()){
+                switch (robot.intakeTransfer.intakeState){
+                    case INTAKE:
+                    case REVERSE:
+                        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                        break;
+                    case OFF:
+                        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                        break;
+                }
             }
         }
     }
@@ -116,17 +132,12 @@ public class TeleOP extends LinearOpMode
             robot.outtake.launcher.increaseDecreaseTarget(-1);
         }
 
-        if(gg.dpadLeftOnce()) {
-            robot.outtake.turret.fixedPos+=0.05;
-        }
 
-        if(gg.dpadRightOnce()) {
-            robot.outtake.turret.fixedPos-=0.05;
-        }
-
-        if(gg.aOnce()) {
+        if(gg.aOnce() || gg.bOnce()) {
             if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {
-                robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
+
+                if(gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
+                else if(gg.bOnce()) robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
 
             } else {
                 robot.outtake.outtakeState = Outtake.OuttakeState.STOP;

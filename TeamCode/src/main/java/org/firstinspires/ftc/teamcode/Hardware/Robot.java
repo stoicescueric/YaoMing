@@ -47,6 +47,7 @@ public class Robot {
         telemetry.addData("Outtake State", outtake.outtakeState);
         telemetry.addData("Launcher Target ", outtake.launcher.target);
         telemetry.addData("Launcher Velocity ", outtake.launcher.currentVel);
+        telemetry.addData("launcher power",outtake.launcher.getPower());
 
         telemetry.addData("Intake amps",intakeTransfer.motor1.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Intake2 amps",intakeTransfer.motor2.getCurrent(CurrentUnit.AMPS));

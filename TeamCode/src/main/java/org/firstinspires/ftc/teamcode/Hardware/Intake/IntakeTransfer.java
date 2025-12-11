@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware.Intake;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -44,6 +46,14 @@ public  class IntakeTransfer implements Module {
         HIGH
     }
 
+    public enum StallCheck{
+        IDLE,
+        DETECTED,
+        CONFIRMING
+    }
+
+    public StallCheck stallCheck = StallCheck.IDLE;
+
     public IntakeState intakeState = IntakeState.OFF;
     public RampState rampState =  RampState.CLOSE;
     public ServoIntakeState servoIntakeState =ServoIntakeState.LOW;
@@ -69,6 +79,8 @@ public  class IntakeTransfer implements Module {
 
     public double power_time = 0.5;
     public double time_power = 500;
+    public double startStallCheckTime = 0;
+    public double stalCheckDuration = 150;
     @Override
     public void update()
     {
@@ -88,10 +100,7 @@ public  class IntakeTransfer implements Module {
                 servoIntakeState = ServoIntakeState.LOW;
                 motor1.setPower(IntakeConstants.intakePower);
                 motor2.setPower(IntakeConstants.intakePower);
-                deq.slide(motor1.isOverCurrent() ? 1 : 0);
-                if(deq.isAboveThreshold()) {
-                    intakeState = IntakeState.OFF;
-                }
+
                 break;
             case REVERSE:
                 rampState = RampState.CLOSE;
@@ -112,6 +121,8 @@ public  class IntakeTransfer implements Module {
                 motor2.setPower(IntakeConstants.transferPower);
                 break;
             case SLEEP:
+                Log.w("Debug shoot precise"," " + (System.currentTimeMillis() - startSleep));
+
                 if(System.currentTimeMillis() - startSleep > sleeptime) {
                     intakeState = nextState;
                 }
@@ -135,6 +146,41 @@ public  class IntakeTransfer implements Module {
                 break;
         }
 
+
+
+        switch (stallCheck){
+            case IDLE:
+                if(intakeState == IntakeState.INTAKE){
+                    stallCheck = StallCheck.DETECTED;
+                }
+                break;
+            case DETECTED:
+                if(intakeState!=IntakeState.INTAKE){
+                    stallCheck = StallCheck.IDLE;
+                    break;
+                }
+                if(motor1.isOverCurrent()){
+                    startStallCheckTime = System.currentTimeMillis();
+                    stallCheck = StallCheck.CONFIRMING;
+                }
+                break;
+            case CONFIRMING:
+                if(intakeState!=IntakeState.INTAKE){
+                    stallCheck = StallCheck.IDLE;
+                    break;
+                }
+                if(!motor1.isOverCurrent()){
+                    stallCheck = StallCheck.DETECTED;
+                    break;
+                }
+                if(System.currentTimeMillis() - startStallCheckTime > stalCheckDuration){
+                    Log.w("IntakeTransfer","Stall detected, stopping intake");
+                    setIntakeState(IntakeState.OFF);
+                    stallCheck = StallCheck.IDLE;
+                }
+                break;
+
+        }
     }
 
     public void setIntakeState(IntakeState intakeState) {
@@ -154,7 +200,7 @@ public  class IntakeTransfer implements Module {
     }
     private void sleep(double time,IntakeState nextState) {
         startSleep = System.currentTimeMillis();
-        intakeState = nextState;
+        intakeState = IntakeState.SLEEP;
         sleeptime = time;
         this.nextState = nextState;
     }

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
@@ -57,14 +59,17 @@ public class Outtake {
                 break;
             case PRECISE_SHOOT_FEEDING:
                 if(launcher.isReady()) {
+                    Log.w("Debug shoot precise","a intrat launcher ready");
                     robot.intakeTransfer.rampState = IntakeTransfer.RampState.OPEN;
                     robot.intakeTransfer.setPowerForTime(IntakeConstants.preciseShotPower, IntakeConstants.preciseShotDelay);
                     outtakeState = OuttakeState.PRECISE_SHOOT;
                 }
                 break;
             case PRECISE_SHOOT:
+                Log.w("Debug shoot precise","a intrat in case Precise shoot");
                 if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) {
                     outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
+                    Log.w("Debug shoot precise","se intoarce inapoi in feeding");
                 }
                 break;
             case STOP:

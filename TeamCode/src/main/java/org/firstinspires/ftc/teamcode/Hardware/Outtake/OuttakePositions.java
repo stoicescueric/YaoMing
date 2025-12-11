@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class OuttakePositions {
     /*----Velocity ----*/
-    public static double errorVelThreeshold = 5;
+    public static double errorVelThreeshold = 30;
 
     public static double farLaunchVelocity = 2000;
     public static double closeLaunchVelocity = 1750;
@@ -22,4 +22,12 @@ public class OuttakePositions {
     public static double kD = 0;
     public static double kV = 0.00044;
     public static double kS = 0;
+
+    /*--TURRET--*/
+    public static double MIN_TURRET_ANGLE = -Math.PI / 2;
+    public static double MAX_TURRET_ANGLE = Math.PI / 2;
+
+    // The corresponding servo positions for those angles
+    public static double MIN_TURRET_POSITION = 0.26;
+    public static double MAX_TURRET_POSITION = 0.72;
 }
