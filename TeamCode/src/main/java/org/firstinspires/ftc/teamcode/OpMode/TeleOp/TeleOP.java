@@ -21,12 +21,19 @@ public class TeleOP extends LinearOpMode
     public static boolean robotCentric = false;
     public static boolean flipFieldFrame = false;
     public static double driverFrameOffsetDeg = -90;
+    public static boolean switchToRedTeam = false;
     GamePadController gg;
     Robot robot;
+    public static double pidTargetClosezone = 1600;
+    public static double pidTargetFarzone  = 2100;
+
     @Override
     public void runOpMode() throws InterruptedException {
          robot = new Robot(this);
          Pose startPose = new Pose(60, 60, -Math.PI/2);
+        if (switchToRedTeam) {
+            startPose = new Pose(60, -60, Math.PI/2);
+        }
          gg = new GamePadController(gamepad1);
 
          robot.drive.setStartingPose(startPose);
@@ -39,6 +46,8 @@ public class TeleOP extends LinearOpMode
              gg.update();
              updateDrive();
 
+             //applyLauncherTargetByX();
+             //commented out pentru ca strica controll-ul de schimbat velocity (increas target/decrease target)
 
              robot.outtake.turret.turretState = turretTracking
                      ? org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.TRACKING
@@ -49,6 +58,16 @@ public class TeleOP extends LinearOpMode
              robot.update();
          }
     }
+
+    private void applyLauncherTargetByX() {
+        double x = robot.sensors.getX();
+        if (x > 17) {
+            robot.outtake.launcher.setTargetTPS(pidTargetFarzone);
+        } else {
+            robot.outtake.launcher.setTargetTPS(pidTargetClosezone);
+        }
+    }
+
     public void updateDrive() {
         double forward = -gg.left_stick_y;
         double strafe = -gg.left_stick_x;
@@ -64,9 +83,14 @@ public class TeleOP extends LinearOpMode
 
 
         robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
-        if (gg.leftStickButtonOnce()) {
+        if (gg.rightStickButtonOnce()) {
             Pose p = robot.drive.getPose();
-            robot.drive.setStartingPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
+            if(!switchToRedTeam){
+                robot.drive.setPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
+            }
+            else {
+                robot.drive.setPose(new Pose(p.getX(), p.getY(), Math.PI/2));
+            }
             robot.drive.update();
             return;
         }

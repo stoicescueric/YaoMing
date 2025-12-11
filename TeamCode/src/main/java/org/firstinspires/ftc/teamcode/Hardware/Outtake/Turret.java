@@ -16,7 +16,7 @@ public class Turret implements Module {
 
     Sensors sensors;
 
-    public double mechRatio = 1;
+    public static double mechRatio = 0.9;
 
     // Expose target for dashboard drawing
     public double targetX = -64.1;

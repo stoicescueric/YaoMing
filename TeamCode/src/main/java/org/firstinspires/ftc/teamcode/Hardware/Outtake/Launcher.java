@@ -79,6 +79,11 @@ public  class Launcher implements Module {
         launcherState = LauncherState.SPIN_UP;
     }
 
+    public void setTargetTPS(double targetTPS){
+        this.target=targetTPS;
+
+    }
+
 
     public boolean  isReady(){
         if(Math.abs(currentVel - target) < OuttakePositions.errorVelThreeshold){
