@@ -39,6 +39,7 @@ public class Sensors {
         currentY = pose.getY();
         currentHeading = pose.getHeading();
 
+
         currentVelocityShooter = robot.outtake.getShooterMotor().getVelocity();
 
         if(System.currentTimeMillis() - readVoltageTime > 250) {

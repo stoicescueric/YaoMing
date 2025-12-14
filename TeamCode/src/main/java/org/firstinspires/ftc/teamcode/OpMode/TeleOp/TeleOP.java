@@ -26,11 +26,14 @@ public class TeleOP extends LinearOpMode
     Robot robot;
     public static double pidTargetClosezone = 1600;
     public static double pidTargetFarzone  = 2100;
+    private boolean dynamicHoodEnabled = false;
+    private double lastHoodAngle = 0.0;
+    public static double hoodGain = -0.02;
 
     @Override
     public void runOpMode() throws InterruptedException {
          robot = new Robot(this);
-         Pose startPose = new Pose(60, 60, -Math.PI/2);
+         Pose startPose = new Pose(0, 0, -Math.PI/2);
         if (switchToRedTeam) {
             startPose = new Pose(60, -60, Math.PI/2);
         }
@@ -46,8 +49,11 @@ public class TeleOP extends LinearOpMode
              gg.update();
              updateDrive();
 
+             updateDynamicHoodTracking();
+
              //applyLauncherTargetByX();
              //commented out pentru ca strica controll-ul de schimbat velocity (increas target/decrease target)
+
 
              robot.outtake.turret.turretState = turretTracking
                      ? org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.TRACKING
@@ -57,6 +63,19 @@ public class TeleOP extends LinearOpMode
              intakeUpdate();
              robot.update();
          }
+    }
+
+    private void updateDynamicHoodTracking() {
+        if (!turretTracking) return;
+        if (!dynamicHoodEnabled) return;
+        if (!robot.outtake.isLaunching()) return;
+
+        double hood = computeHoodAngle();
+        // Only reapply if changed enough to matter
+        if (Math.abs(hood - lastHoodAngle) > 0.01) {
+            robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, hood);
+            lastHoodAngle = hood;
+        }
     }
 
     private void applyLauncherTargetByX() {
@@ -124,6 +143,18 @@ public class TeleOP extends LinearOpMode
         }
     }
 
+    // formula: -0.006248 * distance + 0.001034 * ticksPerSecond + -0.682723
+    private double computeHoodAngle() {
+        double rx = robot.sensors.getX();
+        double ry = robot.sensors.getY();
+        double tx = robot.outtake.turret.targetX;
+        double ty = robot.outtake.turret.targetY;
+        double distance = Math.hypot(tx - rx, ty - ry);
+        // use current launcher target TPS (fallback to farzone if not set)
+        double tps = robot.outtake.launcher.target != 0 ? robot.outtake.launcher.target : pidTargetFarzone;
+        return (-0.006248 * distance) + (0.001034 * tps) + (-0.682723) +(hoodGain);
+    }
+
     public void outtakeUpdate() {
         if(gg.dpadUpOnce()) {
             robot.outtake.launcher.increaseDecreaseTarget(1);
@@ -133,7 +164,20 @@ public class TeleOP extends LinearOpMode
         }
 
 
-        if(gg.aOnce() || gg.bOnce()) {
+        // A toggles dynamic hood tracking mode when turret tracking is enabled
+        if (turretTracking && gg.aOnce()) {
+            if (robot.outtake.outtakeState == Outtake.OuttakeState.IDLE) {
+                dynamicHoodEnabled = true;
+                lastHoodAngle = computeHoodAngle();
+                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, lastHoodAngle);
+            } else {
+                dynamicHoodEnabled = false;
+                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+            }
+            return;
+        }
+
+        if(!turretTracking && (gg.aOnce() || gg.bOnce())) {
             if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {
 
                 if(gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);

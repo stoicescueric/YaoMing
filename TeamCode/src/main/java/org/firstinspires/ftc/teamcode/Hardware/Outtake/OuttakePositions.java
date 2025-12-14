@@ -8,7 +8,7 @@ public class OuttakePositions {
     /*----Velocity ----*/
     public static double errorVelThreeshold = 30;
 
-    public static double farLaunchVelocity = 2000;
+    public static double farLaunchVelocity = 2100;
     public static double closeLaunchVelocity = 1750;
 
 
@@ -17,10 +17,10 @@ public class OuttakePositions {
     public static double closeLaunchTilt = 0.32;
 
     /*--PIDF VELOCITY--*/
-    public static double kP = 0.00278;
+    public static double kP = 0.004;
     public static double kI = 0;
     public static double kD = 0;
-    public static double kV = 0.00044;
+        public static double kV = 0.00044;
     public static double kS = 0;
 
     /*--TURRET--*/

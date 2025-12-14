@@ -72,6 +72,12 @@ public class Robot {
         field.setStroke("#aa33ff");
         field.strokeLine(rxIn, ryIn, txIn, tyIn);
 
+        //to delete
+        double dx = txIn - rxIn;
+        double dy = tyIn - ryIn;
+        double distIn = Math.hypot(dx, dy);
+        telemetry.addData("Distance to Target (in)", distIn);
+
         TelemetryUtil.sendTelemetry();
         telemetry.update();
     }
