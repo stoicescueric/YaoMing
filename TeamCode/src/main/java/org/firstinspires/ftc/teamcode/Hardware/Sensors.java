@@ -22,7 +22,8 @@ public class Sensors {
         this.robot = robot;
         initSensors();
     }
-
+    public static double targetX = -64.1;
+    public static double targetY = -60.1;
     private void initSensors() {
         controlHub = robot.hw.get(LynxModule.class, "Control Hub");
         controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -32,6 +33,12 @@ public class Sensors {
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
+    }
+    public double getTargetX(){
+        return targetX;
+    }
+    public double getTargetY(){
+        return targetY;
     }
     public void update() {
         pose = robot.drive.getPose();
@@ -58,6 +65,14 @@ public class Sensors {
     public double getX() {
         return currentX;
     }
+
+    public double getDistanceToTarget(double targetX,double targetY){
+        return Math.hypot(targetX-currentX,targetY-currentY);
+    }
+    public double getAngleToTarget(double targetX,double targetY) {
+        return Math.atan2(targetY-currentY,targetX-currentX);
+    }
+
     public double getY() {
         return currentY;
     }

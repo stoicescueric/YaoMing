@@ -17,7 +17,7 @@ public class OuttakePositions {
     public static double closeLaunchTilt = 0.32;
 
     /*--PIDF VELOCITY--*/
-    public static double kP = 0.004;
+    public static double kP = 0.0027;
     public static double kI = 0;
     public static double kD = 0;
         public static double kV = 0.00044;

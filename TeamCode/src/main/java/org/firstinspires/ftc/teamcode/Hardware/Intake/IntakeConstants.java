@@ -22,7 +22,7 @@ public class IntakeConstants {
     public static double rampOpen = 0.05;
     public static double rampClose = 0.95;
 
-    public static double intakeServoLow = 0.61;
+    public static double intakeServoLow = 0.64;
     public static double intakeServoHigh = 0.85;
 
     public static double preciseShotDelay = 400;

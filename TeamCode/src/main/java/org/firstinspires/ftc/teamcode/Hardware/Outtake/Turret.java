@@ -20,8 +20,7 @@ public class Turret implements Module {
     public static double mechRatio = 0.83;
 
     // Expose target for dashboard drawing
-    public double targetX = -64.1;
-    public double targetY = -60.1;
+
 
     public enum TurretState {
         OFF,
@@ -49,13 +48,9 @@ public class Turret implements Module {
                 servoRight.setPosition(centerPose);
                 break;
             case TRACKING:
-                double robotX = sensors.getX();
-                double robotY = sensors.getY();
                 double robotHeading = sensors.getHeading(); // radians
 
-                double dx = targetX - robotX;
-                double dy = targetY - robotY;
-                double c = Math.hypot(dx, dy);
+                double c = sensors.getDistanceToTarget(sensors.getTargetX(),sensors.getTargetY());
                 if (c < 1e-6) {
                     double center = 0.5;
                     servoLeft.setPosition(center);
@@ -63,8 +58,7 @@ public class Turret implements Module {
                     break;
                 }
 
-                double globalAngle = Math.atan2(dy, dx);
-
+                double globalAngle = sensors.getAngleToTarget(sensors.getTargetX(),sensors.getTargetY());
                 double relativeAngle = Math.atan2(Math.sin(globalAngle - robotHeading), Math.cos(globalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);

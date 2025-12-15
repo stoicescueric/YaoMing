@@ -56,6 +56,7 @@ public class Outtake {
                 }
                 break;
             case RAPID_FIRE:
+                launcher.launcherState = Launcher.LauncherState.LAUNCHING;
                 break;
             case PRECISE_SHOOT_FEEDING:
                 if(launcher.isReady()) {

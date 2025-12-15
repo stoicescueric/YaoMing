@@ -66,8 +66,8 @@ public class Robot {
         field.strokeCircle(rxIn, ryIn, 7);
         field.strokeLine(rxIn, ryIn, rxIn + Math.cos(rh) * headingVecLenIn, ryIn + Math.sin(rh) * headingVecLenIn);
         field.setStroke("#ff3366");
-        double txIn = outtake.turret.targetX;
-        double tyIn = outtake.turret.targetY;
+        double txIn = sensors.getTargetX();
+        double tyIn = sensors.getTargetY();
         field.strokeCircle(txIn, tyIn, 2);
         field.setStroke("#aa33ff");
         field.strokeLine(rxIn, ryIn, txIn, tyIn);
