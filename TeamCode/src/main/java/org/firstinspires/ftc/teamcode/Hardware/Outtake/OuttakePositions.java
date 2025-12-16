@@ -30,6 +30,6 @@ public class OuttakePositions {
     public static double MAX_TURRET_ANGLE = Math.PI / 2;
 
     // The corresponding servo positions for those angles
-    public static double MIN_TURRET_POSITION = 0.26;
-    public static double MAX_TURRET_POSITION = 0.72;
+    public static double MIN_TURRET_POSITION = 0.275;
+    public static double MAX_TURRET_POSITION = 0.75;
 }

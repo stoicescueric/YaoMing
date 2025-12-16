@@ -21,6 +21,8 @@ public class Turret implements Module {
     public static double mechRatio = 0.83;
 
     // Expose target for dashboard drawing
+    public static boolean backlashYok = false;
+    public  static double offset = -0.003;
 
 
     public enum TurretState {
@@ -47,8 +49,14 @@ public class Turret implements Module {
                 servoRight.setPosition(0);
                 break;
             case FIXED_ANGLE:
-                servoLeft.setPosition(centerPose);
-                servoRight.setPosition(centerPose);
+                if(backlashYok) {
+                    servoLeft.setPosition(centerPose + offset);
+                    servoRight.setPosition(centerPose - offset);
+                }else {
+                    servoLeft.setPosition(centerPose);
+                    servoRight.setPosition(centerPose);
+                }
+
                 break;
             case TRACKING:
                 double robotHeading = sensors.getHeading(); // radians

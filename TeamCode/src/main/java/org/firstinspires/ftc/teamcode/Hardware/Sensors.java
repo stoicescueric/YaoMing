@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.pedropathing.geometry.Pose;
-
+@Config
 public class Sensors {
     private Robot robot;
 
