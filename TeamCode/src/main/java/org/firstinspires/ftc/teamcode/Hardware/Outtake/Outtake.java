@@ -85,6 +85,9 @@ public class Outtake {
         turret.update();
     }
 
+    public void flywheelSpin(double target) {
+        launcher.setFlywheel(target);
+    }
     public boolean isLaunching() {
         return outtakeState != OuttakeState.STOP && outtakeState != OuttakeState.IDLE;
     }

@@ -87,7 +87,7 @@ public  class Launcher implements Module {
         hoodRegression.add(43.46, 1445, 0.14);
         hoodRegression.add(43.46, 1495, 0.10);
 
-        //Distance: 49.46
+        //Distance: 49.462
         hoodRegression.add(49.46, 1370, 0.17);
         hoodRegression.add(49.46, 1420, 0.13);
         hoodRegression.add(49.46, 1470, 0.1);
@@ -164,6 +164,11 @@ public  class Launcher implements Module {
         this.target = target;
         target_tilt = hood_tilt;
         launcherState = LauncherState.SHOOT_STARTED;
+    }
+
+    public void setFlywheel(double target) {
+        this.target = target;
+        launcherState = LauncherState.SPIN_UP;
     }
 
     public void setTargetTPS(double targetTPS){

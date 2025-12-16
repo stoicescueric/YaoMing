@@ -142,8 +142,7 @@ public class TeleOP extends LinearOpMode
         }
 
 
-        // A toggles dynamic hood tracking mode when turret tracking is enabled
-        if (turretTracking && gg.aOnce()) {
+        if (gg.aOnce()) {
             if (robot.outtake.outtakeState == Outtake.OuttakeState.IDLE) {
                 robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, lastHoodAngle);
             } else {
@@ -152,7 +151,7 @@ public class TeleOP extends LinearOpMode
             return;
         }
 
-        if(!turretTracking && (gg.aOnce() || gg.bOnce())) {
+        if(gg.aOnce() || gg.bOnce()) {
             if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {
 
                 if(gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
@@ -162,6 +161,11 @@ public class TeleOP extends LinearOpMode
                 robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
             }
         }
+
+        if(gg.xOnce()){
+            robot.outtake.flywheelSpin(1500);
+        }
+
 
     }
 }
