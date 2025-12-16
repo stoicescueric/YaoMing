@@ -22,14 +22,14 @@ public class Outtake {
         RAPID_FIRE,
         PRECISE_SHOOT_FEEDING,
         PRECISE_SHOOT,
-
+        READY_FLYWHEEL,
         STOP
     }
     public OuttakeState outtakeState = OuttakeState.IDLE;
     public Outtake(Robot robot, Sensors sensors){
         this.robot = robot;
-        turret = new Turret(robot.hw,sensors);
-        launcher = new Launcher(robot.hw,sensors);
+        turret = new Turret(robot,sensors);
+        launcher = new Launcher(robot,sensors);
 
     }
     public void start_feed_rapid(double target,double hood) {
@@ -73,6 +73,9 @@ public class Outtake {
                     Log.w("Debug shoot precise","se intoarce inapoi in feeding");
                 }
                 break;
+            case READY_FLYWHEEL:
+                launcher.launcherState = Launcher.LauncherState.READY_FLYWHEEL;
+                break;
             case STOP:
                 launcher.launcherState = Launcher.LauncherState.OFF;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
@@ -91,6 +94,11 @@ public class Outtake {
     public boolean isLaunching() {
         return outtakeState != OuttakeState.STOP && outtakeState != OuttakeState.IDLE;
     }
+
+    public void setOuttakeState(OuttakeState outtakeState) {
+        this.outtakeState = outtakeState;
+    }
+
     public DcMotorEx getShooterMotor() {
         return launcher.motor1;
     }

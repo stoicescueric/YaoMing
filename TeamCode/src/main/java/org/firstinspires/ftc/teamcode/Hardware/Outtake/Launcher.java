@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.Util.Math.MultipleRegression;
 
 @Config
 public  class Launcher implements Module {
-    private HardwareMap hw;
     CachingDcMotorEx motor1,motor2;
 
     CachingServo tilt;
@@ -33,7 +32,8 @@ public  class Launcher implements Module {
         SHOOT_STARTED,
 
         STEADY_VELOCITY,
-        LAUNCHING
+        LAUNCHING,
+        READY_FLYWHEEL
     }
 
 
@@ -43,11 +43,13 @@ public  class Launcher implements Module {
     public double currentVel = 0;
     public LauncherState launcherState = LauncherState.OFF;
     public FlyWheelPID pid = new FlyWheelPID();
-    public Launcher(HardwareMap hw, Sensors sensors) {
-        this.motor1 = new CachingDcMotorEx(hw.get(DcMotorEx.class,"shooter1"),0);
-        this.motor2 = new CachingDcMotorEx(hw.get(DcMotorEx.class,"shooter2"),0);
+    Robot robot;
+    public Launcher(Robot robot, Sensors sensors) {
+        this.robot = robot;
+        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0);
+        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0);
 
-        tilt = new CachingServo(hw.get(Servo.class,"TurretTilt"));
+        tilt = new CachingServo(robot.hw.get(Servo.class,"TurretTilt"));
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         addData();
@@ -136,10 +138,25 @@ public  class Launcher implements Module {
                 break;
             case SHOOT_STARTED:
                 if(auto_aim){
-                    target = idealVelocity.get(targetDistance);
-                    target_tilt = hoodRegression.getHoodAngle(targetDistance,target);
+                    try {
+                        target = idealVelocity.get(targetDistance);
+                        target_tilt = hoodRegression.getHoodAngle(targetDistance,target);
+                    } catch (Exception e) {
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                        break;
+                    }
                 }
                 launcherState = LauncherState.SPIN_UP;
+                break;
+            case READY_FLYWHEEL:
+                try {
+                    target = idealVelocity.get(targetDistance);
+                } catch (Exception e) {
+                    target = OuttakePositions.defaultVel;
+                }
+                power = pid.update(target,currentVel,sensors.getVoltage());
+                motor1.setPower(power);
+                motor2.setPower(power);
                 break;
             case SPIN_UP:
                 power = pid.update(target,currentVel,sensors.getVoltage());
@@ -147,12 +164,18 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 break;
             case LAUNCHING:
-                if(auto_aim) target_tilt = hoodRegression.getHoodAngle(targetDistance,currentVel);
+                if(auto_aim) {
+                    try {
+                        target_tilt = hoodRegression.getHoodAngle(targetDistance,currentVel);
+                    } catch (Exception e) {
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                        break;
+                    }
+                }
                 power = pid.update(target,currentVel,sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
-
-
+                break;
         }
         tilt.setPosition(target_tilt);
     }

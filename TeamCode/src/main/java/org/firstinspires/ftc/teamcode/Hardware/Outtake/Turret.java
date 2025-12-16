@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Hardware.Module;
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 
@@ -30,9 +31,11 @@ public class Turret implements Module {
 
     public static double centerPose = 0.5;
     public TurretState turretState = TurretState.FIXED_ANGLE;
-    public Turret(HardwareMap hw, Sensors sensors){
-        servoLeft = new CachingServo(hw.get(Servo.class,"turretLeft"));
-        servoRight = new CachingServo(hw.get(Servo.class,"turretRight"));
+    Robot robot;
+    public Turret(Robot rb, Sensors sensors){
+        this.robot = rb;
+        servoLeft = new CachingServo(rb.hw.get(Servo.class,"turretLeft"));
+        servoRight = new CachingServo(rb.hw.get(Servo.class,"turretRight"));
         this.sensors = sensors;
     }
 

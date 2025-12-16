@@ -11,6 +11,8 @@ public class OuttakePositions {
     public static double farLaunchVelocity = 2100;
     public static double closeLaunchVelocity = 1750;
 
+    public static double defaultVel = 1470;
+
 
     /*----Tilt ----*/
     public static double farLaunchTilt = 0.40;

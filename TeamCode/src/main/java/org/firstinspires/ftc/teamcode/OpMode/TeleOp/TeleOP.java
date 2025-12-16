@@ -163,7 +163,12 @@ public class TeleOP extends LinearOpMode
         }
 
         if(gg.xOnce()){
-            robot.outtake.flywheelSpin(1500);
+            if(robot.outtake.outtakeState == Outtake.OuttakeState.READY_FLYWHEEL ) {
+                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+
+            } else {
+                robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
+            }
         }
 
 
