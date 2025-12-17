@@ -16,7 +16,10 @@ public class Sensors {
     private double voltage;
     private LynxModule controlHub, expansionHub;
 
-    public double readVoltageTime = 0;
+    public long readVoltageTime = 0;
+    private long lastUpdateTimeMs = 0;
+    private double cycleRateHz = 0.0;
+    private static final double CYCLE_SMOOTHING_ALPHA = 0.2;
 
 
     public Sensors(Robot robot) {
@@ -34,6 +37,7 @@ public class Sensors {
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
+        lastUpdateTimeMs = readVoltageTime;
     }
     public double getTargetX(){
         return targetX;
@@ -54,6 +58,19 @@ public class Sensors {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
         }
+        long now = System.currentTimeMillis();
+        if (lastUpdateTimeMs != 0) {
+            long dtMs = now - lastUpdateTimeMs;
+            if (dtMs > 0) {
+                double instHz = 1000.0 / dtMs;
+                if (cycleRateHz == 0.0) {
+                    cycleRateHz = instHz;
+                } else {
+                    cycleRateHz = CYCLE_SMOOTHING_ALPHA * instHz + (1.0 - CYCLE_SMOOTHING_ALPHA) * cycleRateHz;
+                }
+            }
+        }
+        lastUpdateTimeMs = now;
     }
 
     public double getVoltage() {
@@ -82,6 +99,10 @@ public class Sensors {
     }
     public double getVelocity() {
         return currentVelocityShooter;
+    }
+
+    public double getCycleRateHz() {
+        return cycleRateHz;
     }
 
 }

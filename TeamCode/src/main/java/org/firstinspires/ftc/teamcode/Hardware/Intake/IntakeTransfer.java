@@ -99,7 +99,7 @@ public  class IntakeTransfer implements Module {
                 rampState = RampState.CLOSE;
                 servoIntakeState = ServoIntakeState.LOW;
                 motor1.setPower(IntakeConstants.intakePower);
-                motor2.setPower(IntakeConstants.intakePower);
+                motor2.setPower(IntakeConstants.intakeShushi);
 
                 break;
             case REVERSE:

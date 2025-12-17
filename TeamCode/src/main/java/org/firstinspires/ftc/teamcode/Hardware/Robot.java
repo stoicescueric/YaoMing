@@ -72,6 +72,8 @@ public class Robot {
         field.setStroke("#aa33ff");
         field.strokeLine(rxIn, ryIn, txIn, tyIn);
 
+        telemetry.addData("Hub Cycle Rate (Hz)", sensors.getCycleRateHz());
+
         //to delete
         double dx = txIn - rxIn;
         double dy = tyIn - ryIn;
