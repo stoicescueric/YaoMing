@@ -141,16 +141,6 @@ public class TeleOP extends LinearOpMode
             robot.outtake.launcher.increaseDecreaseTarget(-1);
         }
 
-
-        if (gg.aOnce()) {
-            if (robot.outtake.outtakeState == Outtake.OuttakeState.IDLE) {
-                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, lastHoodAngle);
-            } else {
-                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
-            }
-            return;
-        }
-
         if(gg.aOnce() || gg.bOnce()) {
             if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {
 
