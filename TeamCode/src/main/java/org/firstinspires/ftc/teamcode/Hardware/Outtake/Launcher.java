@@ -66,8 +66,15 @@ public  class Launcher implements Module {
         // --- Ideal Velocity Data ---
         idealVelocity.add(36.53, 1650);
         idealVelocity.add(43.46, 1475);
+        idealVelocity.add(51.22, 1510);
+        idealVelocity.add(52.22, 1520);
         idealVelocity.add(57.55, 1525);
         idealVelocity.add(59.49, 1600);
+        idealVelocity.add(66.33, 1625);
+        idealVelocity.add(71.93, 1650);
+        idealVelocity.add(75.18, 1675);
+        idealVelocity.add(79.21, 1725);
+        idealVelocity.add(82.71, 1725);
 
 
         // --- Hood Regression Data ---
@@ -94,6 +101,11 @@ public  class Launcher implements Module {
         hoodRegression.add(49.46, 1420, 0.13);
         hoodRegression.add(49.46, 1470, 0.1);
 
+        // Distance: 51.22
+        hoodRegression.add(51.22, 1360, 0.14);
+        hoodRegression.add(51.22, 1435, 0.12);
+        hoodRegression.add(51.22, 1510, 0.15);
+
         //Distance: 54.29
         hoodRegression.add(54.29, 1420, 0.15);
         hoodRegression.add(54.29, 1470, 0.13);
@@ -108,6 +120,36 @@ public  class Launcher implements Module {
         hoodRegression.add(59.49, 1495, 0.14);
         hoodRegression.add(59.49, 1545, 0.18);
         hoodRegression.add(59.49, 1620, 0.17);
+
+        // Distance: 62.22 (New Data)
+        hoodRegression.add(62.22, 1400, 0.14);
+        hoodRegression.add(62.22, 1475, 0.12);
+        hoodRegression.add(62.22, 1520, 0.18);
+
+        // Distance: 66.33 (New Data)
+        hoodRegression.add(66.33, 1475, 0.14);
+        hoodRegression.add(66.33, 1550, 0.18);
+        hoodRegression.add(66.33, 1625, 0.2);
+
+        // Distance: 71.93 (New Data)
+        hoodRegression.add(71.93, 1550, 0.2);
+        hoodRegression.add(71.93, 1625, 0.27);
+        hoodRegression.add(71.93, 1650, 0.4);
+
+        // Distance: 75.18 (New Data)
+        hoodRegression.add(75.18, 1625, 0.35);
+        hoodRegression.add(75.18, 1650, 0.4);
+        hoodRegression.add(75.18, 1675, 0.41);
+
+        // Distance: 79.21 (New Data)
+        hoodRegression.add(79.21, 1650, 0.35);
+        hoodRegression.add(79.21, 1700, 0.4);
+        hoodRegression.add(79.21, 1725, 0.45);
+
+        // Distance: 82.71 (New Data)
+        hoodRegression.add(82.71, 1650, 0.38);
+        hoodRegression.add(82.71, 1700, 0.4);
+        hoodRegression.add(82.71, 1725, 0.45);
 
 
         // --- Build Tables ---
