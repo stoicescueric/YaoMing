@@ -20,6 +20,8 @@ public  class IntakeTransfer implements Module {
     private Robot robot;
 
     CachingServo intakeServo;
+    CachingServo left;
+    CachingServo right;
     CachingServo ramp;
 
 
@@ -43,6 +45,7 @@ public  class IntakeTransfer implements Module {
 
     public enum ServoIntakeState{
         LOW,
+        INTAKE,
         HIGH
     }
 
@@ -69,6 +72,8 @@ public  class IntakeTransfer implements Module {
 
         intakeServo = new CachingServo(robot.hw.get(Servo.class,"intakeTilt"));
         ramp = new CachingServo(robot.hw.get(Servo.class,"ramp"));
+        left = new CachingServo(robot.hw.get(Servo.class,"left"));
+        right = new CachingServo(robot.hw.get(Servo.class,"right"));
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         motor1.setCurrentAlert(IntakeConstants.intakeAmpsThreshold, CurrentUnit.AMPS);
@@ -97,8 +102,8 @@ public  class IntakeTransfer implements Module {
                 break;
             case INTAKE:
                 rampState = RampState.CLOSE;
-                servoIntakeState = ServoIntakeState.LOW;
-                motor1.setPower(IntakeConstants.intakePower);
+                servoIntakeState = ServoIntakeState.INTAKE;
+                motor1.setPower(IntakeConstants.intakePowerConveyer);
                 motor2.setPower(IntakeConstants.intakeShushi);
 
                 break;
@@ -117,8 +122,10 @@ public  class IntakeTransfer implements Module {
                 sleep(time_power,IntakeState.OFF_OPEN);
                 break;
             case TRANSFER:
-                motor1.setPower(IntakeConstants.transferPower);
-                motor2.setPower(IntakeConstants.transferPower);
+                servoIntakeState = ServoIntakeState.LOW;
+                motor1.setPower(IntakeConstants.transferPowerConveyer);
+                motor2.setPower(IntakeConstants.transferPowerSushi);
+
                 break;
             case SLEEP:
                 Log.w("Debug shoot precise"," " + (System.currentTimeMillis() - startSleep));
@@ -140,6 +147,9 @@ public  class IntakeTransfer implements Module {
         switch (servoIntakeState){
             case LOW:
                 intakeServo.setPosition(IntakeConstants.intakeServoLow);
+                break;
+            case INTAKE:
+                intakeServo.setPosition(IntakeConstants.intakeServoIntake);
                 break;
             case HIGH:
                 intakeServo.setPosition(IntakeConstants.intakeServoHigh);
@@ -181,6 +191,9 @@ public  class IntakeTransfer implements Module {
                 break;
 
         }
+
+        left.setPosition(IntakeConstants.leftTransfer);
+        right.setPosition(IntakeConstants.rightTransfer);
     }
 
     public void setIntakeState(IntakeState intakeState) {

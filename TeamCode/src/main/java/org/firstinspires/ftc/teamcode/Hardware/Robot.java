@@ -20,8 +20,9 @@ public class Robot {
     public Outtake outtake;
     public Sensors sensors;
     public Follower drive;
-    OpMode op;
+    public OpMode op;
     Telemetry telemetry;
+    private double loopTime = 0;
     public Robot(OpMode op)
     {
         this.op = op;
@@ -38,7 +39,11 @@ public class Robot {
         intakeTransfer.update();
         outtake.update();
         sensors.update();
-        updateTelemetry();
+        //updateTelemetry();
+        double loop = System.nanoTime();
+        telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+        loopTime = loop;
+        telemetry.update();
     }
 
     public void updateTelemetry() {
@@ -72,7 +77,6 @@ public class Robot {
         field.setStroke("#aa33ff");
         field.strokeLine(rxIn, ryIn, txIn, tyIn);
 
-        telemetry.addData("Hub Cycle Rate (Hz)", sensors.getCycleRateHz());
 
         //to delete
         double dx = txIn - rxIn;
@@ -81,6 +85,8 @@ public class Robot {
         telemetry.addData("Distance to Target (in)", distIn);
 
         TelemetryUtil.sendTelemetry();
-        telemetry.update();
+
+
+
     }
 }

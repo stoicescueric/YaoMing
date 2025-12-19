@@ -52,25 +52,11 @@ public class Sensors {
         currentHeading = pose.getHeading();
 
 
-        currentVelocityShooter = robot.outtake.getShooterMotor().getVelocity();
 
         if(System.currentTimeMillis() - readVoltageTime > 250) {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
         }
-        long now = System.currentTimeMillis();
-        if (lastUpdateTimeMs != 0) {
-            long dtMs = now - lastUpdateTimeMs;
-            if (dtMs > 0) {
-                double instHz = 1000.0 / dtMs;
-                if (cycleRateHz == 0.0) {
-                    cycleRateHz = instHz;
-                } else {
-                    cycleRateHz = CYCLE_SMOOTHING_ALPHA * instHz + (1.0 - CYCLE_SMOOTHING_ALPHA) * cycleRateHz;
-                }
-            }
-        }
-        lastUpdateTimeMs = now;
     }
 
     public double getVoltage() {

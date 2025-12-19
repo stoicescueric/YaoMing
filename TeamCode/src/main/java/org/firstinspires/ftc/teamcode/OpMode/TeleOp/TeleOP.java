@@ -11,13 +11,14 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 
 
 @Config
 @TeleOp(name = "TeleOP")
 public class TeleOP extends LinearOpMode
 {
-    public static boolean turretTracking = false;
+    public static boolean turretTracking = true;
     public static boolean robotCentric = false;
     public static boolean flipFieldFrame = false;
     public static double driverFrameOffsetDeg = -90;
@@ -33,9 +34,9 @@ public class TeleOP extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
          robot = new Robot(this);
-         Pose startPose = new Pose(0, 0, -Math.PI/2);
+         Pose startPose = new Pose(60.48, 58.22, Math.PI/2);
         if (switchToRedTeam) {
-            startPose = new Pose(60, -60, Math.PI/2);
+            startPose = new Pose(60, -60, -Math.PI/2);
         }
          gg = new GamePadController(gamepad1);
 
@@ -74,8 +75,9 @@ public class TeleOP extends LinearOpMode
             robot.outtake.launcher.setTargetTPS(pidTargetClosezone);
         }
     }
-    public static double translationalSlow = 0.8;
-    public static double rotateSlow = 0.5;
+    public static double translationalSlow = 1;
+    public static double rotateSlow = 0.6;
+    public static double rotateNorma = 0.8;
     public void updateDrive() {
         double forward = -gg.left_stick_y;
         double strafe = -gg.left_stick_x;
@@ -94,16 +96,18 @@ public class TeleOP extends LinearOpMode
             forward*=translationalSlow;
             strafe*=translationalSlow;
             rotate*=rotateSlow;
+        }else {
+            rotate *= rotateNorma;
         }
         robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
 
         if (gg.rightStickButtonOnce()) {
             Pose p = robot.drive.getPose();
             if(!switchToRedTeam){
-                robot.drive.setPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
+                robot.drive.setPose(new Pose(60.48, 58.22, Math.PI/2));
             }
             else {
-                robot.drive.setPose(new Pose(p.getX(), p.getY(), Math.PI/2));
+                robot.drive.setPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
             }
             robot.drive.update();
             return;
@@ -139,6 +143,11 @@ public class TeleOP extends LinearOpMode
         }
         if(gg.dpadDownOnce()) {
             robot.outtake.launcher.increaseDecreaseTarget(-1);
+        }
+
+        if (gg.yOnce()) {
+            Launcher.auto_aim = !Launcher.auto_aim;
+            turretTracking = !turretTracking;
         }
 
         if(gg.aOnce() || gg.bOnce()) {
