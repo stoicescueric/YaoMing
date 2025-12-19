@@ -30,11 +30,13 @@ public class TeleOP extends LinearOpMode
     private boolean dynamicHoodEnabled = false;
     private double lastHoodAngle = 0.0;
     public static double hoodGain = -0.02;
+    Pose startPose = new Pose(64.57, 62, Math.PI/2);
 
     @Override
     public void runOpMode() throws InterruptedException {
          robot = new Robot(this);
-         Pose startPose = new Pose(60.48, 58.22, Math.PI/2);
+         //60.48 58.22
+
         if (switchToRedTeam) {
             startPose = new Pose(60, -60, -Math.PI/2);
         }
@@ -102,13 +104,7 @@ public class TeleOP extends LinearOpMode
         robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
 
         if (gg.rightStickButtonOnce()) {
-            Pose p = robot.drive.getPose();
-            if(!switchToRedTeam){
-                robot.drive.setPose(new Pose(60.48, 58.22, Math.PI/2));
-            }
-            else {
-                robot.drive.setPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
-            }
+            robot.drive.setPose(startPose);
         }
 
     }

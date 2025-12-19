@@ -26,7 +26,7 @@ public class IntakeTransfer implements Module {
     CachingServo right;
     CachingServo ramp;
 
-    public static boolean useStall = true;
+    public static boolean useStall = false;
 
 
     public enum IntakeState {
