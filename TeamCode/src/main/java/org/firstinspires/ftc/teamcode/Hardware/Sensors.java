@@ -26,8 +26,8 @@ public class Sensors {
         this.robot = robot;
         initSensors();
     }
-    public static double targetX = -64.1;
-    public static double targetY = -60.1;
+    public static double targetX = -64.4;
+    public static double targetY = -60.4;
     private void initSensors() {
         controlHub = robot.hw.get(LynxModule.class, "Control Hub");
         controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

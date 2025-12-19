@@ -73,8 +73,13 @@ public class Turret implements Module {
                 double relativeAngle = Math.atan2(Math.sin(globalAngle - robotHeading), Math.cos(globalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);
-                servoLeft.setPosition(pos);
-                servoRight.setPosition(pos);
+                if(backlashYok) {
+                    servoLeft.setPosition(pos + offset);
+                    servoRight.setPosition(pos - offset);
+                }else {
+                    servoLeft.setPosition(pos);
+                    servoRight.setPosition(pos);
+                }
                 break;
         }
     }

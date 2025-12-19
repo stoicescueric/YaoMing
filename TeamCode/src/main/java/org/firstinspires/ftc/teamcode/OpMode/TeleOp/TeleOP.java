@@ -109,11 +109,8 @@ public class TeleOP extends LinearOpMode
             else {
                 robot.drive.setPose(new Pose(p.getX(), p.getY(), -Math.PI/2));
             }
-            robot.drive.update();
-            return;
         }
 
-        robot.drive.update();
     }
 
     public void intakeUpdate() {

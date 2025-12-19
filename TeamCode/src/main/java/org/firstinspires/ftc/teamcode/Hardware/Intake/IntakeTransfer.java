@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Intake;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,8 +16,9 @@ import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.BinaryDeque;
 
-public  class IntakeTransfer implements Module {
-    public CachingDcMotorEx motor1,motor2;
+@Config
+public class IntakeTransfer implements Module {
+    public CachingDcMotorEx motor1, motor2;
     private Robot robot;
 
     CachingServo intakeServo;
@@ -24,6 +26,7 @@ public  class IntakeTransfer implements Module {
     CachingServo right;
     CachingServo ramp;
 
+    public static boolean useStall = true;
 
 
     public enum IntakeState {
@@ -43,13 +46,13 @@ public  class IntakeTransfer implements Module {
         OPEN
     }
 
-    public enum ServoIntakeState{
+    public enum ServoIntakeState {
         LOW,
         INTAKE,
         HIGH
     }
 
-    public enum StallCheck{
+    public enum StallCheck {
         IDLE,
         DETECTED,
         CONFIRMING
@@ -58,22 +61,23 @@ public  class IntakeTransfer implements Module {
     public StallCheck stallCheck = StallCheck.IDLE;
 
     public IntakeState intakeState = IntakeState.OFF;
-    public RampState rampState =  RampState.CLOSE;
-    public ServoIntakeState servoIntakeState =ServoIntakeState.LOW;
+    public RampState rampState = RampState.CLOSE;
+    public ServoIntakeState servoIntakeState = ServoIntakeState.LOW;
     long startSleep = 0;
     double sleeptime = 0;
     IntakeState nextState = IntakeState.OFF;
 
     BinaryDeque deq = new BinaryDeque();
+
     public IntakeTransfer(Robot robot, Sensors sensors) {
         this.robot = robot;
-        motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"conveyor1"),0);
-        motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"conveyor2"),0);
+        motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "conveyor1"), 0);
+        motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "conveyor2"), 0);
 
-        intakeServo = new CachingServo(robot.hw.get(Servo.class,"intakeTilt"));
-        ramp = new CachingServo(robot.hw.get(Servo.class,"ramp"));
-        left = new CachingServo(robot.hw.get(Servo.class,"left"));
-        right = new CachingServo(robot.hw.get(Servo.class,"right"));
+        intakeServo = new CachingServo(robot.hw.get(Servo.class, "intakeTilt"));
+        ramp = new CachingServo(robot.hw.get(Servo.class, "ramp"));
+        left = new CachingServo(robot.hw.get(Servo.class, "left"));
+        right = new CachingServo(robot.hw.get(Servo.class, "right"));
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         motor1.setCurrentAlert(IntakeConstants.intakeAmpsThreshold, CurrentUnit.AMPS);
@@ -86,9 +90,9 @@ public  class IntakeTransfer implements Module {
     public double time_power = 500;
     public double startStallCheckTime = 0;
     public double stalCheckDuration = 150;
+
     @Override
-    public void update()
-    {
+    public void update() {
         switch (intakeState) {
             case OFF:
                 rampState = RampState.CLOSE;
@@ -114,12 +118,12 @@ public  class IntakeTransfer implements Module {
                 break;
             case START_TRANSFER:
                 rampState = RampState.OPEN;
-                sleep(250,IntakeState.TRANSFER);
+                sleep(250, IntakeState.TRANSFER);
                 break;
             case POWER_FOR_TIME:
                 motor1.setPower(power_time);
                 motor2.setPower(power_time);
-                sleep(time_power,IntakeState.OFF_OPEN);
+                sleep(time_power, IntakeState.OFF_OPEN);
                 break;
             case TRANSFER:
                 servoIntakeState = ServoIntakeState.LOW;
@@ -128,15 +132,15 @@ public  class IntakeTransfer implements Module {
 
                 break;
             case SLEEP:
-                Log.w("Debug shoot precise"," " + (System.currentTimeMillis() - startSleep));
+                Log.w("Debug shoot precise", " " + (System.currentTimeMillis() - startSleep));
 
-                if(System.currentTimeMillis() - startSleep > sleeptime) {
+                if (System.currentTimeMillis() - startSleep > sleeptime) {
                     intakeState = nextState;
                 }
                 break;
         }
 
-        switch (rampState){
+        switch (rampState) {
             case OPEN:
                 ramp.setPosition(IntakeConstants.rampOpen);
                 break;
@@ -144,7 +148,7 @@ public  class IntakeTransfer implements Module {
                 ramp.setPosition(IntakeConstants.rampClose);
                 break;
         }
-        switch (servoIntakeState){
+        switch (servoIntakeState) {
             case LOW:
                 intakeServo.setPosition(IntakeConstants.intakeServoLow);
                 break;
@@ -157,39 +161,40 @@ public  class IntakeTransfer implements Module {
         }
 
 
+        if (useStall) {
+            switch (stallCheck) {
+                case IDLE:
+                    if (intakeState == IntakeState.INTAKE) {
+                        stallCheck = StallCheck.DETECTED;
+                    }
+                    break;
+                case DETECTED:
+                    if (intakeState != IntakeState.INTAKE) {
+                        stallCheck = StallCheck.IDLE;
+                        break;
+                    }
+                    if (motor1.isOverCurrent()) {
+                        startStallCheckTime = System.currentTimeMillis();
+                        stallCheck = StallCheck.CONFIRMING;
+                    }
+                    break;
+                case CONFIRMING:
+                    if (intakeState != IntakeState.INTAKE) {
+                        stallCheck = StallCheck.IDLE;
+                        break;
+                    }
+                    if (!motor1.isOverCurrent()) {
+                        stallCheck = StallCheck.DETECTED;
+                        break;
+                    }
+                    if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
+                        Log.w("IntakeTransfer", "Stall detected, stopping intake");
+                        setIntakeState(IntakeState.OFF);
+                        stallCheck = StallCheck.IDLE;
+                    }
+                    break;
 
-        switch (stallCheck){
-            case IDLE:
-                if(intakeState == IntakeState.INTAKE){
-                    stallCheck = StallCheck.DETECTED;
-                }
-                break;
-            case DETECTED:
-                if(intakeState!=IntakeState.INTAKE){
-                    stallCheck = StallCheck.IDLE;
-                    break;
-                }
-                if(motor1.isOverCurrent()){
-                    startStallCheckTime = System.currentTimeMillis();
-                    stallCheck = StallCheck.CONFIRMING;
-                }
-                break;
-            case CONFIRMING:
-                if(intakeState!=IntakeState.INTAKE){
-                    stallCheck = StallCheck.IDLE;
-                    break;
-                }
-                if(!motor1.isOverCurrent()){
-                    stallCheck = StallCheck.DETECTED;
-                    break;
-                }
-                if(System.currentTimeMillis() - startStallCheckTime > stalCheckDuration){
-                    Log.w("IntakeTransfer","Stall detected, stopping intake");
-                    setIntakeState(IntakeState.OFF);
-                    stallCheck = StallCheck.IDLE;
-                }
-                break;
-
+            }
         }
 
         left.setPosition(IntakeConstants.leftTransfer);
@@ -199,19 +204,22 @@ public  class IntakeTransfer implements Module {
     public void setIntakeState(IntakeState intakeState) {
         this.intakeState = intakeState;
     }
+
     public void setRampState(RampState rampState) {
         this.rampState = rampState;
     }
+
     public void setServoIntakeState(ServoIntakeState servoIntakeState) {
         this.servoIntakeState = servoIntakeState;
     }
 
-    public void setPowerForTime(double power,double time) {
+    public void setPowerForTime(double power, double time) {
         this.power_time = power;
         this.time_power = time;
         intakeState = IntakeState.POWER_FOR_TIME;
     }
-    private void sleep(double time,IntakeState nextState) {
+
+    private void sleep(double time, IntakeState nextState) {
         startSleep = System.currentTimeMillis();
         intakeState = IntakeState.SLEEP;
         sleeptime = time;

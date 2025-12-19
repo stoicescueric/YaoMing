@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
-
+@Config
 public class Robot {
     public HardwareMap hw;
     public IntakeTransfer intakeTransfer;
@@ -21,13 +22,13 @@ public class Robot {
     public Sensors sensors;
     public Follower drive;
     public OpMode op;
+    public static boolean showTelemetry = false;
     Telemetry telemetry;
     private double loopTime = 0;
     public Robot(OpMode op)
     {
         this.op = op;
         this.hw = op.hardwareMap;
-        telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = Constants.createFollower(hw);
         sensors = new Sensors(this);
         intakeTransfer = new IntakeTransfer(this,sensors);
@@ -39,28 +40,29 @@ public class Robot {
         intakeTransfer.update();
         outtake.update();
         sensors.update();
-        //updateTelemetry();
+        drive.update();
+        if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
-        telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+        TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
-        telemetry.update();
+        TelemetryUtil.sendTelemetry();
     }
 
     public void updateTelemetry() {
-        telemetry.addLine("--- Robot Telemetry ---");
-        telemetry.addData("Intake State", intakeTransfer.intakeState);
-        telemetry.addData("Outtake State", outtake.outtakeState);
-        telemetry.addData("Launcher Target ", outtake.launcher.target);
-        telemetry.addData("Launcher Velocity ", outtake.launcher.currentVel);
-        telemetry.addData("launcher power",outtake.launcher.getPower());
+        TelemetryUtil.packet.addLine("--- Robot Telemetry ---");
+        TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);
+        TelemetryUtil.packet.put("Outtake State", outtake.outtakeState);
+        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
+        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
+        TelemetryUtil.packet.put("launcher power",outtake.launcher.getPower());
 
-        telemetry.addData("Intake amps",intakeTransfer.motor1.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("Intake2 amps",intakeTransfer.motor2.getCurrent(CurrentUnit.AMPS));
+        TelemetryUtil.packet.put("Intake amps",intakeTransfer.motor1.getCurrent(CurrentUnit.AMPS));
+        TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.motor2.getCurrent(CurrentUnit.AMPS));
 
-        telemetry.addData("Current X", sensors.getX());
-        telemetry.addData("Current Y", sensors.getY());
-        telemetry.addData("Current Heading", sensors.getHeading());
-        telemetry.addData("voltage",sensors.getVoltage());
+        TelemetryUtil.packet.put("Current X", sensors.getX());
+        TelemetryUtil.packet.put("Current Y", sensors.getY());
+        TelemetryUtil.packet.put("Current Heading", sensors.getHeading());
+        TelemetryUtil.packet.put("voltage",sensors.getVoltage());
 
         Canvas field = TelemetryUtil.getPacket().fieldOverlay();
         double rxIn = sensors.getX();
@@ -82,9 +84,9 @@ public class Robot {
         double dx = txIn - rxIn;
         double dy = tyIn - ryIn;
         double distIn = Math.hypot(dx, dy);
-        telemetry.addData("Distance to Target (in)", distIn);
+        TelemetryUtil.packet.put("Distance to Target (in)", distIn);
 
-        TelemetryUtil.sendTelemetry();
+
 
 
 
