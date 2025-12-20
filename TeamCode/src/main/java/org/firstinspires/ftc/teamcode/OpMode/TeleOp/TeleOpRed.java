@@ -10,6 +10,7 @@ public class TeleOpRed extends TeleOP{
 
     @Override
     public void runOpMode() throws InterruptedException {
+        TeleOP.flipFieldFrame = true;
         Info.alliance = Alliance.RED;
         super.runOpMode();
     }

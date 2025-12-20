@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class TeleOpBlue extends TeleOP{
     @Override
     public void runOpMode() throws InterruptedException {
+        TeleOP.flipFieldFrame = false;
         Info.alliance = Alliance.BLUE;
         super.runOpMode();
     }

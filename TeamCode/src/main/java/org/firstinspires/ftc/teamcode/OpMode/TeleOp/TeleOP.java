@@ -30,8 +30,6 @@ public class TeleOP extends LinearOpMode
     Robot robot;
     public static double pidTargetClosezone = 1600;
     public static double pidTargetFarzone  = 2100;
-    private boolean dynamicHoodEnabled = false;
-    private double lastHoodAngle = 0.0;
     public static double hoodGain = -0.02;
     Pose startPose;
     Pose startPoseRed = new Pose(64.57, -62, -Math.PI/2);
