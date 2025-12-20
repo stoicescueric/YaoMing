@@ -9,10 +9,7 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 public class Info {
     public static Phase phase = Phase.TELEOP;
     public static String opModeName = "";
-    public Alliance alliance = Alliance.RED;
-    public Info() {
-
-    }
+    public static Alliance alliance = Alliance.RED;
     public void setAlliance(Alliance seted) {
         alliance =  seted;
     }

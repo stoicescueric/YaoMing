@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,12 +11,14 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
+import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 
 
 @Config
-@TeleOp(name = "TeleOP")
+@Disabled
 public class TeleOP extends LinearOpMode
 {
     public static boolean turretTracking = true;
@@ -30,15 +33,21 @@ public class TeleOP extends LinearOpMode
     private boolean dynamicHoodEnabled = false;
     private double lastHoodAngle = 0.0;
     public static double hoodGain = -0.02;
-    Pose startPose = new Pose(64.57, 62, Math.PI/2);
+    Pose startPose;
+    Pose startPoseRed = new Pose(64.57, -62, -Math.PI/2);
+    Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
+    Pose resetPoseRed = new Pose(64.57, -62, -Math.PI/2);
+    Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
 
     @Override
     public void runOpMode() throws InterruptedException {
          robot = new Robot(this);
          //60.48 58.22
 
-        if (switchToRedTeam) {
-            startPose = new Pose(60, -60, -Math.PI/2);
+        if (Info.alliance == Alliance.RED) {
+            startPose = startPoseRed;
+        }else {
+            startPose = startPoseBlue;
         }
          gg = new GamePadController(gamepad1);
 
@@ -104,16 +113,17 @@ public class TeleOP extends LinearOpMode
         robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
 
         if (gg.rightStickButtonOnce()) {
-            robot.drive.setPose(startPose);
-        }
+            if(Info.alliance == Alliance.RED) {
+                robot.drive.setPose(resetPoseRed);
+            }else {
+                robot.drive.setPose(resetPoseBlue);
+            }
 
+        }
     }
 
     public void intakeUpdate() {
         if(gg.rightBumper()) {
-            if(gg.rightBumperLong()){
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.REVERSE);
-            }
             if(gg.rightBumperOnce()){
                 switch (robot.intakeTransfer.intakeState){
                     case INTAKE:

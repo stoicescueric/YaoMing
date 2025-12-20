@@ -5,6 +5,10 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.pedropathing.geometry.Pose;
+
+import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
+import org.firstinspires.ftc.teamcode.Util.Info;
+
 @Config
 public class Sensors {
     private Robot robot;
@@ -21,13 +25,16 @@ public class Sensors {
     private double cycleRateHz = 0.0;
     private static final double CYCLE_SMOOTHING_ALPHA = 0.2;
 
-
+    public  double targetX = -64;
+    public  double targetY = 58;
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
+        if(Info.alliance == Alliance.BLUE){
+            targetY*=-1;
+        }
     }
-    public static double targetX = -64;
-    public static double targetY = -58;
+
     private void initSensors() {
         controlHub = robot.hw.get(LynxModule.class, "Control Hub");
         controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
