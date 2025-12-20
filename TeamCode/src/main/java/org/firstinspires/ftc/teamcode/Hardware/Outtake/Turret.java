@@ -83,6 +83,10 @@ public class Turret implements Module {
                 break;
         }
     }
+
+    public void setPosFixed(double pos){
+        centerPose = pos;
+    }
     private double angleToTurretPosition(double angle) {
         double position = Range.scale(angle, OuttakePositions.MIN_TURRET_ANGLE,OuttakePositions.MAX_TURRET_ANGLE,OuttakePositions.MIN_TURRET_POSITION, OuttakePositions.MAX_TURRET_POSITION);
         return Range.clip(position, OuttakePositions.MIN_TURRET_POSITION,OuttakePositions.MAX_TURRET_POSITION);

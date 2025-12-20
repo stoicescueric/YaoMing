@@ -52,9 +52,10 @@ public class Robot {
         TelemetryUtil.packet.addLine("--- Robot Telemetry ---");
         TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);
         TelemetryUtil.packet.put("Outtake State", outtake.outtakeState);
+        TelemetryUtil.packet.put("Launcher State", outtake.launcher.launcherState);
+
         TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
         TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
-        TelemetryUtil.packet.put("launcher power",outtake.launcher.getPower());
 
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.motor1.getCurrent(CurrentUnit.AMPS));
         TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.motor2.getCurrent(CurrentUnit.AMPS));

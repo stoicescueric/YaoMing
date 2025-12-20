@@ -41,6 +41,7 @@ public  class Launcher implements Module {
     Sensors sensors;
     public double target = 0;
     public static boolean auto_aim = true;
+
     public double currentVel = 0;
     public LauncherState launcherState = LauncherState.OFF;
     public FlyWheelPID pid = new FlyWheelPID();
@@ -283,6 +284,9 @@ public  class Launcher implements Module {
             return true;
         }
         return false;
+    }
+    public void autoAimOn(boolean on){
+        auto_aim = on;
     }
 
 

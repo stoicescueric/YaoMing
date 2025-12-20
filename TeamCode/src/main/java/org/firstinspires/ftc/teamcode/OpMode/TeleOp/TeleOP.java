@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 
 
 @Config
-@Disabled
+
 public class TeleOP extends LinearOpMode
 {
     public static boolean turretTracking = true;
@@ -55,6 +55,7 @@ public class TeleOP extends LinearOpMode
 
          waitForStart();
          robot.drive.startTeleopDrive();
+         robot.outtake.launcher.autoAimOn(true);
 
          while(opModeIsActive())
          {
@@ -141,13 +142,6 @@ public class TeleOP extends LinearOpMode
     // formula: -0.006248 * distance + 0.001034 * ticksPerSecond + -0.682723
 
     public void outtakeUpdate() {
-        if(gg.dpadUpOnce()) {
-            robot.outtake.launcher.increaseDecreaseTarget(1);
-        }
-        if(gg.dpadDownOnce()) {
-            robot.outtake.launcher.increaseDecreaseTarget(-1);
-        }
-
         if (gg.yOnce()) {
             Launcher.auto_aim = !Launcher.auto_aim;
             turretTracking = !turretTracking;

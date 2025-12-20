@@ -62,7 +62,7 @@ public class IntakeTransfer implements Module {
 
     public IntakeState intakeState = IntakeState.OFF;
     public RampState rampState = RampState.CLOSE;
-    public ServoIntakeState servoIntakeState = ServoIntakeState.LOW;
+    public ServoIntakeState servoIntakeState = ServoIntakeState.INTAKE;
     long startSleep = 0;
     double sleeptime = 0;
     IntakeState nextState = IntakeState.OFF;
@@ -96,6 +96,7 @@ public class IntakeTransfer implements Module {
         switch (intakeState) {
             case OFF:
                 rampState = RampState.CLOSE;
+                servoIntakeState = ServoIntakeState.INTAKE;
                 motor1.setPower(0);
                 motor2.setPower(0);
                 break;
@@ -129,7 +130,6 @@ public class IntakeTransfer implements Module {
                 servoIntakeState = ServoIntakeState.LOW;
                 motor1.setPower(IntakeConstants.transferPowerConveyer);
                 motor2.setPower(IntakeConstants.transferPowerSushi);
-
                 break;
             case SLEEP:
                 Log.w("Debug shoot precise", " " + (System.currentTimeMillis() - startSleep));
@@ -213,6 +213,9 @@ public class IntakeTransfer implements Module {
         this.servoIntakeState = servoIntakeState;
     }
 
+    public void increaseIntakeServo(double delta) {
+        
+    }
     public void setPowerForTime(double power, double time) {
         this.power_time = power;
         this.time_power = time;

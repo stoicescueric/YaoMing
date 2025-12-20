@@ -25,8 +25,8 @@ public class Sensors {
     private double cycleRateHz = 0.0;
     private static final double CYCLE_SMOOTHING_ALPHA = 0.2;
 
-    public  double targetX = -64;
-    public  double targetY = 58;
+    public   double targetX = -65;
+    public  double targetY = 67;
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
