@@ -24,6 +24,7 @@ public class TeleOP extends LinearOpMode
     public static boolean turretTracking = true;
     public static boolean robotCentric = false;
     public static boolean flipFieldFrame = false;
+    public boolean isReadyingFlywheel = false;
     public static double driverFrameOffsetDeg = -90;
     public static boolean switchToRedTeam = false;
     GamePadController gg;
@@ -32,9 +33,9 @@ public class TeleOP extends LinearOpMode
     public static double pidTargetFarzone  = 2100;
     public static double hoodGain = -0.02;
     Pose startPose;
-    Pose startPoseRed = new Pose(64.57, -62, -Math.PI/2);
+    Pose startPoseRed = new Pose(13.5, 45, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(64.57, -62, -Math.PI/2);
+    Pose resetPoseRed = new Pose(63.92, -59.60, -Math.PI/2);
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
 
     @Override
@@ -151,16 +152,23 @@ public class TeleOP extends LinearOpMode
                 if(gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
                 else if(gg.bOnce()) robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
 
-            } else {
-                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+            } else if(isReadyingFlywheel) {
+                isReadyingFlywheel = false;
+                if (gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                else if (gg.bOnce()) robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
             }
+            else{
+                    robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+                }
         }
 
         if(gg.xOnce()){
             if(robot.outtake.outtakeState == Outtake.OuttakeState.READY_FLYWHEEL ) {
+                isReadyingFlywheel = false;
                 robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
 
             } else {
+                isReadyingFlywheel = true;
                 robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
             }
         }

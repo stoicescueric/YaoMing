@@ -23,17 +23,17 @@ public class CloseConstants {
     public static double failSafeDtTime = 2500;
     public static double hoodPosition = 0.615;
     public static double launcherVelocity = 1000;
-    public static double startX = -55.8, startY = 47, headingStartRed = Math.toRadians(128);
+    public static double startX = -55.82, startY = 48.13, headingStartRed = Math.toRadians(128);
     public Pose startPose;
     public static double shootingX = -14, shootingY = 15, shootingHeading = Math.toRadians(90);
     public Pose scorePose;
 
-    public static double pickUp1X = -11.3, pickUp1Y = 52.5, pickUp1Heading = Math.toRadians(90);
+    public static double pickUp1X = -11.3, pickUp1Y = 55, pickUp1Heading = Math.toRadians(90);
     public Pose pickUpPose;
     public static double max_power_pickUp = 0.8;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
-    public static double pickUp2X = 14.5, pickUp2Y = 58, pickUp2Heading = Math.toRadians(90);
+    public static double pickUp2X = 14.5, pickUp2Y = 60.5, pickUp2Heading = Math.toRadians(90);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 
