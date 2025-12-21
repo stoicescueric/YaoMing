@@ -173,6 +173,15 @@ public class TeleOP extends LinearOpMode
             }
         }
 
+        if(gg.dpadUpOnce()){
+            if(turretTracking == true) {
+                turretTracking = false;
+
+            } else {
+                turretTracking = true;
+            }
+        }
+
 
     }
 }

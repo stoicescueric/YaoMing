@@ -25,13 +25,21 @@ public class Sensors {
     private double cycleRateHz = 0.0;
     private static final double CYCLE_SMOOTHING_ALPHA = 0.2;
 
-    public double targetX = -66.6;
-    public double targetY = 71;
+    public  double targetX = -66.6;
+    public  double targetY = 71;
+    public double targetXRed = -69;
+    public double targetYRed = 71;
+    public double targetXBlue= -66.6;
+    public double targetYBlue = -71;
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
         if(Info.alliance == Alliance.BLUE){
-            targetY*=-1;
+            targetX = targetXBlue;
+            targetY = targetYBlue;
+        }else {
+            targetX = targetXRed;
+            targetY = targetYRed;
         }
     }
 
