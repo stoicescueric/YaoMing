@@ -11,7 +11,9 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <application tools:replace="android:allowBackup">
+    <application
+        android:allowBackup="false"
+        tools:replace="android:allowBackup">
         <!-- Watchdog background service -->
         <service
             android:name="com.watchdog.WatchdogService"

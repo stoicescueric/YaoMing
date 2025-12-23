@@ -43,6 +43,7 @@ final class WatchdogEngine {
     void initialize(@NonNull Context context) {
         if (initialized.get()) return;
         appContext = context.getApplicationContext();
+        WatchdogInitializer.setContext(appContext);
         queue = new ArrayBlockingQueue<>(Watchdog.QUEUE_CAPACITY);
         dbExecutor = Executors.newSingleThreadExecutor();
         WatchdogDatabaseHelper.getInstance().init(appContext);
