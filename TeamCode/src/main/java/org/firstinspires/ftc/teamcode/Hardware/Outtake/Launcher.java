@@ -208,8 +208,10 @@ public  class Launcher implements Module {
 
         switch (launcherState){
             case OFF:
-                motor1.setPower(0);
-                motor2.setPower(0);
+                target = 0;
+                power = pid.update(target, currentVel, sensors.getVoltage());
+                motor1.setPower(power);
+                motor2.setPower(power);
                 break;
             case SHOOT_STARTED:
                 if(auto_aim){
