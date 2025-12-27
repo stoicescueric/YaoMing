@@ -48,6 +48,10 @@ public class Robot {
         TelemetryUtil.sendTelemetry();
     }
 
+    public long getLoopTimeNs() {
+        return (long) loopTime;
+    }
+
     public void updateTelemetry() {
         TelemetryUtil.packet.addLine("--- Robot Telemetry ---");
         TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);

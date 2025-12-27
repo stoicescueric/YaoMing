@@ -21,9 +21,7 @@ public class Sensors {
     private LynxModule controlHub, expansionHub;
 
     public long readVoltageTime = 0;
-    private long lastUpdateTimeMs = 0;
-    private double cycleRateHz = 0.0;
-    private static final double CYCLE_SMOOTHING_ALPHA = 0.2;
+    private long lastUpdateTimeNs = 0;
 
     public  double targetX = -66.6;
     public  double targetY = 71;
@@ -31,6 +29,20 @@ public class Sensors {
     public double targetYRed = 71;
     public double targetXBlue= -66.6;
     public double targetYBlue = -71;
+
+    public static double STILL_MAX_TRANSLATIONAL_SPEED = 0.5; // field units per second
+    public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
+
+    // Last pose used for stillness detection
+    private double lastStillX = Double.NaN;
+    private double lastStillY = Double.NaN;
+    private double lastStillHeading = Double.NaN;
+    private long lastStillCheckLoopTimeNs = 0; // Robot.loopTime at last history update
+
+    public static double FARZONE_X1 = -72, FARZONE_Y1 = 72;
+    public static double FARZONE_X2 = 0, FARZONE_Y2 = 0;
+    public static double FARZONE_X3 = -72, FARZONE_Y3 = -72;
+
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
@@ -52,7 +64,7 @@ public class Sensors {
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
-        lastUpdateTimeMs = readVoltageTime;
+        lastUpdateTimeNs = System.nanoTime();
     }
     public double getTargetX(){
         return targetX;
@@ -66,12 +78,12 @@ public class Sensors {
         currentY = pose.getY();
         currentHeading = pose.getHeading();
 
-
-
         if(System.currentTimeMillis() - readVoltageTime > 250) {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
         }
+
+        lastUpdateTimeNs = System.nanoTime();
     }
 
     public double getVoltage() {
@@ -106,8 +118,73 @@ public class Sensors {
         return currentVelocityShooter;
     }
 
-    public double getCycleRateHz() {
-        return cycleRateHz;
+    /**
+     * Returns true if the robot is considered "still enough".
+     * Safe to call multiple times per loop *after* robot.update().
+     */
+    public boolean isRobotStill() {
+        if (pose == null) return false;
+
+        long loopTimeNs = robot.getLoopTimeNs();
+
+        // First-time initialization of history
+        if (Double.isNaN(lastStillX) || lastStillCheckLoopTimeNs == 0) {
+            lastStillX = currentX;
+            lastStillY = currentY;
+            lastStillHeading = currentHeading;
+            lastStillCheckLoopTimeNs = loopTimeNs;
+            return false; // not enough info yet
+        }
+
+        // If we've already processed this loop, just reuse the previous result
+        if (loopTimeNs == lastStillCheckLoopTimeNs) {
+            double dx = currentX - lastStillX;
+            double dy = currentY - lastStillY;
+            double dHeading = currentHeading - lastStillHeading;
+            double dt = (loopTimeNs - lastStillCheckLoopTimeNs) / 1e9;
+            if (dt <= 0) return false;
+            double translationalSpeed = Math.hypot(dx, dy) / dt;
+            double angularSpeed = Math.abs(dHeading) / dt;
+            return translationalSpeed <= STILL_MAX_TRANSLATIONAL_SPEED &&
+                   angularSpeed <= STILL_MAX_ANGULAR_SPEED;
+        }
+
+        double dt = (loopTimeNs - lastStillCheckLoopTimeNs) / 1e9;
+        if (dt <= 0) return false;
+
+        double dx = currentX - lastStillX;
+        double dy = currentY - lastStillY;
+        double dHeading = currentHeading - lastStillHeading;
+
+        double translationalSpeed = Math.hypot(dx, dy) / dt;
+        double angularSpeed = Math.abs(dHeading) / dt;
+
+        // Update history for next loop
+        lastStillX = currentX;
+        lastStillY = currentY;
+        lastStillHeading = currentHeading;
+        lastStillCheckLoopTimeNs = loopTimeNs;
+
+        return translationalSpeed <= STILL_MAX_TRANSLATIONAL_SPEED &&
+               angularSpeed <= STILL_MAX_ANGULAR_SPEED;
     }
 
+    public boolean isInTargetZone(double x, double y) {
+        double x1 = FARZONE_X1, y1 = FARZONE_Y1;
+        double x2 = FARZONE_X2, y2 = FARZONE_Y2;
+        double x3 = FARZONE_X3, y3 = FARZONE_Y3;
+
+        double denom = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+        if (denom == 0) {
+            return false;
+        }
+
+        double a = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denom;
+        double b = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denom;
+        double c = 1 - a - b;
+
+        double eps = 1e-6;
+        return a >= -eps && b >= -eps && c >= -eps;
+    }
 }
+

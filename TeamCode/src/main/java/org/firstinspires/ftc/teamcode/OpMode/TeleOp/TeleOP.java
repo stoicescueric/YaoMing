@@ -146,40 +146,60 @@ public class TeleOP extends LinearOpMode
             turretTracking = !turretTracking;
         }
 
-        if(gg.aOnce() || gg.bOnce()) {
-            if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {
+        Outtake.OuttakeState state = robot.outtake.outtakeState;
+        double x = robot.sensors.getX();
+        double y = robot.sensors.getY();
+        boolean inZone = robot.sensors.isInTargetZone(x, y);
+        boolean isStill = robot.sensors.isRobotStill();
 
-                if(gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
-                else if(gg.bOnce()) robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
+        if (gg.aOnce()) {
+
+
+            if (state == Outtake.OuttakeState.IDLE) {
+                if (inZone && isStill) {
+                    // Idle and in zone: shoot immediately
+                    robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                } else {
+                    // Idle and outside zone: spin up
+                    isReadyingFlywheel = true;
+                    robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
+                }
+            } else if (state == Outtake.OuttakeState.READY_FLYWHEEL) {
+                if (inZone && isStill) {
+                    // Spinning up/in ready state and in zone: shoot
+                    robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                } else {
+                    // Spinning but not in zone: STOP
+                    isReadyingFlywheel = false;
+                    robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+                }
+            } else {
+                // Any other non-IDLE state: STOP
+                isReadyingFlywheel = false;
+                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+            }
+        }
+
+        if(state == Outtake.OuttakeState.READY_FLYWHEEL && inZone && isStill){
+            robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+        }
+
+        if(gg.bOnce()) {
+            if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {
+                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity,OuttakePositions.farLaunchTilt);
 
             } else if(isReadyingFlywheel) {
                 isReadyingFlywheel = false;
-                if (gg.aOnce()) robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-                else if (gg.bOnce()) robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
             }
             else{
-                    robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
-                }
-        }
-
-        if(gg.xOnce()){
-            if(robot.outtake.outtakeState == Outtake.OuttakeState.READY_FLYWHEEL ) {
-                isReadyingFlywheel = false;
                 robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
-
-            } else {
-                isReadyingFlywheel = true;
-                robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
             }
         }
+
 
         if(gg.dpadUpOnce()){
-            if(turretTracking == true) {
-                turretTracking = false;
-
-            } else {
-                turretTracking = true;
-            }
+            turretTracking = !turretTracking;
         }
 
 
