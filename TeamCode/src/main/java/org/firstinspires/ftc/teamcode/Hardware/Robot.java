@@ -13,6 +13,7 @@ import com.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 @Config
 public class Robot {
@@ -77,23 +78,38 @@ public class Robot {
         field.setStroke("#00ccff");
         field.strokeCircle(rxIn, ryIn, 7);
         field.strokeLine(rxIn, ryIn, rxIn + Math.cos(rh) * headingVecLenIn, ryIn + Math.sin(rh) * headingVecLenIn);
-        field.setStroke("#ff3366");
+
         double txIn = sensors.getTargetX();
         double tyIn = sensors.getTargetY();
+        double dx = txIn - rxIn;
+        double dy = tyIn - ryIn;
+        double distIn = Math.hypot(dx, dy);
+
+        field.setStroke("#ff3366");
         field.strokeCircle(txIn, tyIn, 2);
         field.setStroke("#aa33ff");
         field.strokeLine(rxIn, ryIn, txIn, tyIn);
 
+        double normalLen = 10.0;
+        field.setStroke("#00ff00");
+        double b1mag = Math.hypot(Turret.BOARD1_NXrl, Turret.BOARD1_NYrl);
+        double n1x = b1mag > 1e-6 ? Turret.BOARD1_NXrl / b1mag : 0.0;
+        double n1y = b1mag > 1e-6 ? Turret.BOARD1_NYrl / b1mag : 0.0;
+        field.strokeLine(txIn, tyIn, txIn + n1x * normalLen, tyIn + n1y * normalLen);
 
-        //to delete
-        double dx = txIn - rxIn;
-        double dy = tyIn - ryIn;
-        double distIn = Math.hypot(dx, dy);
+        field.setStroke("#ffcc00");
+        double b2mag = Math.hypot(Turret.BOARD2_NXrl, Turret.BOARD2_NYrl);
+        double n2x = b2mag > 1e-6 ? Turret.BOARD2_NXrl / b2mag : 0.0;
+        double n2y = b2mag > 1e-6 ? Turret.BOARD2_NYrl / b2mag : 0.0;
+        field.strokeLine(txIn, tyIn, txIn + n2x * normalLen, tyIn + n2y * normalLen);
+
+        field.setStroke("#ffffff");
+        double aimLen = 40.0;
+        double aimAngle = Turret.lastAdjustedGlobalAngle;
+        field.strokeLine(rxIn, ryIn,
+                rxIn + Math.cos(aimAngle) * aimLen,
+                ryIn + Math.sin(aimAngle) * aimLen);
+
         TelemetryUtil.packet.put("Distance to Target (in)", distIn);
-
-
-
-
-
     }
 }
