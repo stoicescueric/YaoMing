@@ -30,7 +30,7 @@ public class Sensors {
     public double targetXBlue= -64;
     public double targetYBlue = -64;
 
-    public static double STILL_MAX_TRANSLATIONAL_SPEED = 0.5; // field units per second
+    public static double STILL_MAX_TRANSLATIONAL_SPEED = 2; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
 
     // Last pose used for stillness detection
@@ -39,9 +39,9 @@ public class Sensors {
     private double lastStillHeading = Double.NaN;
     private long lastStillCheckLoopTimeNs = 0; // Robot.loopTime at last history update
 
-    public static double FARZONE_X1 = -72, FARZONE_Y1 = 72;
-    public static double FARZONE_X2 = 0, FARZONE_Y2 = 0;
-    public static double FARZONE_X3 = -72, FARZONE_Y3 = -72;
+    public static double FARZONE_X1 = -89, FARZONE_Y1 = 89;
+    public static double FARZONE_X2 = 15, FARZONE_Y2 = 0;
+    public static double FARZONE_X3 = -89, FARZONE_Y3 = -89;
 
     public Sensors(Robot robot) {
         this.robot = robot;
@@ -127,16 +127,13 @@ public class Sensors {
 
         long loopTimeNs = robot.getLoopTimeNs();
 
-        // First-time initialization of history
         if (Double.isNaN(lastStillX) || lastStillCheckLoopTimeNs == 0) {
             lastStillX = currentX;
             lastStillY = currentY;
             lastStillHeading = currentHeading;
             lastStillCheckLoopTimeNs = loopTimeNs;
-            return false; // not enough info yet
+            return false;
         }
-
-        // If we've already processed this loop, just reuse the previous result
         if (loopTimeNs == lastStillCheckLoopTimeNs) {
             double dx = currentX - lastStillX;
             double dy = currentY - lastStillY;
@@ -159,7 +156,6 @@ public class Sensors {
         double translationalSpeed = Math.hypot(dx, dy) / dt;
         double angularSpeed = Math.abs(dHeading) / dt;
 
-        // Update history for next loop
         lastStillX = currentX;
         lastStillY = currentY;
         lastStillHeading = currentHeading;
