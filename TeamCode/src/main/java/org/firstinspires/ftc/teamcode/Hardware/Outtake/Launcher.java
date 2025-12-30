@@ -139,9 +139,10 @@ public  class Launcher implements Module {
         hoodRegression.add(66.33, 1555, 0.17);
 
         // Distance: 71.93 de refacut
-        hoodRegression.add(71.93, 1505, 0.13);
-        hoodRegression.add(71.93, 1530, 0.13);
-        hoodRegression.add(71.93, 1565, 0.12);
+        //l-am refacut
+        hoodRegression.add(71.93, 1510, 0.13);
+        hoodRegression.add(71.93, 1545, 0.14);
+        hoodRegression.add(71.93, 1570, 0.15);
 
         // Distance: 75.18
         hoodRegression.add(75.18, 1510, 0.13);
@@ -153,8 +154,7 @@ public  class Launcher implements Module {
         hoodRegression.add(79.21, 1580, 0.16);
         hoodRegression.add(79.21, 1610, 0.16);
 
-        // Distance: 82.71 
-        //DE RAFACUT
+        // Distance: 82.71
         hoodRegression.add(82.71, 1580, 0.14);
         hoodRegression.add(82.71, 1620, 0.14);
         hoodRegression.add(82.71, 1625, 0.23);

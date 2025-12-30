@@ -24,10 +24,10 @@ public class Turret implements Module {
     public static boolean backlashYok = false;
     public static double offset = -0.008;
 
-    public static double BOARD1_NX = 0.5;
+    public static double BOARD1_NX = 0.2;
     public static double BOARD1_NY = 0.0;
     public static double BOARD2_NX = 0.0;
-    public static double BOARD2_NY = 1.0;
+    public static double BOARD2_NY = 0.2;
 
     public static double BOARD1_NXrl;
     public static double BOARD1_NYrl;

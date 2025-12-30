@@ -27,6 +27,10 @@ public class Close extends OpMode {
         GO_TO_SCORE2,
         WAIT_SCORE2,
         GO_PICKUP2,
+        GO_PICKUP3,
+        CLEAR,
+        GO_TO_SCORE3,
+        WAIT_SCORE3,
         GO_TO_PARK,
         PARK,
         SLEEP
@@ -74,8 +78,13 @@ public class Close extends OpMode {
 
                 robot.drive.followPath(constants.grabPickUp1, constants.getMaxPower(),true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                setPathState(AutoStates.GO_TO_SCORE1);
+                setPathState(AutoStates.CLEAR);
                 break;
+            case CLEAR :
+                if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                robot.drive.followPath(constants.goClear, constants.getMaxClearPower(), false);
+                setPathState(AutoStates.GO_TO_SCORE1);
             case GO_TO_SCORE1:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.drive.followPath(constants.scorePickup1);
@@ -101,6 +110,23 @@ public class Close extends OpMode {
             case WAIT_SCORE2:
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
 
+                if (robot.drive.isBusy()) break;
+                robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
+                sleep(constants.getShootingTime(), AutoStates.GO_PICKUP3);
+                break;
+            case GO_PICKUP3:
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                robot.drive.followPath(constants.grabPickup3, constants.getMaxPower(), true);
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                setPathState(AutoStates.GO_TO_SCORE3);
+                break;
+            case GO_TO_SCORE3:
+                if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.drive.followPath(constants.scorePickup3,true);
+                setPathState(AutoStates.WAIT_SCORE3);
+                break;
+            case WAIT_SCORE3:
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 if (robot.drive.isBusy()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK);

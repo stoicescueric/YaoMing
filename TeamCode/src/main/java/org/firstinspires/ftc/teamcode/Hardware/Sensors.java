@@ -25,10 +25,10 @@ public class Sensors {
 
     public double targetX = -66.6;
     public double targetY = -65;
-    public double targetXRed = -70;
-    public double targetYRed = 65;
-    public double targetXBlue= -70;
-    public double targetYBlue = -65;
+    public double targetXRed = -64;
+    public double targetYRed = 64;
+    public double targetXBlue= -64;
+    public double targetYBlue = -64;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 0.5; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
