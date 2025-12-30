@@ -5,17 +5,25 @@ import android.util.Log;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
 @Autonomous(name = "Close")
 public class Close extends OpMode {
     Robot robot;
     Timer pathTimer;
+    GamePadController gg;
+
+    boolean disablePickup1 = false;
+    boolean disableClear = false;
+    boolean disablePickup2 = false;
+    boolean disablePickup3 = false;
+
+    int selectedIndex = 0; // 0: pickup1, 1: clear, 2: pickup2, 3: pickup3
 
     public enum AutoStates {
         IDLE,
@@ -50,6 +58,52 @@ public class Close extends OpMode {
 
         robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
         robot.outtake.launcher.autoAimOn(true);
+
+        gg = new GamePadController(gamepad1);
+    }
+
+    @Override
+    public void init_loop() {
+        gg.update();
+
+        if (gg.dpadUpOnce()) {
+            selectedIndex--;
+            if (selectedIndex < 0) selectedIndex = 3;
+        }
+        if (gg.dpadDownOnce()) {
+            selectedIndex++;
+            if (selectedIndex > 3) selectedIndex = 0;
+        }
+
+        if (gg.aOnce()) {
+            switch (selectedIndex) {
+                case 0:
+                    disablePickup1 = !disablePickup1;
+                    break;
+                case 1:
+                    disableClear = !disableClear;
+                    break;
+                case 2:
+                    disablePickup2 = !disablePickup2;
+                    break;
+                case 3:
+                    disablePickup3 = !disablePickup3;
+                    break;
+            }
+        }
+
+        telemetry.addLine("Close Auto Config (A = toggle, dpad up/down = move)");
+        telemetry.addLine(formatOptionLine(0, "Disable Pickup 1 (skip to clear)", disablePickup1));
+        telemetry.addLine(formatOptionLine(1, "Disable Clear (skip clear path)", disableClear));
+        telemetry.addLine(formatOptionLine(2, "Disable Pickup 2", disablePickup2));
+        telemetry.addLine(formatOptionLine(3, "Disable Pickup 3", disablePickup3));
+        telemetry.update();
+    }
+
+    private String formatOptionLine(int index, String label, boolean enabled) {
+        char cursorOrSpace = (selectedIndex == index) ? '*' : ' ';
+        char tick = enabled ? 'X' : ' ';
+        return String.format("%c [%c] %s", cursorOrSpace, tick, label);
     }
 
     @Override
@@ -71,20 +125,37 @@ public class Close extends OpMode {
             case WAIT_SCORE_PRELOAD:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1);
+                if (disablePickup1) {
+                    if (disableClear) {
+                        if (disablePickup2) {
+                            sleep(constants.getShootingTime(), disablePickup3 ? AutoStates.GO_TO_PARK : AutoStates.GO_PICKUP3);
+                        } else {
+                            sleep(constants.getShootingTime(), AutoStates.GO_PICKUP2);
+                        }
+                    } else {
+                        sleep(constants.getShootingTime(), AutoStates.CLEAR);
+                    }
+                } else {
+                    sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1);
+                }
                 break;
             case GO_PICKUP1:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
 
                 robot.drive.followPath(constants.grabPickUp1, constants.getMaxPower(),true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                setPathState(AutoStates.CLEAR);
+                if (disableClear) {
+                    setPathState(AutoStates.GO_TO_SCORE1);
+                } else {
+                    setPathState(AutoStates.CLEAR);
+                }
                 break;
             case CLEAR :
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.drive.followPath(constants.goClear, constants.getMaxClearPower(), false);
                 setPathState(AutoStates.GO_TO_SCORE1);
+                break;
             case GO_TO_SCORE1:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.drive.followPath(constants.scorePickup1);
@@ -94,7 +165,11 @@ public class Close extends OpMode {
                 if (robot.drive.isBusy()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getShootingTime(),AutoStates.GO_PICKUP2);
+                if (disablePickup2) {
+                    sleep(constants.getShootingTime(), disablePickup3 ? AutoStates.GO_TO_PARK : AutoStates.GO_PICKUP3);
+                } else {
+                    sleep(constants.getShootingTime(),AutoStates.GO_PICKUP2);
+                }
                 break;
             case GO_PICKUP2:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
@@ -112,7 +187,11 @@ public class Close extends OpMode {
 
                 if (robot.drive.isBusy()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getShootingTime(), AutoStates.GO_PICKUP3);
+                if (disablePickup3) {
+                    sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK);
+                } else {
+                    sleep(constants.getShootingTime(), AutoStates.GO_PICKUP3);
+                }
                 break;
             case GO_PICKUP3:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
