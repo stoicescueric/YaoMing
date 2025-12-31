@@ -152,13 +152,19 @@ public class TeleOP extends LinearOpMode
         boolean inZone = robot.sensors.isInTargetZone(x, y);
         boolean isStill = robot.sensors.isRobotStill();
 
+        boolean isLongShot = robot.sensors.shootingLong();
+
         if (gg.aOnce()) {
 
 
             if (state == Outtake.OuttakeState.IDLE) {
                 if (inZone && isStill) {
                     // Idle and in zone: shoot immediately
-                    robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                    if (isLongShot) {
+                        robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                    } else {
+                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                    }
                 } else {
                     // Idle and outside zone: spin up
                     isReadyingFlywheel = true;
@@ -167,7 +173,11 @@ public class TeleOP extends LinearOpMode
             } else if (state == Outtake.OuttakeState.READY_FLYWHEEL) {
                 if (inZone && isStill) {
                     // Spinning up/in ready state and in zone: shoot
-                    robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                    if (isLongShot) {
+                        robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                    } else {
+                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                    }
                 } else {
                     // Spinning but not in zone: STOP
                     isReadyingFlywheel = false;
@@ -181,7 +191,11 @@ public class TeleOP extends LinearOpMode
         }
 
         if(state == Outtake.OuttakeState.READY_FLYWHEEL && inZone && isStill){
-            robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+            if (isLongShot) {
+                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+            } else {
+                robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+            }
         }
 
         if(gg.bOnce()) {

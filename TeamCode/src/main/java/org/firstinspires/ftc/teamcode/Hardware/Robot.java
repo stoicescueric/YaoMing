@@ -41,6 +41,7 @@ public class Robot {
         intakeTransfer.update();
         outtake.update();
         sensors.update();
+        sensors.updateTargetForZone();
         drive.update();
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();

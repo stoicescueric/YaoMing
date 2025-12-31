@@ -5,6 +5,9 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class OuttakePositions {
+    /*----Launcher ----*/
+    public static double FAR_ZONE_X_THRESHOLD = 17;
+
     /*----Velocity ----*/
     public static double errorVelThreeshold = 30;
 

@@ -8,6 +8,7 @@ import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 
 @Config
 public class Sensors {
@@ -25,10 +26,15 @@ public class Sensors {
 
     public double targetX = -66.6;
     public double targetY = -65;
-    public double targetXRed = -64;
-    public double targetYRed = 64;
-    public double targetXBlue= -64;
-    public double targetYBlue = -64;
+    public double targetXRedClose = -64;
+    public double targetYRedClose = 64;
+    public double targetXBlueClose = -64;
+    public double targetYBlueClose = -64;
+
+    public double targetXRedFar = -71;
+    public double targetYRedFar = 65;
+    public double targetXBlueFar = -71;
+    public double targetYBlueFar = -70;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 2; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
@@ -39,19 +45,24 @@ public class Sensors {
     private double lastStillHeading = Double.NaN;
     private long lastStillCheckLoopTimeNs = 0; // Robot.loopTime at last history update
 
-    public static double FARZONE_X1 = -89, FARZONE_Y1 = 89;
-    public static double FARZONE_X2 = 15, FARZONE_Y2 = 0;
-    public static double FARZONE_X3 = -89, FARZONE_Y3 = -89;
+    public static double CLOSEZONE_X1 = -89, CLOSEZONE_Y1 = 89;
+    public static double CLOSEZONE_X2 = 15,  CLOSEZONE_Y2 = 0;
+    public static double CLOSEZONE_X3 = -89, CLOSEZONE_Y3 = -89;
+
+    // Far target-zone triangle (defaults can be tuned from dashboard)
+    public static double FARZONE_X1 = 63, FARZONE_Y1 = 24;
+    public static double FARZONE_X2 = 44,  FARZONE_Y2 = 0;
+    public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;
 
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
         if(Info.alliance == Alliance.BLUE){
-            targetX = targetXBlue;
-            targetY = targetYBlue;
+            targetX = targetXBlueClose;
+            targetY = targetYBlueClose;
         }else {
-            targetX = targetXRed;
-            targetY = targetYRed;
+            targetX = targetXRedClose;
+            targetY = targetYRedClose;
         }
     }
 
@@ -119,6 +130,15 @@ public class Sensors {
     }
 
     /**
+     * Returns true if the robot is considered in the long/far shooting zone
+     * based purely on its X coordinate vs FAR_ZONE_X_THRESHOLD.
+     * This is the single source of truth for "long shot" checks.
+     */
+    public boolean shootingLong() {
+        return currentX > OuttakePositions.FAR_ZONE_X_THRESHOLD;
+    }
+
+    /**
      * Returns true if the robot is considered "still enough".
      * Safe to call multiple times per loop *after* robot.update().
      */
@@ -166,10 +186,26 @@ public class Sensors {
     }
 
     public boolean isInTargetZone(double x, double y) {
-        double x1 = FARZONE_X1, y1 = FARZONE_Y1;
-        double x2 = FARZONE_X2, y2 = FARZONE_Y2;
-        double x3 = FARZONE_X3, y3 = FARZONE_Y3;
+        if (isPointInTriangle(x, y,
+                CLOSEZONE_X1, CLOSEZONE_Y1,
+                CLOSEZONE_X2, CLOSEZONE_Y2,
+                CLOSEZONE_X3, CLOSEZONE_Y3)) {
+            return true;
+        }
 
+        if (isPointInTriangle(x, y,
+                FARZONE_X1, FARZONE_Y1,
+                FARZONE_X2, FARZONE_Y2,
+                FARZONE_X3, FARZONE_Y3)) {
+            return true;
+        }
+
+        return false;
+    }
+    private boolean isPointInTriangle(double x, double y,
+                                      double x1, double y1,
+                                      double x2, double y2,
+                                      double x3, double y3) {
         double denom = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
         if (denom == 0) {
             return false;
@@ -182,5 +218,16 @@ public class Sensors {
         double eps = 1e-6;
         return a >= -eps && b >= -eps && c >= -eps;
     }
-}
 
+    public void updateTargetForZone() {
+        boolean isFar = currentX > OuttakePositions.FAR_ZONE_X_THRESHOLD;
+
+        if (Info.alliance == Alliance.BLUE) {
+            targetX = isFar ? targetXBlueFar : targetXBlueClose;
+            targetY = isFar ? targetYBlueFar : targetYBlueClose;
+        } else {
+            targetX = isFar ? targetXRedFar : targetXRedClose;
+            targetY = isFar ? targetYRedFar : targetYRedClose;
+        }
+    }
+}

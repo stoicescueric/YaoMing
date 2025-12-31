@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpMode.Auto;
 
-import android.util.Log;
-
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
