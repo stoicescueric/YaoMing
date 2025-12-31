@@ -334,7 +334,6 @@ public  class Launcher implements Module {
                         break;
                     }
                 }
-                // if auto_aim is false, again keep manual target & target_tilt
                 power = pid.update(target, currentVel, sensors.getVoltage());
                 power = pid.update(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);

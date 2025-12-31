@@ -38,8 +38,6 @@ public class Sensors {
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 2; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
-
-    // Last pose used for stillness detection
     private double lastStillX = Double.NaN;
     private double lastStillY = Double.NaN;
     private double lastStillHeading = Double.NaN;
@@ -48,8 +46,6 @@ public class Sensors {
     public static double CLOSEZONE_X1 = -89, CLOSEZONE_Y1 = 89;
     public static double CLOSEZONE_X2 = 15,  CLOSEZONE_Y2 = 0;
     public static double CLOSEZONE_X3 = -89, CLOSEZONE_Y3 = -89;
-
-    // Far target-zone triangle (defaults can be tuned from dashboard)
     public static double FARZONE_X1 = 63, FARZONE_Y1 = 24;
     public static double FARZONE_X2 = 44,  FARZONE_Y2 = 0;
     public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;

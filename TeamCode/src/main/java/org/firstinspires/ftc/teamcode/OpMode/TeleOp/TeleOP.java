@@ -62,9 +62,6 @@ public class TeleOP extends LinearOpMode
              updateDrive();
 
 
-             //applyLauncherTargetByX();
-             //commented out pentru ca strica controll-ul de schimbat velocity (increas target/decrease target)
-
 
              robot.outtake.turret.turretState = turretTracking
                      ? org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.TRACKING

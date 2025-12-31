@@ -16,35 +16,21 @@ public class FarConstants {
 
     public static double shootingTime = 2850;
     public static double failSafeDtTime = 2500;
-
-    // Start pose
     public static double startX = 70, startY = 18.13, headingStartRed = Math.PI;
     public Pose startPose;
-
-    // Preload scoring pose
     public static double shootingX = 70, shootingY = 18.3, shootingHeading = Math.PI/2;
     public Pose scorePose;
-
-    // Pickup 1 pose
     public static double pickUp1X = 34, pickUp1Y = 61, pickUp1Heading = Math.PI/2;
     public static double pickUp1XIntermediary = 34, pickUp1YIntermediary = 27, pickUp1HeadingIntermediary = Math.PI/2;
     public Pose pickUpPose;
     public Pose pickUpPose1Intermediary;
-
-    // Pickup 2 intermediary + final poses
     public static double pickUp2XIntermediary = 10.8, pickUp2YIntermediary = 24, pickUp2HeadingIntermediary = Math.PI/2;
     public static double pickUp2X = 10, pickUp2Y = 61, pickUp2Heading = Math.PI/2;
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
-
-    // Park pose
     public static double parkX = 60, parkY = 34, parkHeading = Math.PI/2;
     public Pose parkPose;
-
-    // Powers
     public static double max_power_pickUp = 0.8;
-
-    // Paths: preload + 2 pickups + park
     public Path scorePreload;
     public PathChain grabPickUp1, scorePickup1, grabPickup2, scorePickup2;
     public PathChain goToPark;
@@ -57,14 +43,12 @@ public class FarConstants {
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
 
-        // NEW: use pickup1 intermediary pose
         pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
         pickUpPose1Intermediary = new Pose(pickUp1XIntermediary, pickUp1YIntermediary, pickUp1HeadingIntermediary);
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-        // Use a BezierCurve with intermediary for pickup1
         grabPickUp1 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickUpPose1Intermediary, pickUpPose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose.getHeading())
@@ -75,7 +59,6 @@ public class FarConstants {
                 .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading())
                 .build();
 
-        // pickup2 already uses its intermediary
         grabPickup2 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickUpPose2Intermediary, pickUpPose2))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose2.getHeading())

@@ -17,7 +17,6 @@ public class Far extends OpMode {
     Timer pathTimer;
     GamePadController gg;
 
-    // Simple config: allow disabling pickup1 or pickup2
     boolean disablePickup1 = false;
     boolean disablePickup2 = false;
 
