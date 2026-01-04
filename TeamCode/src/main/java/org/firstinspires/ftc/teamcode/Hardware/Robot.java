@@ -80,29 +80,34 @@ public class Robot {
         field.strokeCircle(rxIn, ryIn, 7);
         field.strokeLine(rxIn, ryIn, rxIn + Math.cos(rh) * headingVecLenIn, ryIn + Math.sin(rh) * headingVecLenIn);
 
-        double txIn = sensors.getTargetX();
-        double tyIn = sensors.getTargetY();
-        double dx = txIn - rxIn;
-        double dy = tyIn - ryIn;
-        double distIn = Math.hypot(dx, dy);
+        double shootTx = sensors.getTargetX();
+        double shootTy = sensors.getTargetY();
+        double backTx = sensors.getBackboardX();
+        double backTy = sensors.getBackboardY();
 
         field.setStroke("#ff3366");
-        field.strokeCircle(txIn, tyIn, 2);
+        field.strokeCircle(shootTx, shootTy, 2);
+        field.setStroke("#ffa500");
+        field.strokeCircle(backTx, backTy, 3);
         field.setStroke("#aa33ff");
-        field.strokeLine(rxIn, ryIn, txIn, tyIn);
+        field.strokeLine(rxIn, ryIn, backTx, backTy);
+
+        double dxBack = backTx - rxIn;
+        double dyBack = backTy - ryIn;
+        double distBackIn = Math.hypot(dxBack, dyBack);
 
         double normalLen = 10.0;
         field.setStroke("#00ff00");
-        double b1mag = Math.hypot(Turret.BOARD1_NXrl, Turret.BOARD1_NYrl);
-        double n1x = b1mag > 1e-6 ? Turret.BOARD1_NXrl / b1mag : 0.0;
-        double n1y = b1mag > 1e-6 ? Turret.BOARD1_NYrl / b1mag : 0.0;
-        field.strokeLine(txIn, tyIn, txIn + n1x * normalLen, tyIn + n1y * normalLen);
+        double b1mag = Math.hypot(outtake.turret.BOARD1_NXrl, outtake.turret.BOARD1_NYrl);
+        double n1x = b1mag > 1e-6 ? outtake.turret.BOARD1_NXrl / b1mag : 0.0;
+        double n1y = b1mag > 1e-6 ? outtake.turret.BOARD1_NYrl / b1mag : 0.0;
+        field.strokeLine(backTx, backTy, backTx + n1x * normalLen, backTy + n1y * normalLen);
 
         field.setStroke("#ffcc00");
-        double b2mag = Math.hypot(Turret.BOARD2_NXrl, Turret.BOARD2_NYrl);
-        double n2x = b2mag > 1e-6 ? Turret.BOARD2_NXrl / b2mag : 0.0;
-        double n2y = b2mag > 1e-6 ? Turret.BOARD2_NYrl / b2mag : 0.0;
-        field.strokeLine(txIn, tyIn, txIn + n2x * normalLen, tyIn + n2y * normalLen);
+        double b2mag = Math.hypot(outtake.turret.BOARD2_NXrl, outtake.turret.BOARD2_NYrl);
+        double n2x = b2mag > 1e-6 ? outtake.turret.BOARD2_NXrl / b2mag : 0.0;
+        double n2y = b2mag > 1e-6 ? outtake.turret.BOARD2_NYrl / b2mag : 0.0;
+        field.strokeLine(backTx, backTy, backTx + n2x * normalLen, backTy + n2y * normalLen);
 
         field.setStroke("#ffffff");
         double aimLen = 40.0;
@@ -111,6 +116,8 @@ public class Robot {
                 rxIn + Math.cos(aimAngle) * aimLen,
                 ryIn + Math.sin(aimAngle) * aimLen);
 
-        TelemetryUtil.packet.put("Distance to Target (in)", distIn);
+        TelemetryUtil.packet.put("Distance to Backboard (in)", distBackIn);
+        double distShootIn = Math.hypot(shootTx - rxIn, shootTy - ryIn);
+        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
     }
 }

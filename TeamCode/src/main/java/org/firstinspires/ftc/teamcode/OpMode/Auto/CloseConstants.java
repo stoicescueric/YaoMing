@@ -18,7 +18,7 @@ public class CloseConstants {
 
     //DEFAULT VALUES FOR RED
     public static double shootingTime = 2350;
-    public static double turretPositionRed = 0.599;
+    public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 2500;
     public static double hoodPosition = 0.615;
@@ -31,16 +31,16 @@ public class CloseConstants {
     public static double pickUp1X = -11.3, pickUp1Y = 55, pickUp1Heading = Math.toRadians(90);
     public Pose pickUpPose;
     public static double max_power_pickUp = 0.8;
-    public static double max_power_clear = 0.5;
+    public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
     public static double pickUp2X = 14.5, pickUp2Y = 60.5, pickUp2Heading = Math.toRadians(90);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 
-    public static double pickUp3X = 41.5, pickUp3Y = 73, pickUp3Heading = Math.toRadians(90);
+    public static double pickUp3X = 41.5, pickUp3Y = 83, pickUp3Heading = Math.toRadians(90);
     public Pose pickUpPose3;
-    public static double pickUp3XIntermediary = 41.5, pickUp3YIntermediary = 1, pickUp3HeadingIntermediary = Math.toRadians(90);
+    public static double pickUp3XIntermediary = 43, pickUp3YIntermediary = 1, pickUp3HeadingIntermediary = Math.toRadians(90);
     public Pose pickUpPose3Intermediary;
 
     //clear

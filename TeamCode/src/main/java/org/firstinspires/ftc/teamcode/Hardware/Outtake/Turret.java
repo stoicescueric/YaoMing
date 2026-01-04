@@ -22,17 +22,17 @@ public class Turret implements Module {
     public static double mechRatio = 0.83;
 
     public static boolean backlashYok = false;
-    public static double offset = -0.008;
+    public static double offset = -0.009;
 
-    public static double BOARD1_NX = 0.2;
+    public static double BOARD1_NX = 0.22;
     public static double BOARD1_NY = 0.0;
     public static double BOARD2_NX = 0.0;
-    public static double BOARD2_NY = 0.2;
+    public static double BOARD2_NY = 0.15;
 
-    public static double BOARD1_NXrl;
-    public static double BOARD1_NYrl;
-    public static double BOARD2_NXrl;
-    public static double BOARD2_NYrl;
+    public double BOARD1_NXrl;
+    public double BOARD1_NYrl;
+    public double BOARD2_NXrl;
+    public double BOARD2_NYrl;
 
     public static double BACKBOARD_AIM_GAIN = 0.1;
     public static double MAX_BACKBOARD_AIM_OFFSET = Math.toRadians(10.0);
@@ -88,7 +88,10 @@ public class Turret implements Module {
             case TRACKING:
                 double robotHeading = sensors.getHeading(); // radians
 
-                double c = sensors.getDistanceToTarget(sensors.getTargetX(),sensors.getTargetY());
+                double backboardX = sensors.getBackboardX();
+                double backboardY = sensors.getBackboardY();
+
+                double c = sensors.getDistanceToTarget(backboardX, backboardY);
                 if (c < 1e-6) {
                     double center = 0.5;
                     servoLeft.setPosition(center);
@@ -96,12 +99,12 @@ public class Turret implements Module {
                     break;
                 }
 
-                double directGlobalAngle = sensors.getAngleToTarget(sensors.getTargetX(),sensors.getTargetY());
+                double directGlobalAngle = sensors.getAngleToTarget(backboardX, backboardY);
                 double adjustedGlobalAngle = computeBackboardOptimizedAngle(
                         sensors.getX(),
                         sensors.getY(),
-                        sensors.getTargetX(),
-                        sensors.getTargetY(),
+                        backboardX,
+                        backboardY,
                         directGlobalAngle
                 );
 
@@ -167,5 +170,14 @@ public class Turret implements Module {
         return Range.clip(position,
                 OuttakePositions.MIN_TURRET_POSITION,
                 OuttakePositions.MAX_TURRET_POSITION);
+    }
+
+    public double backlashEvet(){
+        backlashYok = false;
+        return 0;
+    }
+    public double backlashYok(){
+        backlashYok = true;
+        return 0;
     }
 }

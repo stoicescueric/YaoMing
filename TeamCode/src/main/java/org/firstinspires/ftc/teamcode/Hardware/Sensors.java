@@ -26,15 +26,22 @@ public class Sensors {
 
     public double targetX = -66.6;
     public double targetY = -65;
-    public double targetXRedClose = -65;
-    public double targetYRedClose = 65;
-    public double targetXBlueClose = -65;
-    public double targetYBlueClose = -65;
+    public double targetXRedClose = -70.8;
+    public double targetYRedClose = 70.8;
+    public double targetXBlueClose = -70.5;
+    public double targetYBlueClose = -70.5;
 
     public double targetXRedFar = -71;
-    public double targetYRedFar = 66;
-    public double targetXBlueFar = -73;
-    public double targetYBlueFar = -71;
+    public double targetYRedFar = 70;
+    public double targetXBlueFar = -71;
+    public double targetYBlueFar = -72;
+
+    public double backboardX;
+    public double backboardY;
+    public double backboardXRed = -72;
+    public double backboardYRed =72;
+    public double backboardXBlue = -73;
+    public double backboardYBlue = -73;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 2; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
@@ -56,9 +63,13 @@ public class Sensors {
         if(Info.alliance == Alliance.BLUE){
             targetX = targetXBlueClose;
             targetY = targetYBlueClose;
+            backboardX = backboardXBlue;
+            backboardY = backboardYBlue;
         }else {
             targetX = targetXRedClose;
             targetY = targetYRedClose;
+            backboardX = backboardXRed;
+            backboardY = backboardYRed;
         }
     }
 
@@ -79,6 +90,9 @@ public class Sensors {
     public double getTargetY(){
         return targetY;
     }
+    public double getBackboardX() { return backboardX; }
+    public double getBackboardY() { return backboardY; }
+
     public void update() {
         pose = robot.drive.getPose();
         currentX = pose.getX();

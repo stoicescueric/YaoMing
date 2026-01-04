@@ -293,8 +293,10 @@ public  class Launcher implements Module {
                 power = pid.update(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
+                robot.outtake.turret.backlashEvet();
                 break;
             case SHOOT_STARTED:
+                robot.outtake.turret.backlashYok();
                 if(auto_aim){
                     try {
                         target = activeVelocityLUT.get(targetDistance);

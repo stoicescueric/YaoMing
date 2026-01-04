@@ -7,7 +7,7 @@ public class IntakeConstants {
 
     /*-----MOTOR POWERS---*/
     public static double intakePowerConveyer = 1;
-    public static double intakeShushi = 0.15;
+    public static double intakeShushi = 0.2;
     public static double reversePower = 1;
     public static double transferPowerConveyer = 1;
     public static double transferPowerSushi = 1;
@@ -29,7 +29,7 @@ public class IntakeConstants {
 
     public static double intakeServoLow = 0.64;
     public static double intakeServoHigh = 0.85;
-    public static double intakeServoIntake = 0.675;
+    public static double intakeServoIntake = 0.66;
 
     public static double preciseShotDelay = 400;
 }
