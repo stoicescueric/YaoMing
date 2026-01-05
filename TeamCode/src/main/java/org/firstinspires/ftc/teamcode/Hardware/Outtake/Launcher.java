@@ -71,120 +71,120 @@ public  class Launcher implements Module {
     public void addData() {
 
         // --- Ideal Velocity Data (close zone) ---
-        idealVelocityClose.add(36.53, 1370);
-        idealVelocityClose.add(43.46, 1475);
-        idealVelocityClose.add(51.22, 1480);
-        idealVelocityClose.add(57.55, 1525);
-        idealVelocityClose.add(59.49, 1600);
-        idealVelocityClose.add(62.22, 1540);
-        idealVelocityClose.add(66.33, 1555);
-        idealVelocityClose.add(71.93, 1560);
-        idealVelocityClose.add(75.18, 1575);
-        idealVelocityClose.add(79.21, 1620);
-        idealVelocityClose.add(82.71, 1635);
-        idealVelocityClose.add(85.16, 1650);
-        idealVelocityClose.add(89.22, 1660);
-        idealVelocityClose.add(93.14, 1680);
-        idealVelocityClose.add(96.28, 1745);
-        idealVelocityClose.add(100.91, 1840);
+        idealVelocityClose.add(36.53, 1410);
+        idealVelocityClose.add(43.46, 1515);
+        idealVelocityClose.add(51.22, 1520);
+        idealVelocityClose.add(57.55, 1565);
+        idealVelocityClose.add(59.49, 1640);
+        idealVelocityClose.add(62.22, 1580);
+        idealVelocityClose.add(66.33, 1595);
+        idealVelocityClose.add(71.93, 1600);
+        idealVelocityClose.add(75.18, 1615);
+        idealVelocityClose.add(79.21, 1660);
+        idealVelocityClose.add(82.71, 1675);
+        idealVelocityClose.add(85.16, 1690);
+        idealVelocityClose.add(89.22, 1700);
+        idealVelocityClose.add(93.14, 1720);
+        idealVelocityClose.add(96.28, 1785);
+        idealVelocityClose.add(100.91, 1880);
 
 
-        // --- Hood Regression Data (close zone) ---
+// --- Hood Regression Data (close zone) ---
         // Distance: 36.53
-        hoodRegressionClose.add(36.53, 1320, 0.04);
-        hoodRegressionClose.add(36.53, 1345, 0.05);
-        hoodRegressionClose.add(36.53, 1370, 0.07);
+        hoodRegressionClose.add(36.53, 1360, 0.17);
+        hoodRegressionClose.add(36.53, 1385, 0.18);
+        hoodRegressionClose.add(36.53, 1410, 0.20);
 
-        //Distance: 40.27
-        hoodRegressionClose.add(40.27, 1380, 0.13);
-        hoodRegressionClose.add(40.27, 1420, 0.11);
-        hoodRegressionClose.add(40.27, 1470, 0.1);
+        // Distance: 40.27
+        hoodRegressionClose.add(40.27, 1420, 0.26);
+        hoodRegressionClose.add(40.27, 1460, 0.24);
+        hoodRegressionClose.add(40.27, 1510, 0.23);
 
         // Distance: 43.46
-        hoodRegressionClose.add(43.46, 1370, 0.15);
-        hoodRegressionClose.add(43.46, 1445, 0.14);
-        hoodRegressionClose.add(43.46, 1495, 0.10);
+        hoodRegressionClose.add(43.46, 1410, 0.28);
+        hoodRegressionClose.add(43.46, 1485, 0.27);
+        hoodRegressionClose.add(43.46, 1535, 0.23);
 
-        //Distance: 49.462
-        hoodRegressionClose.add(49.46, 1370, 0.17);
-        hoodRegressionClose.add(49.46, 1420, 0.13);
-        hoodRegressionClose.add(49.46, 1470, 0.1);
+        // Distance: 49.46
+        hoodRegressionClose.add(49.46, 1410, 0.30);
+        hoodRegressionClose.add(49.46, 1460, 0.26);
+        hoodRegressionClose.add(49.46, 1510, 0.23);
 
         // Distance: 51.22
-        hoodRegressionClose.add(51.22, 1380, 0.17);
-        hoodRegressionClose.add(51.22, 1420, 0.15);
-        hoodRegressionClose.add(51.22, 1480, 0.13);
+        hoodRegressionClose.add(51.22, 1420, 0.30);
+        hoodRegressionClose.add(51.22, 1460, 0.28);
+        hoodRegressionClose.add(51.22, 1520, 0.26);
 
-        //Distance: 54.29
-        hoodRegressionClose.add(54.29, 1420, 0.15);
-        hoodRegressionClose.add(54.29, 1470, 0.13);
-        hoodRegressionClose.add(54.29, 1500, 0.11);
+        // Distance: 54.29
+        hoodRegressionClose.add(54.29, 1460, 0.28);
+        hoodRegressionClose.add(54.29, 1510, 0.26);
+        hoodRegressionClose.add(54.29, 1540, 0.24);
 
-        // Distance: 57.55 
-        hoodRegressionClose.add(57.55, 1420, 0.18);
-        hoodRegressionClose.add(57.55, 1495, 0.20);
-        hoodRegressionClose.add(57.55, 1545, 0.16);
+        // Distance: 57.55
+        hoodRegressionClose.add(57.55, 1460, 0.31);
+        hoodRegressionClose.add(57.55, 1535, 0.33);
+        hoodRegressionClose.add(57.55, 1585, 0.29);
 
-        // Distance: 59.49 
-        hoodRegressionClose.add(59.49, 1495, 0.14);
-        hoodRegressionClose.add(59.49, 1545, 0.18);
-        hoodRegressionClose.add(59.49, 1610, 0.17);
+        // Distance: 59.49
+        hoodRegressionClose.add(59.49, 1535, 0.27);
+        hoodRegressionClose.add(59.49, 1585, 0.31);
+        hoodRegressionClose.add(59.49, 1650, 0.30);
 
-        // Distance: 62.22 
-        hoodRegressionClose.add(62.22, 1480, 0.14);
-        hoodRegressionClose.add(62.22, 1530, 0.18);
-        hoodRegressionClose.add(62.22, 1540, 0.19);
+        // Distance: 62.22
+        hoodRegressionClose.add(62.22, 1520, 0.27);
+        hoodRegressionClose.add(62.22, 1570, 0.31);
+        hoodRegressionClose.add(62.22, 1580, 0.32);
 
-        // Distance: 66.33 
-        hoodRegressionClose.add(66.33, 1490, 0.14);
-        hoodRegressionClose.add(66.33, 1540, 0.16);
-        hoodRegressionClose.add(66.33, 1555, 0.17);
+        // Distance: 66.33
+        hoodRegressionClose.add(66.33, 1530, 0.27);
+        hoodRegressionClose.add(66.33, 1580, 0.29);
+        hoodRegressionClose.add(66.33, 1595, 0.30);
 
-        // Distance: 71.93 de refacut
-        //l-am refacut
-        hoodRegressionClose.add(71.93, 1510, 0.13);
-        hoodRegressionClose.add(71.93, 1545, 0.14);
-        hoodRegressionClose.add(71.93, 1570, 0.15);
+        // Distance: 71.93
+        hoodRegressionClose.add(71.93, 1550, 0.26);
+        hoodRegressionClose.add(71.93, 1585, 0.27);
+        hoodRegressionClose.add(71.93, 1610, 0.28);
 
         // Distance: 75.18
-        hoodRegressionClose.add(75.18, 1510, 0.13);
-        hoodRegressionClose.add(75.18, 1540, 0.12);
-        hoodRegressionClose.add(75.18, 1575, 0.16);
+        hoodRegressionClose.add(75.18, 1550, 0.26);
+        hoodRegressionClose.add(75.18, 1580, 0.25);
+        hoodRegressionClose.add(75.18, 1615, 0.29);
 
         // Distance: 79.21
-        hoodRegressionClose.add(79.21, 1560, 0.16);
-        hoodRegressionClose.add(79.21, 1580, 0.16);
-        hoodRegressionClose.add(79.21, 1610, 0.16);
+        hoodRegressionClose.add(79.21, 1590, 0.29);
+        hoodRegressionClose.add(79.21, 1610, 0.29);
+        hoodRegressionClose.add(79.21, 1640, 0.29);
 
         // Distance: 82.71
-        hoodRegressionClose.add(82.71, 1580, 0.14);
-        hoodRegressionClose.add(82.71, 1620, 0.14);
-        hoodRegressionClose.add(82.71, 1625, 0.23);
+        hoodRegressionClose.add(82.71, 1610, 0.27);
+        hoodRegressionClose.add(82.71, 1650, 0.27);
+        hoodRegressionClose.add(82.71, 1655, 0.36);
 
-        // Distance: 85.16 
-        hoodRegressionClose.add(85.16, 1590, 0.13);
-        hoodRegressionClose.add(85.16, 1625, 0.24);
-        hoodRegressionClose.add(85.16, 1650, 0.3);
+        // Distance: 85.16
+        hoodRegressionClose.add(85.16, 1620, 0.26);
+        hoodRegressionClose.add(85.16, 1655, 0.37);
+        hoodRegressionClose.add(85.16, 1690, 0.43);
 
-        // Distance: 89.22 
-        hoodRegressionClose.add(89.22, 1600, 0.16);
-        hoodRegressionClose.add(89.22, 1630, 0.14);
-        hoodRegressionClose.add(89.22, 1660, 0.14);
+        // Distance: 89.22
+        hoodRegressionClose.add(89.22, 1630, 0.29);
+        hoodRegressionClose.add(89.22, 1660, 0.27);
+        hoodRegressionClose.add(89.22, 1690, 0.27);
 
-        // Distance: 93.14 
-        hoodRegressionClose.add(93.14, 1630, 0.14);
-        hoodRegressionClose.add(93.14, 1650, 0.13);
-        hoodRegressionClose.add(93.14, 1680, 0.08);
+        // Distance: 93.14
+        hoodRegressionClose.add(93.14, 1670, 0.30);
+        hoodRegressionClose.add(93.14, 1690, 0.29);
+        hoodRegressionClose.add(93.14, 1720, 0.30);
 
-        // Distance: 96.28 
-        hoodRegressionClose.add(96.28, 1690, 0.08);
-        hoodRegressionClose.add(96.28, 1720, 0.06);
-        hoodRegressionClose.add(96.28, 1745, 0.25);
+        // Distance: 96.28
+        hoodRegressionClose.add(96.28, 1730, 0.24);
+        hoodRegressionClose.add(96.28, 1760, 0.23);
+        hoodRegressionClose.add(96.28, 1785, 0.40);
 
-        // Distance: 100.91 
-        hoodRegressionClose.add(100.91, 1770, 0.13);
-        hoodRegressionClose.add(100.91, 1805, 0.1);
-        hoodRegressionClose.add(100.91, 1840, 0.14);
+        // Distance: 100.91
+        hoodRegressionClose.add(100.91, 1810, 0.32);
+        hoodRegressionClose.add(100.91, 1845, 0.30);
+        hoodRegressionClose.add(100.91, 1880, 0.34);
+
 
 
 

@@ -102,6 +102,7 @@ public class IntakeTransfer implements Module {
                 break;
             case OFF_OPEN:
                 rampState = RampState.OPEN;
+                servoIntakeState = ServoIntakeState.LOW;
                 motor1.setPower(0);
                 motor2.setPower(0);
                 break;
@@ -119,9 +120,11 @@ public class IntakeTransfer implements Module {
                 break;
             case START_TRANSFER:
                 rampState = RampState.OPEN;
+                servoIntakeState = ServoIntakeState.LOW;
                 sleep(250, IntakeState.TRANSFER);
                 break;
             case POWER_FOR_TIME:
+                servoIntakeState = ServoIntakeState.LOW;
                 motor1.setPower(power_time);
                 motor2.setPower(power_time);
                 sleep(time_power, IntakeState.OFF_OPEN);

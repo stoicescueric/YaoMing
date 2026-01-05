@@ -34,13 +34,13 @@ public class CloseConstants {
     public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
-    public static double pickUp2X = 14.5, pickUp2Y = 60.5, pickUp2Heading = Math.toRadians(90);
+    public static double pickUp2X = 14.5, pickUp2Y = 61.5, pickUp2Heading = Math.toRadians(90);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 
-    public static double pickUp3X = 41.5, pickUp3Y = 83, pickUp3Heading = Math.toRadians(90);
+    public static double pickUp3X = 38, pickUp3Y = 61.5, pickUp3Heading = Math.toRadians(90);
     public Pose pickUpPose3;
-    public static double pickUp3XIntermediary = 43, pickUp3YIntermediary = 1, pickUp3HeadingIntermediary = Math.toRadians(90);
+    public static double pickUp3XIntermediary = 44, pickUp3YIntermediary = -5, pickUp3HeadingIntermediary = Math.toRadians(90);
     public Pose pickUpPose3Intermediary;
 
     //clear
