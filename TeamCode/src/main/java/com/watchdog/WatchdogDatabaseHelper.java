@@ -23,6 +23,7 @@ import java.util.List;
 final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
     static final String DB_NAME = "watchdog.db";
     private static final int DB_VERSION = 1;
+    private static final String TAG = "WatchdogDB";
     private static WatchdogDatabaseHelper INSTANCE;
 
     static synchronized WatchdogDatabaseHelper getInstance() {
@@ -38,7 +39,11 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
         if (context != null) return;
         context = ctx.getApplicationContext();
         WatchdogInitializer.setContext(context);
-        SQLiteDatabase unused = getWritableDatabase();
+        try {
+            SQLiteDatabase unused = getWritableDatabase();
+        } catch (Throwable t) {
+            Log.e(TAG, "Failed to open watchdog database", t);
+        }
     }
 
     private WatchdogDatabaseHelper() {
@@ -52,6 +57,9 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
             if (ctx != null) {
                 WatchdogInitializer.setContext(ctx);
             }
+        }
+        if (ctx == null) {
+            Log.e(TAG, "obtainContext() returned null; database will not be available");
         }
         return ctx;
     }
@@ -80,7 +88,13 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
 
     void insertBatch(Collection<WatchdogEntry> batch) {
         if (batch.isEmpty()) return;
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db;
+        try {
+            db = getWritableDatabase();
+        } catch (Throwable t) {
+            Log.e(TAG, "insertBatch: failed to getWritableDatabase", t);
+            return;
+        }
         db.beginTransaction();
         try {
             for (WatchdogEntry entry : batch) {
@@ -92,6 +106,8 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
                 db.insert("logs", null, values);
             }
             db.setTransactionSuccessful();
+        } catch (Throwable t) {
+            Log.e(TAG, "insertBatch failure", t);
         } finally {
             db.endTransaction();
         }
@@ -100,11 +116,15 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
 
     private void enforceSizeCap(SQLiteDatabase db) {
         if (context == null) return;
-        File dbFile = context.getDatabasePath(DB_NAME);
-        if (dbFile != null && dbFile.exists() && dbFile.length() > Watchdog.MAX_DB_SIZE_BYTES) {
-            long rowsToDelete = Math.max(1, (long) (getRowCount(db) * 0.1));
-            db.execSQL("DELETE FROM logs WHERE id IN (SELECT id FROM logs ORDER BY id ASC LIMIT " + rowsToDelete + ")");
-            Log.w("WatchdogDB", "Trimmed " + rowsToDelete + " rows to enforce size cap");
+        try {
+            File dbFile = context.getDatabasePath(DB_NAME);
+            if (dbFile != null && dbFile.exists() && dbFile.length() > Watchdog.MAX_DB_SIZE_BYTES) {
+                long rowsToDelete = Math.max(1, (long) (getRowCount(db) * 0.1));
+                db.execSQL("DELETE FROM logs WHERE id IN (SELECT id FROM logs ORDER BY id ASC LIMIT " + rowsToDelete + ")");
+                Log.w(TAG, "Trimmed " + rowsToDelete + " rows to enforce size cap");
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "enforceSizeCap failure", t);
         }
     }
 
@@ -125,6 +145,7 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
 
     static List<WatchdogRecord> consumeCursor(Cursor cursor) {
         List<WatchdogRecord> list = new ArrayList<>();
+        if (cursor == null) return list;
         try {
             while (cursor.moveToNext()) {
                 list.add(new WatchdogRecord(
@@ -143,6 +164,7 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
 
     static String cursorToJson(Cursor cursor) {
         JSONArray array = new JSONArray();
+        if (cursor == null) return array.toString();
         try {
             while (cursor.moveToNext()) {
                 JSONObject obj = new JSONObject();
@@ -154,7 +176,7 @@ final class WatchdogDatabaseHelper extends SQLiteOpenHelper {
                 array.put(obj);
             }
         } catch (Exception e) {
-            Log.e("WatchdogDB", "cursorToJson error", e);
+            Log.e(TAG, "cursorToJson error", e);
         } finally {
             cursor.close();
         }

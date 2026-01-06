@@ -42,16 +42,23 @@ final class WatchdogEngine {
 
     void initialize(@NonNull Context context) {
         if (initialized.get()) return;
-        appContext = context.getApplicationContext();
-        WatchdogInitializer.setContext(appContext);
-        queue = new ArrayBlockingQueue<>(Watchdog.QUEUE_CAPACITY);
-        dbExecutor = Executors.newSingleThreadExecutor();
-        WatchdogDatabaseHelper.getInstance().init(appContext);
-        if (Watchdog.ENABLE_HTTP_SERVER) {
-            httpServer = new WatchdogHttpServer(appContext, WatchdogDatabaseHelper.getInstance());
-            httpServer.start(Watchdog.HTTP_PORT);
+        try {
+            appContext = context.getApplicationContext();
+            WatchdogInitializer.setContext(appContext);
+            queue = new ArrayBlockingQueue<>(Watchdog.QUEUE_CAPACITY);
+            dbExecutor = Executors.newSingleThreadExecutor();
+            WatchdogDatabaseHelper.getInstance().init(appContext);
+            if (Watchdog.ENABLE_HTTP_SERVER) {
+                httpServer = new WatchdogHttpServer(appContext, WatchdogDatabaseHelper.getInstance());
+                httpServer.start(Watchdog.HTTP_PORT);
+            }
+            initialized.set(true);
+            Log.i(TAG, "WatchdogEngine initialized");
+        } catch (Throwable t) {
+            // Never crash the app from background logging init
+            Log.e(TAG, "Failed to initialize WatchdogEngine", t);
+            initialized.set(false);
         }
-        initialized.set(true);
     }
 
     void enable() {
@@ -61,7 +68,9 @@ final class WatchdogEngine {
         }
         if (enabled.compareAndSet(false, true)) {
             paused.set(false);
-            dbExecutor.submit(this::drainQueueLoop);
+            if (dbExecutor != null) {
+                dbExecutor.submit(this::drainQueueLoop);
+            }
         }
     }
 
@@ -80,7 +89,7 @@ final class WatchdogEngine {
 
     void resume(boolean flushNow) {
         paused.set(false);
-        if (flushNow) {
+        if (flushNow && dbExecutor != null) {
             dbExecutor.submit(this::flushCurrentQueue);
         }
     }
@@ -90,16 +99,30 @@ final class WatchdogEngine {
             Log.w(TAG, "log() called before initialize()");
             return;
         }
-        WatchdogEntry entry = new WatchdogEntry(channel, payload, System.currentTimeMillis(), tags);
-        if (!queue.offer(entry) && !Watchdog.DROP_WHEN_QUEUE_FULL) {
-            queue.poll();
-            queue.offer(entry);
+        try {
+            if (queue == null) {
+                Log.w(TAG, "log() called but queue is null");
+                return;
+            }
+            WatchdogEntry entry = new WatchdogEntry(channel, payload, System.currentTimeMillis(), tags);
+            if (!queue.offer(entry) && !Watchdog.DROP_WHEN_QUEUE_FULL) {
+                queue.poll();
+                queue.offer(entry);
+            }
+        } catch (Throwable t) {
+            // Swallow any internal failure to avoid crashing OpModes
+            Log.e(TAG, "log() failure", t);
         }
     }
 
     List<WatchdogRecord> getRecentRecords(String channel, int limit) {
-        SQLiteDatabase db = WatchdogDatabaseHelper.getInstance().getReadableDatabase();
-        return WatchdogDatabaseHelper.consumeCursor(WatchdogDatabaseHelper.queryLogs(db, channel, limit));
+        try {
+            SQLiteDatabase db = WatchdogDatabaseHelper.getInstance().getReadableDatabase();
+            return WatchdogDatabaseHelper.consumeCursor(WatchdogDatabaseHelper.queryLogs(db, channel, limit));
+        } catch (Throwable t) {
+            Log.e(TAG, "getRecentRecords() failure", t);
+            return new ArrayList<>();
+        }
     }
 
     boolean isEnabled() {
@@ -116,6 +139,10 @@ final class WatchdogEngine {
             try {
                 if (paused.get()) {
                     SystemClock.sleep(Watchdog.PAUSE_POLL_INTERVAL_MS);
+                    continue;
+                }
+                if (queue == null) {
+                    SystemClock.sleep(Watchdog.BATCH_FLUSH_INTERVAL_MS);
                     continue;
                 }
                 WatchdogEntry first = queue.poll();

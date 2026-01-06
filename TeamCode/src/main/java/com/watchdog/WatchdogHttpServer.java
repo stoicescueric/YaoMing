@@ -122,6 +122,9 @@ final class WatchdogHttpServer {
                 case "/download":
                     handleDownload(out);
                     break;
+                case "/logo.svg":
+                    handleLogo(out);
+                    break;
                 default:
                     respondText(out, 404, "Not Found", "Unknown path");
             }
@@ -154,6 +157,29 @@ final class WatchdogHttpServer {
         out.write(header);
         try (FileInputStream fis = new FileInputStream(dbFile)) {
             byte[] buffer = new byte[8192];
+            int read;
+            while ((read = fis.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        }
+        out.flush();
+    }
+
+    private void handleLogo(OutputStream out) throws IOException {
+        // Serve the WATCHDOG.svg asset placed in the com.watchdog package directory
+        File svgFile = new File(context.getFilesDir().getParentFile(),
+                "app_TeamCode/src/main/java/com/watchdog/WATCHDOG.svg");
+        if (!svgFile.exists()) {
+            // Fallback: respond with 404 if not found on the device filesystem
+            respondText(out, 404, "Not Found", "Logo asset not found");
+            return;
+        }
+        byte[] header = ("HTTP/1.1 200 OK\r\n" +
+                "Content-Type: image/svg+xml\r\n" +
+                "Connection: close\r\n\r\n").getBytes(StandardCharsets.UTF_8);
+        out.write(header);
+        try (FileInputStream fis = new FileInputStream(svgFile)) {
+            byte[] buffer = new byte[4096];
             int read;
             while ((read = fis.read(buffer)) != -1) {
                 out.write(buffer, 0, read);
