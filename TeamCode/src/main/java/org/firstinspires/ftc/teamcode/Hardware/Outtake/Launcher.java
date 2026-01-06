@@ -89,7 +89,7 @@ public  class Launcher implements Module {
         idealVelocityClose.add(100.91, 1880);
 
 
-// --- Hood Regression Data (close zone) ---
+        // --- Hood Regression Data (close zone) ---
         // Distance: 36.53
         hoodRegressionClose.add(36.53, 1360, 0.17);
         hoodRegressionClose.add(36.53, 1385, 0.18);
