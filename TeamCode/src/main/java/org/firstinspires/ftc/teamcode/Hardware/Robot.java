@@ -46,8 +46,15 @@ public class Robot {
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
+        double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
+        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
         loopTime = loop;
         TelemetryUtil.sendTelemetry();
+
+        if (op != null && op.telemetry != null) {
+            op.telemetry.addData("Distance to Shooting Target (in)", distShootIn);
+            op.telemetry.update();
+        }
     }
 
     public long getLoopTimeNs() {
@@ -92,12 +99,10 @@ public class Robot {
         field.setStroke("#aa33ff");
         field.strokeLine(rxIn, ryIn, backTx, backTy);
 
-        double dxBack = backTx - rxIn;
-        double dyBack = backTy - ryIn;
-        double distBackIn = Math.hypot(dxBack, dyBack);
-
-        double normalLen = 10.0;
+        double distBackIn = sensors.getDistanceToBackboard();
         field.setStroke("#00ff00");
+        
+        double normalLen = 10.0;
         double b1mag = Math.hypot(outtake.turret.BOARD1_NXrl, outtake.turret.BOARD1_NYrl);
         double n1x = b1mag > 1e-6 ? outtake.turret.BOARD1_NXrl / b1mag : 0.0;
         double n1y = b1mag > 1e-6 ? outtake.turret.BOARD1_NYrl / b1mag : 0.0;
@@ -117,7 +122,7 @@ public class Robot {
                 ryIn + Math.sin(aimAngle) * aimLen);
 
         TelemetryUtil.packet.put("Distance to Backboard (in)", distBackIn);
-        double distShootIn = Math.hypot(shootTx - rxIn, shootTy - ryIn);
-        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
+        double distShootIn2 = sensors.getDistanceToTarget(shootTx, shootTy);
+        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn2);
     }
 }

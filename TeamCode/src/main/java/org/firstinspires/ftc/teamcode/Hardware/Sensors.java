@@ -24,6 +24,8 @@ public class Sensors {
     public long readVoltageTime = 0;
     private long lastUpdateTimeNs = 0;
 
+    private boolean intakeMotor1OverCurrent = false;
+
     public double targetX = -66.6;
     public double targetY = -65;
     public double targetXRedClose = -70.8;
@@ -104,6 +106,12 @@ public class Sensors {
             readVoltageTime = System.currentTimeMillis();
         }
 
+        if (robot.intakeTransfer != null && robot.intakeTransfer.motor1 != null) {
+            intakeMotor1OverCurrent = robot.intakeTransfer.motor1.isOverCurrent();
+        } else {
+            intakeMotor1OverCurrent = false;
+        }
+
         lastUpdateTimeNs = System.nanoTime();
     }
 
@@ -121,6 +129,11 @@ public class Sensors {
     public double getDistanceToTarget(double targetX,double targetY){
         return Math.hypot(targetX-currentX,targetY-currentY);
     }
+
+    public double getDistanceToBackboard() {
+        return Math.hypot(backboardX - currentX, backboardY - currentY);
+    }
+
     public double getAngleToTarget(double targetX,double targetY) {
         return Math.atan2(targetY-currentY,targetX-currentX);
     }
@@ -137,6 +150,14 @@ public class Sensors {
     }
     public double getVelocity() {
         return currentVelocityShooter;
+    }
+
+    /**
+     * Returns true if the intake conveyor motor1 is currently over its current limit.
+     * This value is updated once per Sensors.update() call using the hub bulk data.
+     */
+    public boolean isIntakeMotor1OverCurrent() {
+        return intakeMotor1OverCurrent;
     }
 
     /**

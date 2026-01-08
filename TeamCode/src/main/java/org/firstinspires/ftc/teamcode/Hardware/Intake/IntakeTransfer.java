@@ -27,6 +27,7 @@ public class IntakeTransfer implements Module {
     CachingServo ramp;
 
     public static boolean useStall = false;
+    public boolean stallTriggeredThisLoop = false;
 
 
     public enum IntakeState {
@@ -93,6 +94,8 @@ public class IntakeTransfer implements Module {
 
     @Override
     public void update() {
+        stallTriggeredThisLoop = false;
+
         switch (intakeState) {
             case OFF:
                 rampState = RampState.CLOSE;
@@ -176,26 +179,27 @@ public class IntakeTransfer implements Module {
                         stallCheck = StallCheck.IDLE;
                         break;
                     }
-                    if (motor1.isOverCurrent()) {
-                        startStallCheckTime = System.currentTimeMillis();
-                        stallCheck = StallCheck.CONFIRMING;
-                    }
-                    break;
-                case CONFIRMING:
-                    if (intakeState != IntakeState.INTAKE) {
-                        stallCheck = StallCheck.IDLE;
-                        break;
-                    }
-                    if (!motor1.isOverCurrent()) {
-                        stallCheck = StallCheck.DETECTED;
-                        break;
-                    }
-                    if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
-                        Log.w("IntakeTransfer", "Stall detected, stopping intake");
-                        setIntakeState(IntakeState.OFF);
-                        stallCheck = StallCheck.IDLE;
-                    }
-                    break;
+                    if (robot.sensors != null && robot.sensors.isIntakeMotor1OverCurrent()) {
+                         startStallCheckTime = System.currentTimeMillis();
+                         stallCheck = StallCheck.CONFIRMING;
+                     }
+                     break;
+                 case CONFIRMING:
+                     if (intakeState != IntakeState.INTAKE) {
+                         stallCheck = StallCheck.IDLE;
+                         break;
+                     }
+                     if (robot.sensors == null || !robot.sensors.isIntakeMotor1OverCurrent()) {
+                          stallCheck = StallCheck.DETECTED;
+                          break;
+                      }
+                      if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
+                          Log.w("IntakeTransfer", "Stall detected, stopping intake");
+                          stallTriggeredThisLoop = true;
+                          setIntakeState(IntakeState.OFF);
+                          stallCheck = StallCheck.IDLE;
+                      }
+                      break;
 
             }
         }

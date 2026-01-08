@@ -58,19 +58,19 @@ public class TeleOP extends LinearOpMode
 
          while(opModeIsActive())
          {
-             gg.update();
-             updateDrive();
+              gg.update();
+              updateDrive();
 
-
-
-             robot.outtake.turret.turretState = turretTracking
+              robot.outtake.turret.turretState = turretTracking
                      ? org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.TRACKING
                      : org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.FIXED_ANGLE;
 
-             outtakeUpdate();
-             intakeUpdate();
-             robot.update();
-         }
+              outtakeUpdate();
+              intakeUpdate();
+              readyFlywheelAfterStall();
+             //posibil sa trb sa mut robot.update inainte de stall check chestie
+              robot.update();
+          }
     }
 
 
@@ -132,6 +132,13 @@ public class TeleOP extends LinearOpMode
                         break;
                 }
             }
+        }
+    }
+
+    public void readyFlywheelAfterStall(){
+        if (IntakeTransfer.useStall && robot.intakeTransfer.stallTriggeredThisLoop) {
+            isReadyingFlywheel = true;
+            robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
         }
     }
 

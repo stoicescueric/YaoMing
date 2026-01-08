@@ -111,14 +111,14 @@ public  class Launcher implements Module {
         hoodRegressionClose.add(49.46, 1510, 0.23);
 
         // Distance: 51.22
-        hoodRegressionClose.add(51.22, 1420, 0.30);
-        hoodRegressionClose.add(51.22, 1460, 0.28);
-        hoodRegressionClose.add(51.22, 1520, 0.26);
+        hoodRegressionClose.add(51.22, 1420, 0.24);
+        hoodRegressionClose.add(51.22, 1460, 0.24);
+        hoodRegressionClose.add(51.22, 1520, 0.23);
 
         // Distance: 54.29
-        hoodRegressionClose.add(54.29, 1460, 0.28);
-        hoodRegressionClose.add(54.29, 1510, 0.26);
-        hoodRegressionClose.add(54.29, 1540, 0.24);
+        hoodRegressionClose.add(54.29, 1460, 0.25);
+        hoodRegressionClose.add(54.29, 1510, 0.25);
+        hoodRegressionClose.add(54.29, 1540, 0.25);
 
         // Distance: 57.55
         hoodRegressionClose.add(57.55, 1460, 0.31);
