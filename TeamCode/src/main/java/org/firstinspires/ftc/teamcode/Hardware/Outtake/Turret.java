@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -45,6 +46,9 @@ public class Turret implements Module {
     public static double lastMotionCompensatedAngle = 0.0;
     private static double smoothedGlobalAngle = 0.0;
 
+    public static InterpLUT shotTimeLUT = new InterpLUT();
+    private static boolean shotTimeLutInitialized = false;
+
     public enum TurretState {
         OFF,
         FIXED_ANGLE,
@@ -74,6 +78,23 @@ public class Turret implements Module {
             BOARD2_NXrl = BOARD2_NX;
             BOARD2_NYrl = BOARD2_NY;
         }
+
+        initShotTimeLUT();
+    }
+
+    private static void initShotTimeLUT() {
+        if (shotTimeLutInitialized) return;
+        // inch , seconds
+        shotTimeLUT.add(1, 1);
+        shotTimeLUT.add(2, 2);
+
+        shotTimeLUT.createLUT();
+        shotTimeLutInitialized = true;
+    }
+
+    private double getShotTimeForDistance(double distanceInches) {
+        if (distanceInches <= 0.0) return 0.0;
+        return shotTimeLUT.get(distanceInches);
     }
 
     @Override
@@ -128,46 +149,43 @@ public class Turret implements Module {
                     double vy = sensors.getVelY();
 
                     double robotSpeed = Math.hypot(vx, vy);
-                    if (robotSpeed > MIN_LEAD_SPEED && robot.outtake.launcher != null) {
-                        double projSpeed = robot.outtake.launcher.getProjectileSpeedEstimate();
-                        if (projSpeed > 1e-3) {
-                            double shotTime = baseDistance / projSpeed;
+                    if (robotSpeed > MIN_LEAD_SPEED) {
+                        double shotTime = getShotTimeForDistance(baseDistance);
 
-                            double moveGoalX = backboardX;
-                            double moveGoalY = backboardY;
+                        double moveGoalX = backboardX;
+                        double moveGoalY = backboardY;
 
-                            for (int i = 0; i < 5; i++) {
-                                double virtualGoalX = backboardX
-                                        - shotTime * (vx * MOTION_LEAD_GAIN);
-                                double virtualGoalY = backboardY
-                                        - shotTime * (vy * MOTION_LEAD_GAIN);
+                        for (int i = 0; i < 5; i++) {
+                            double virtualGoalX = backboardX
+                                    - shotTime * (vx * MOTION_LEAD_GAIN);
+                            double virtualGoalY = backboardY
+                                    - shotTime * (vy * MOTION_LEAD_GAIN);
 
-                                double dx = virtualGoalX - rx;
-                                double dy = virtualGoalY - ry;
-                                double distToVirtual = Math.hypot(dx, dy);
+                            double dx = virtualGoalX - rx;
+                            double dy = virtualGoalY - ry;
+                            double distToVirtual = Math.hypot(dx, dy);
 
-                                double newShotTime = distToVirtual / projSpeed;
+                            double newShotTime = getShotTimeForDistance(distToVirtual);
 
-                                if (Math.abs(newShotTime - shotTime) <= 0.01) {
-                                    moveGoalX = virtualGoalX;
-                                    moveGoalY = virtualGoalY;
-                                    shotTime = newShotTime;
-                                    break;
-                                }
-
+                            if (Math.abs(newShotTime - shotTime) <= 0.01) {
+                                moveGoalX = virtualGoalX;
+                                moveGoalY = virtualGoalY;
                                 shotTime = newShotTime;
-
-                                if (i == 4) {
-                                    moveGoalX = virtualGoalX;
-                                    moveGoalY = virtualGoalY;
-                                }
+                                break;
                             }
 
-                            double dxLead = moveGoalX - rx;
-                            double dyLead = moveGoalY - ry;
-                            if (Math.hypot(dxLead, dyLead) > 1e-6) {
-                                finalGlobalAngle = Math.atan2(dyLead, dxLead);
+                            shotTime = newShotTime;
+
+                            if (i == 4) {
+                                moveGoalX = virtualGoalX;
+                                moveGoalY = virtualGoalY;
                             }
+                        }
+
+                        double dxLead = moveGoalX - rx;
+                        double dyLead = moveGoalY - ry;
+                        if (Math.hypot(dxLead, dyLead) > 1e-6) {
+                            finalGlobalAngle = Math.atan2(dyLead, dxLead);
                         }
                     }
                 }
