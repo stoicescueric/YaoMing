@@ -14,6 +14,9 @@ public class Outtake {
     Robot robot;
     public Launcher launcher;
     public Turret turret;
+
+    public boolean shootingWhileMoving = false;
+
     public enum OuttakeState {
         OFF,
         IDLE,
@@ -102,4 +105,13 @@ public class Outtake {
     public DcMotorEx getShooterMotor() {
         return launcher.motor1;
     }
+
+    public boolean isShootingWhileMoving() {
+        return shootingWhileMoving;
+    }
+
+    public void setShootingWhileMoving(boolean enabled) {
+        shootingWhileMoving = enabled;
+    }
 }
+

@@ -279,7 +279,9 @@ public  class Launcher implements Module {
     public void update() {
         currentVel = motor1.getVelocity();
         changeTarget();
+
         double targetDistance = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
+
         double robotX = sensors.getX();
 
         // select which regression to use based on robot X
@@ -311,7 +313,9 @@ public  class Launcher implements Module {
                 break;
             case READY_FLYWHEEL:
                 try {
-                    target = auto_aim ? activeVelocityLUT.get(targetDistance) : target;
+                    if (auto_aim) {
+                        target = activeVelocityLUT.get(targetDistance);
+                    }
                 } catch (Exception e) {
                     robot.op.gamepad1.rumble(250);
                     target = OuttakePositions.defaultVel;
@@ -372,5 +376,37 @@ public  class Launcher implements Module {
         auto_aim = on;
     }
 
+    public static double SHOOTER_TICKS_PER_REV = 28.0;
+    // Flywheel radius in inches (69.2 mm -> 2.7244 inches).
+    public static double FLYWHEEL_RADIUS_IN = 69.2 / 25.4;
+    // Gear ratio from motor to flywheel (1:1 by user description).
+    public static double FLYWHEEL_GEAR_RATIO = 1.0;
+    // Effective transfer coefficient from rim speed to projectile speed.
+    public static double PROJECTILE_TRANSFER_COEFF = 0.7; // tune in dashboard
 
+    /**
+     * Estimates projectile linear speed (inches/second) based on the current
+     * launcher target TPS (ticks per second) and the physical flywheel
+     * parameters. This is used for time-of-flight in motion compensation.
+     */
+    public double getProjectileSpeedEstimate() {
+        double tps = target; // target ticks per second the PID is chasing
+        if (SHOOTER_TICKS_PER_REV <= 0) return 0.0;
+
+        // Convert motor ticks/s -> motor rev/s
+        double motorRevPerSec = tps / SHOOTER_TICKS_PER_REV;
+
+        // Apply gear ratio to get flywheel rev/s
+        double flywheelRevPerSec = motorRevPerSec * FLYWHEEL_GEAR_RATIO;
+
+        // Rim linear speed: v = 2πr * rev/s
+        double rimSpeedInPerSec = 2.0 * Math.PI * FLYWHEEL_RADIUS_IN * flywheelRevPerSec;
+
+        // Effective projectile speed: some fraction of rim speed
+        double projSpeed = PROJECTILE_TRANSFER_COEFF * rimSpeedInPerSec;
+        if (projSpeed < 0) projSpeed = 0.0;
+        return projSpeed;
+    }
 }
+
+

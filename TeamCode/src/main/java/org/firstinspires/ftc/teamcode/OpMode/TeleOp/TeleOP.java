@@ -29,6 +29,9 @@ public class TeleOP extends LinearOpMode
     public static boolean switchToRedTeam = false;
     GamePadController gg;
     Robot robot;
+
+    public static boolean shootWhileMoving = false;
+
     public static double pidTargetClosezone = 1600;
     public static double pidTargetFarzone  = 2100;
     public static double hoodGain = -0.02;
@@ -65,13 +68,15 @@ public class TeleOP extends LinearOpMode
                      ? org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.TRACKING
                      : org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.FIXED_ANGLE;
 
+              robot.outtake.setShootingWhileMoving(shootWhileMoving);
+
               outtakeUpdate();
               intakeUpdate();
               readyFlywheelAfterStall();
-             //posibil sa trb sa mut robot.update inainte de stall check chestie
               robot.update();
           }
     }
+             //posibil sa trb sa mut robot.update inainte de stall check chestie
 
 
 
@@ -150,17 +155,23 @@ public class TeleOP extends LinearOpMode
             turretTracking = !turretTracking;
         }
 
+        if (gg.xOnce()) {
+            shootWhileMoving = !shootWhileMoving;
+        }
+
         Outtake.OuttakeState state = robot.outtake.outtakeState;
         double x = robot.sensors.getX();
         double y = robot.sensors.getY();
         boolean inZone = robot.sensors.isInTargetZone(x, y);
-        boolean isStill = robot.sensors.isRobotStill();
+
+        // When shootWhileMoving is enabled, treat the robot as "still" for
+        // purposes of allowing shots (we still might later add motion
+        // compensation in the turret/launcher).
+        boolean isStill = shootWhileMoving ? true : robot.sensors.isRobotStill();
 
         boolean isLongShot = robot.sensors.shootingLong();
 
         if (gg.aOnce()) {
-
-
             if (state == Outtake.OuttakeState.IDLE) {
                 if (inZone && isStill) {
                     // Idle and in zone: shoot immediately
@@ -214,7 +225,6 @@ public class TeleOP extends LinearOpMode
                 robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
             }
         }
-
 
         if(gg.dpadUpOnce()){
             turretTracking = !turretTracking;

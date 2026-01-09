@@ -59,6 +59,11 @@ public class Sensors {
     public static double FARZONE_X2 = 44,  FARZONE_Y2 = 0;
     public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;
 
+    private double velX = 0.0;
+    private double velY = 0.0;
+
+    public static double DEFAULT_PROJECTILE_SPEED = 300.0; // inches per second, rough guess
+
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
@@ -96,10 +101,25 @@ public class Sensors {
     public double getBackboardY() { return backboardY; }
 
     public void update() {
+        Pose prevPose = pose;
+        double prevX = currentX;
+        double prevY = currentY;
+
+        long prevUpdateTimeNs = lastUpdateTimeNs;
+
         pose = robot.drive.getPose();
         currentX = pose.getX();
         currentY = pose.getY();
         currentHeading = pose.getHeading();
+
+        long nowNs = System.nanoTime();
+        if (prevUpdateTimeNs != 0) {
+            double dt = (nowNs - prevUpdateTimeNs) / 1e9; // seconds
+            if (dt > 1e-4) {
+                velX = (currentX - prevX) / dt;
+                velY = (currentY - prevY) / dt;
+            }
+        }
 
         if(System.currentTimeMillis() - readVoltageTime > 250) {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
@@ -112,7 +132,7 @@ public class Sensors {
             intakeMotor1OverCurrent = false;
         }
 
-        lastUpdateTimeNs = System.nanoTime();
+        lastUpdateTimeNs = nowNs;
     }
 
     public double getVoltage() {
@@ -260,5 +280,23 @@ public class Sensors {
             targetX = isFar ? targetXRedFar : targetXRedClose;
             targetY = isFar ? targetYRedFar : targetYRedClose;
         }
+    }
+
+    /**
+     * Returns the current estimated translational velocity of the robot in the
+     * field frame (units per second).
+     */
+    public double getVelX() { return velX; }
+    public double getVelY() { return velY; }
+
+    /**
+     * Approximate time of flight for a shot given a planar distance. This is a
+     * rough estimate using a single projectile speed parameter and can be
+     * tuned from the dashboard. Units: seconds.
+     */
+    public double estimateShotTimeOfFlight(double distance) {
+        double speed = DEFAULT_PROJECTILE_SPEED;
+        if (speed <= 1e-3) return 0.0;
+        return Math.max(0.0, distance / speed);
     }
 }

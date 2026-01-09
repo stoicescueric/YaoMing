@@ -101,7 +101,7 @@ public class Robot {
 
         double distBackIn = sensors.getDistanceToBackboard();
         field.setStroke("#00ff00");
-        
+
         double normalLen = 10.0;
         double b1mag = Math.hypot(outtake.turret.BOARD1_NXrl, outtake.turret.BOARD1_NYrl);
         double n1x = b1mag > 1e-6 ? outtake.turret.BOARD1_NXrl / b1mag : 0.0;
@@ -114,15 +114,26 @@ public class Robot {
         double n2y = b2mag > 1e-6 ? outtake.turret.BOARD2_NYrl / b2mag : 0.0;
         field.strokeLine(backTx, backTy, backTx + n2x * normalLen, backTy + n2y * normalLen);
 
-        field.setStroke("#ffffff");
         double aimLen = 40.0;
-        double aimAngle = Turret.lastAdjustedGlobalAngle;
+        double nominalAngle = Turret.lastAdjustedGlobalAngle;
+        field.setStroke("#ffffff");
         field.strokeLine(rxIn, ryIn,
-                rxIn + Math.cos(aimAngle) * aimLen,
-                ryIn + Math.sin(aimAngle) * aimLen);
+                rxIn + Math.cos(nominalAngle) * aimLen,
+                ryIn + Math.sin(nominalAngle) * aimLen);
+
+        double compAngle = Turret.lastMotionCompensatedAngle;
+        if (Math.abs(compAngle - nominalAngle) > 1e-3) {
+            field.setStroke("#00ffff");
+            field.strokeLine(rxIn, ryIn,
+                    rxIn + Math.cos(compAngle) * aimLen,
+                    ryIn + Math.sin(compAngle) * aimLen);
+        }
 
         TelemetryUtil.packet.put("Distance to Backboard (in)", distBackIn);
         double distShootIn2 = sensors.getDistanceToTarget(shootTx, shootTy);
         TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn2);
+
+        TelemetryUtil.packet.put("Robot velX", sensors.getVelX());
+        TelemetryUtil.packet.put("Robot velY", sensors.getVelY());
     }
 }

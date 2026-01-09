@@ -37,6 +37,11 @@ public class Turret implements Module {
     public static double BACKBOARD_AIM_GAIN = 0.1;
     public static double MAX_BACKBOARD_AIM_OFFSET = Math.toRadians(10.0);
 
+
+    public static double MOTION_LEAD_GAIN = 5.6;
+
+    public static double lastMotionCompensatedAngle = 0.0;
+
     public enum TurretState {
         OFF,
         FIXED_ANGLE,
@@ -100,7 +105,7 @@ public class Turret implements Module {
                 }
 
                 double directGlobalAngle = sensors.getAngleToTarget(backboardX, backboardY);
-                double adjustedGlobalAngle = computeBackboardOptimizedAngle(
+                double optimizedGlobalAngle = computeBackboardOptimizedAngle(
                         sensors.getX(),
                         sensors.getY(),
                         backboardX,
@@ -108,9 +113,37 @@ public class Turret implements Module {
                         directGlobalAngle
                 );
 
-                lastAdjustedGlobalAngle = adjustedGlobalAngle;
+                lastAdjustedGlobalAngle = optimizedGlobalAngle;
 
-                double relativeAngle = Math.atan2(Math.sin(adjustedGlobalAngle - robotHeading), Math.cos(adjustedGlobalAngle - robotHeading));
+                double finalGlobalAngle = optimizedGlobalAngle;
+                if (robot.outtake != null && robot.outtake.isShootingWhileMoving() && MOTION_LEAD_GAIN != 0.0) {
+                    double rx = sensors.getX();
+                    double ry = sensors.getY();
+
+                    double vx = sensors.getVelX();
+                    double vy = sensors.getVelY();
+
+                    double speed = Math.hypot(vx, vy);
+                    if (speed > 1e-3 && robot.outtake.launcher != null) {
+                        double projSpeed = robot.outtake.launcher.getProjectileSpeedEstimate();
+                        if (projSpeed > 1e-3) {
+                            double tof = c / projSpeed;
+
+                            double leadX = rx + vx * tof * MOTION_LEAD_GAIN;
+                            double leadY = ry + vy * tof * MOTION_LEAD_GAIN;
+
+                            double dxLead = backboardX - leadX;
+                            double dyLead = backboardY - leadY;
+                            if (Math.hypot(dxLead, dyLead) > 1e-6) {
+                                finalGlobalAngle = Math.atan2(dyLead, dxLead);
+                            }
+                        }
+                    }
+                }
+
+                lastMotionCompensatedAngle = finalGlobalAngle;
+
+                double relativeAngle = Math.atan2(Math.sin(finalGlobalAngle - robotHeading), Math.cos(finalGlobalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);
                 if(backlashYok) {
