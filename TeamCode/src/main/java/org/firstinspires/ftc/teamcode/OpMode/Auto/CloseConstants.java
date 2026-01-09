@@ -72,7 +72,7 @@ public class CloseConstants {
 
         pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
         pickUpPose3Intermediary = new Pose(pickUp3XIntermediary, pickUp3YIntermediary, pickUp3HeadingIntermediary);
-        clearIntermediary = new Pose(clearXIntermediary, clearYIntermediary, clearHeadingIntermediary);
+        clearIntermediary = new Pose(clearXIntermediary, clearYIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
@@ -83,7 +83,7 @@ public class CloseConstants {
                 .build();
         goClear = follower.pathBuilder()
                 .addPath(new BezierCurve(pickUpPose, clearIntermediary, clear))
-                .setLinearHeadingInterpolation(pickUpPose3.getHeading(), scorePose.getHeading())
+                .setLinearHeadingInterpolation(pickUpPose3.getHeading(), clear.getHeading())
                 .build();;
         scorePickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(clear, scorePose))

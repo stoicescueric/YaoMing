@@ -39,8 +39,11 @@ public class Turret implements Module {
 
 
     public static double MOTION_LEAD_GAIN = 5.6;
+    public static double MIN_LEAD_SPEED = 3.0;
+    public static double ANGLE_SMOOTH_ALPHA = 0.55;
 
     public static double lastMotionCompensatedAngle = 0.0;
+    private static double smoothedGlobalAngle = 0.0;
 
     public enum TurretState {
         OFF,
@@ -96,8 +99,8 @@ public class Turret implements Module {
                 double backboardX = sensors.getBackboardX();
                 double backboardY = sensors.getBackboardY();
 
-                double c = sensors.getDistanceToTarget(backboardX, backboardY);
-                if (c < 1e-6) {
+                double baseDistance = sensors.getDistanceToTarget(backboardX, backboardY);
+                if (baseDistance < 1e-6) {
                     double center = 0.5;
                     servoLeft.setPosition(center);
                     servoRight.setPosition(center);
@@ -116,6 +119,7 @@ public class Turret implements Module {
                 lastAdjustedGlobalAngle = optimizedGlobalAngle;
 
                 double finalGlobalAngle = optimizedGlobalAngle;
+
                 if (robot.outtake != null && robot.outtake.isShootingWhileMoving() && MOTION_LEAD_GAIN != 0.0) {
                     double rx = sensors.getX();
                     double ry = sensors.getY();
@@ -123,17 +127,44 @@ public class Turret implements Module {
                     double vx = sensors.getVelX();
                     double vy = sensors.getVelY();
 
-                    double speed = Math.hypot(vx, vy);
-                    if (speed > 1e-3 && robot.outtake.launcher != null) {
+                    double robotSpeed = Math.hypot(vx, vy);
+                    if (robotSpeed > MIN_LEAD_SPEED && robot.outtake.launcher != null) {
                         double projSpeed = robot.outtake.launcher.getProjectileSpeedEstimate();
                         if (projSpeed > 1e-3) {
-                            double tof = c / projSpeed;
+                            double shotTime = baseDistance / projSpeed;
 
-                            double leadX = rx + vx * tof * MOTION_LEAD_GAIN;
-                            double leadY = ry + vy * tof * MOTION_LEAD_GAIN;
+                            double moveGoalX = backboardX;
+                            double moveGoalY = backboardY;
 
-                            double dxLead = backboardX - leadX;
-                            double dyLead = backboardY - leadY;
+                            for (int i = 0; i < 5; i++) {
+                                double virtualGoalX = backboardX
+                                        - shotTime * (vx * MOTION_LEAD_GAIN);
+                                double virtualGoalY = backboardY
+                                        - shotTime * (vy * MOTION_LEAD_GAIN);
+
+                                double dx = virtualGoalX - rx;
+                                double dy = virtualGoalY - ry;
+                                double distToVirtual = Math.hypot(dx, dy);
+
+                                double newShotTime = distToVirtual / projSpeed;
+
+                                if (Math.abs(newShotTime - shotTime) <= 0.01) {
+                                    moveGoalX = virtualGoalX;
+                                    moveGoalY = virtualGoalY;
+                                    shotTime = newShotTime;
+                                    break;
+                                }
+
+                                shotTime = newShotTime;
+
+                                if (i == 4) {
+                                    moveGoalX = virtualGoalX;
+                                    moveGoalY = virtualGoalY;
+                                }
+                            }
+
+                            double dxLead = moveGoalX - rx;
+                            double dyLead = moveGoalY - ry;
                             if (Math.hypot(dxLead, dyLead) > 1e-6) {
                                 finalGlobalAngle = Math.atan2(dyLead, dxLead);
                             }
@@ -141,9 +172,20 @@ public class Turret implements Module {
                     }
                 }
 
-                lastMotionCompensatedAngle = finalGlobalAngle;
+                if (ANGLE_SMOOTH_ALPHA <= 0.0) {
+                    smoothedGlobalAngle = finalGlobalAngle;
+                } else {
+                    double d = Math.atan2(
+                            Math.sin(finalGlobalAngle - smoothedGlobalAngle),
+                            Math.cos(finalGlobalAngle - smoothedGlobalAngle));
+                    smoothedGlobalAngle = smoothedGlobalAngle + ANGLE_SMOOTH_ALPHA * d;
+                }
 
-                double relativeAngle = Math.atan2(Math.sin(finalGlobalAngle - robotHeading), Math.cos(finalGlobalAngle - robotHeading));
+                lastMotionCompensatedAngle = smoothedGlobalAngle;
+
+                double relativeAngle = Math.atan2(
+                        Math.sin(smoothedGlobalAngle - robotHeading),
+                        Math.cos(smoothedGlobalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);
                 if(backlashYok) {

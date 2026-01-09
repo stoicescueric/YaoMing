@@ -130,6 +130,7 @@ public class Far extends OpMode {
 
             case GO_TO_SCORE1:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 robot.drive.followPath(constants.scorePickup1);
                 setPathState(AutoStates.WAIT_SCORE_1);
                 break;
@@ -174,6 +175,7 @@ public class Far extends OpMode {
             case PARK:
                 if (robot.drive.isBusy()) break;
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                sleep(500, AutoStates.IDLE);
                 requestOpModeStop();
                 break;
 
