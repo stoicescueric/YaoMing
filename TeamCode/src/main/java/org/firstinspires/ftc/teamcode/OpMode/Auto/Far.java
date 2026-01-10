@@ -21,8 +21,9 @@ public class Far extends OpMode {
 
     boolean disablePickup1 = false;
     boolean disablePickup2 = false;
+    boolean enableInitialWait = false;
 
-    int selectedIndex = 0; // 0: pickup1, 1: pickup2
+    int selectedIndex = 0; // 0: pickup1, 1: pickup2, 2: enable initial wait
 
     public enum AutoStates {
         IDLE,
@@ -61,11 +62,11 @@ public class Far extends OpMode {
 
         if (gg.dpadUpOnce()) {
             selectedIndex--;
-            if (selectedIndex < 0) selectedIndex = 1;
+            if (selectedIndex < 0) selectedIndex = 2;
         }
         if (gg.dpadDownOnce()) {
             selectedIndex++;
-            if (selectedIndex > 1) selectedIndex = 0;
+            if (selectedIndex > 2) selectedIndex = 0;
         }
 
         if (gg.aOnce()) {
@@ -76,12 +77,16 @@ public class Far extends OpMode {
                 case 1:
                     disablePickup2 = !disablePickup2;
                     break;
+                case 2:
+                    enableInitialWait = !enableInitialWait;
+                    break;
             }
         }
 
         telemetry.addLine("Far Auto (Close-style) Config (A = toggle, dpad up/down = move)");
         telemetry.addLine(formatOptionLine(0, "Disable Pickup 1", disablePickup1));
         telemetry.addLine(formatOptionLine(1, "Disable Pickup 2", disablePickup2));
+        telemetry.addLine(formatOptionLine(2, "Enable wait at start", enableInitialWait));
         telemetry.update();
     }
 
@@ -94,7 +99,11 @@ public class Far extends OpMode {
     @Override
     public void start() {
         pathTimer = new Timer();
-        setPathState(AutoStates.WAIT_AT_START);
+        if (enableInitialWait) {
+            setPathState(AutoStates.WAIT_AT_START);
+        } else {
+            setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+        }
     }
 
     @Override
