@@ -16,16 +16,16 @@ public class FarConstants {
 
     public static double shootingTime = 3350;
     public static double failSafeDtTime = 2500;
-    public static double startX = 62, startY = 15, headingStartRed = Math.PI;
+    public static double startX = 63.5, startY = 17.3, headingStartRed = Math.PI;
     public Pose startPose;
-    public static double shootingX = 50, shootingY = 7, shootingHeading = Math.PI;
+    public static double shootingX = 50, shootingY = 8.5, shootingHeading = Math.PI;
     public Pose scorePose;
-    public static double pickUp1X = 34, pickUp1Y = 57, pickUp1Heading = Math.PI/2;
+    public static double pickUp1X = 36, pickUp1Y = 57, pickUp1Heading = Math.PI/2;
     public static double pickUp1XIntermediary = 26, pickUp1YIntermediary = 20, pickUp1HeadingIntermediary = Math.PI/2;
     public Pose pickUpPose;
     public Pose pickUpPose1Intermediary;
     public static double pickUp2XIntermediary = 3, pickUp2YIntermediary = 18, pickUp2HeadingIntermediary = Math.PI/2;
-    public static double pickUp2X = 9, pickUp2Y = 57.5  , pickUp2Heading = Math.PI/2;
+    public static double pickUp2X = 10.5, pickUp2Y = 57.5  , pickUp2Heading = Math.PI/2;
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
     public static double parkX = 60, parkY = 34, parkHeading = Math.PI/2;

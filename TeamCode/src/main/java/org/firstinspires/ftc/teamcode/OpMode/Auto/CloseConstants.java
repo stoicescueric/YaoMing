@@ -23,7 +23,7 @@ public class CloseConstants {
     public static double failSafeDtTime = 2500;
     public static double hoodPosition = 0.615;
     public static double launcherVelocity = 1000;
-    public static double startX = -55.82, startY = 48.13, headingStartRed = Math.toRadians(128);
+    public static double startX = -54.99, startY = 46.03, headingStartRed = Math.toRadians(128);
     public Pose startPose;
     public static double shootingX = -14, shootingY = 12, shootingHeading = Math.toRadians(90);
     public Pose scorePose;

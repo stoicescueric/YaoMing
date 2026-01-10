@@ -17,6 +17,8 @@ public class Far extends OpMode {
     Timer pathTimer;
     GamePadController gg;
 
+    public static double initialWaitSeconds = 25000;
+
     boolean disablePickup1 = false;
     boolean disablePickup2 = false;
 
@@ -24,6 +26,7 @@ public class Far extends OpMode {
 
     public enum AutoStates {
         IDLE,
+        WAIT_AT_START,
         GO_TO_SCORE_FROM_START,
         WAIT_SCORE_PRELOAD,
         GO_PICKUP1,
@@ -91,13 +94,19 @@ public class Far extends OpMode {
     @Override
     public void start() {
         pathTimer = new Timer();
-        setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+        setPathState(AutoStates.WAIT_AT_START);
     }
 
     @Override
     public void loop() {
         switch (autoStates) {
             case IDLE:
+                break;
+
+            case WAIT_AT_START:
+                if (pathTimer.getElapsedTime() > initialWaitSeconds) {
+                    setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+                }
                 break;
 
             case GO_TO_SCORE_FROM_START:
@@ -175,7 +184,7 @@ public class Far extends OpMode {
             case PARK:
                 if (robot.drive.isBusy()) break;
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                sleep(500, AutoStates.IDLE);
+                sleep(800, AutoStates.IDLE);
                 requestOpModeStop();
                 break;
 

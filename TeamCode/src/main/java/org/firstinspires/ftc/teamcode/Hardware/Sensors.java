@@ -34,9 +34,9 @@ public class Sensors {
     public double targetYBlueClose = -70.5;
 
     public double targetXRedFar = -71;
-    public double targetYRedFar = 70.5;
+    public double targetYRedFar = 70;
     public double targetXBlueFar = -71;
-    public double targetYBlueFar = -70.5;
+    public double targetYBlueFar = -72;
 
     public double backboardX;
     public double backboardY;

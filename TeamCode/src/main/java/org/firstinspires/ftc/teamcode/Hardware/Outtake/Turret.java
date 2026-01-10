@@ -34,13 +34,13 @@ public class Turret implements Module {
     public double BOARD2_NXrl;
     public double BOARD2_NYrl;
 
-    public static double BACKBOARD_AIM_GAIN = 0.098;
+    public static double BACKBOARD_AIM_GAIN = 0.1;
     public static double MAX_BACKBOARD_AIM_OFFSET = Math.toRadians(10.0);
 
 
     public static double MOTION_LEAD_GAIN = 5.6;
     public static double MIN_LEAD_SPEED = 3.0;
-    public static double ANGLE_SMOOTH_ALPHA = 0.55;
+    public static double ANGLE_SMOOTH_ALPHA = 0.2;
 
     public static double lastMotionCompensatedAngle = 0.0;
     private static double smoothedGlobalAngle = 0.0;

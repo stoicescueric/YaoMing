@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.pedropathing.geometry.Pose;
 
@@ -38,7 +36,7 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(13.5, 45, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(63.92, -59.60, -Math.PI/2);
+    Pose resetPoseRed = new Pose(64.9, -60.68, -Math.PI/2);
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
 
     @Override
@@ -164,9 +162,6 @@ public class TeleOP extends LinearOpMode
         double y = robot.sensors.getY();
         boolean inZone = robot.sensors.isInTargetZone(x, y);
 
-        // When shootWhileMoving is enabled, treat the robot as "still" for
-        // purposes of allowing shots (we still might later add motion
-        // compensation in the turret/launcher).
         boolean isStill = shootWhileMoving ? true : robot.sensors.isRobotStill();
 
         boolean isLongShot = robot.sensors.shootingLong();

@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import com.pedropathing.follower.Follower;
+
+import org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
@@ -53,6 +55,7 @@ public class Robot {
 
         if (op != null && op.telemetry != null) {
             op.telemetry.addData("Distance to Shooting Target (in)", distShootIn);
+            op.telemetry.addData("Shooting While Moving", org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP.shootWhileMoving);
             op.telemetry.update();
         }
     }
