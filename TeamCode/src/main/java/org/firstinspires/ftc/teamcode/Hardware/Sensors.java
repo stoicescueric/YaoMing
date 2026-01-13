@@ -45,8 +45,8 @@ public class Sensors {
     public double backboardXBlue = -73;
     public double backboardYBlue = -73;
 
-    public static double STILL_MAX_TRANSLATIONAL_SPEED = 2; // field units per second
-    public static double STILL_MAX_ANGULAR_SPEED = 1; //radians per seconds
+    public static double STILL_MAX_TRANSLATIONAL_SPEED = 13; // field units per second
+    public static double STILL_MAX_ANGULAR_SPEED = 12; //radians per seconds
     private double lastStillX = Double.NaN;
     private double lastStillY = Double.NaN;
     private double lastStillHeading = Double.NaN;
@@ -58,6 +58,13 @@ public class Sensors {
     public static double FARZONE_X1 = 63, FARZONE_Y1 = 24;
     public static double FARZONE_X2 = 44,  FARZONE_Y2 = 0;
     public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;
+
+
+
+    public static double SLOWZONE_X1 = 10, SLOWZONE_Y1 = 35;
+    public static double SLOWZONE_X2 = 35, SLOWZONE_Y2 = 35;
+    public static double SLOWZONE_X3 = 10, SLOWZONE_Y3 = 72;
+    public static double SLOWZONE_X4 = 10, SLOWZONE_Y4 = 72;
 
     private double velX = 0.0;
     private double velY = 0.0;
@@ -298,5 +305,40 @@ public class Sensors {
         double speed = DEFAULT_PROJECTILE_SPEED;
         if (speed <= 1e-3) return 0.0;
         return Math.max(0.0, distance / speed);
+    }
+
+    /**
+     * Returns true if the robot is currently inside the slow zone
+    **/
+    public boolean isInSlowZone() {
+        double[] xs = { SLOWZONE_X1, SLOWZONE_X2, SLOWZONE_X3, SLOWZONE_X4 };
+        double[] ys;
+
+        if (Info.alliance == Alliance.BLUE) {
+            ys = new double[]{ -SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4 };
+        } else {
+            ys = new double[]{ SLOWZONE_Y1, SLOWZONE_Y2, SLOWZONE_Y3, SLOWZONE_Y4 };
+        }
+
+        return isPointInPolygon(currentX, currentY, xs, ys);
+    }
+
+    /**
+     * Generic point-in-polygon test (ray casting). xs/ys are vertices in order.
+     */
+    private boolean isPointInPolygon(double x, double y, double[] xs, double[] ys) {
+        boolean inside = false;
+        int n = xs.length;
+        if (n < 3) return false;
+
+        for (int i = 0, j = n - 1; i < n; j = i++) {
+            double xi = xs[i], yi = ys[i];
+            double xj = xs[j], yj = ys[j];
+
+            boolean intersect = ((yi > y) != (yj > y)) &&
+                    (x < (xj - xi) * (y - yi) / ((yj - yi) + 1e-9) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
     }
 }

@@ -33,6 +33,11 @@ public class TeleOP extends LinearOpMode
     public static double pidTargetClosezone = 1600;
     public static double pidTargetFarzone  = 2100;
     public static double hoodGain = -0.02;
+
+    public static boolean enableDriveSlowMode = false;
+    public static boolean enableHeadingSlowMode = false;
+
+
     Pose startPose;
     Pose startPoseRed = new Pose(13.5, 45, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
@@ -88,7 +93,11 @@ public class TeleOP extends LinearOpMode
     }
     public static double translationalSlow = 1;
     public static double rotateSlow = 0.6;
-    public static double rotateNorma = 0.8;
+    public static double rotateNormal = 0.8;
+    public static double translationalNormal = 0.8;
+    public static double driveSlowMultiplier = 0.8;
+    public static double headingSlowMultiplier = 0.6;
+    public static boolean useSlowZone = false;
     public void updateDrive() {
         double forward = -gg.left_stick_y;
         double strafe = -gg.left_stick_x;
@@ -102,18 +111,29 @@ public class TeleOP extends LinearOpMode
             strafe = s;
         }
 
-        if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTAKE
-                || robot.outtake.isLaunching()){
-            forward*=translationalSlow;
-            strafe*=translationalSlow;
-            rotate*=rotateSlow;
-        }else {
-            rotate *= rotateNorma;
+        forward *= translationalNormal;
+        strafe  *= rotateNormal;
+
+
+        if (enableDriveSlowMode) {
+            forward *= driveSlowMultiplier;
+            strafe  *= driveSlowMultiplier;
         }
+
+        if (enableHeadingSlowMode) {
+            rotate *= headingSlowMultiplier;
+        }
+
+        if (robot.sensors.isInSlowZone() && useSlowZone) {
+            forward *= driveSlowMultiplier;
+            strafe  *= driveSlowMultiplier;
+            rotate  *= headingSlowMultiplier;
+        }
+
         robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
 
         if (gg.rightStickButtonOnce()) {
-            if(Info.alliance == Alliance.RED) {
+            if (Info.alliance == Alliance.RED) {
                 robot.drive.setPose(resetPoseRed);
             }else {
                 robot.drive.setPose(resetPoseBlue);
@@ -166,7 +186,7 @@ public class TeleOP extends LinearOpMode
 
         boolean isLongShot = robot.sensors.shootingLong();
 
-        if (gg.aOnce()) {
+        if (gg.aOnce() || gg.leftBumperOnce()) {
             if (state == Outtake.OuttakeState.IDLE) {
                 if (inZone && isStill) {
                     // Idle and in zone: shoot immediately

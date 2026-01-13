@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -28,6 +29,8 @@ public class Robot {
     public static boolean showTelemetry = false;
     Telemetry telemetry;
     private double loopTime = 0;
+    private DcMotorEx flDriveMotor = null;
+
     public Robot(OpMode op)
     {
         this.op = op;
@@ -37,6 +40,15 @@ public class Robot {
         intakeTransfer = new IntakeTransfer(this,sensors);
         outtake = new Outtake(this,sensors);
         TelemetryUtil.setup();
+    }
+
+    private void ensureFlMotor() {
+        if (flDriveMotor == null && hw != null) {
+            try {
+                flDriveMotor = hw.get(DcMotorEx.class, "fl");
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     public void update() {
@@ -65,6 +77,9 @@ public class Robot {
     }
 
     public void updateTelemetry() {
+        // Make sure FL motor reference is resolved if possible
+        ensureFlMotor();
+
         TelemetryUtil.packet.addLine("--- Robot Telemetry ---");
         TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);
         TelemetryUtil.packet.put("Outtake State", outtake.outtakeState);
@@ -75,6 +90,9 @@ public class Robot {
 
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.motor1.getCurrent(CurrentUnit.AMPS));
         TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.motor2.getCurrent(CurrentUnit.AMPS));
+        if (flDriveMotor != null) {
+            TelemetryUtil.packet.put("FL Motor amps", flDriveMotor.getCurrent(CurrentUnit.AMPS));
+        }
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());

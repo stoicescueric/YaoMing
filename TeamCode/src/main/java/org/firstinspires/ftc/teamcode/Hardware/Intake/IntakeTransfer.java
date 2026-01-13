@@ -90,7 +90,7 @@ public class IntakeTransfer implements Module {
     public double power_time = 0.5;
     public double time_power = 500;
     public double startStallCheckTime = 0;
-    public double stalCheckDuration = 150;
+    public static double stalCheckDuration = 100;
 
     @Override
     public void update() {
@@ -195,6 +195,7 @@ public class IntakeTransfer implements Module {
                       }
                       if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
                           Log.w("IntakeTransfer", "Stall detected, stopping intake");
+                          robot.op.gamepad1.rumble(150);
                           stallTriggeredThisLoop = true;
                           setIntakeState(IntakeState.OFF);
                           stallCheck = StallCheck.IDLE;

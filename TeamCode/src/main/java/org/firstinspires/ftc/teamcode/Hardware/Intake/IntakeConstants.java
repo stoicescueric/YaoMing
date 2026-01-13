@@ -18,7 +18,7 @@ public class IntakeConstants {
     public static double rightTransfer = 0.5;
 
 
-    public static double intakeAmpsThreshold = 7.5;
+    public static double intakeAmpsThreshold = 2.7;
     public static boolean isConveyer1Reversed = true;
     public static boolean isConveyer2Reversed = false;
 
