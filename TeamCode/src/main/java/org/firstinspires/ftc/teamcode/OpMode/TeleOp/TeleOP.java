@@ -24,7 +24,6 @@ public class TeleOP extends LinearOpMode
     public static boolean flipFieldFrame = false;
     public boolean isReadyingFlywheel = false;
     public static double driverFrameOffsetDeg = -90;
-    public static boolean switchToRedTeam = false;
     GamePadController gg;
     Robot robot;
 
@@ -32,7 +31,6 @@ public class TeleOP extends LinearOpMode
 
     public static double pidTargetClosezone = 1600;
     public static double pidTargetFarzone  = 2100;
-    public static double hoodGain = -0.02;
 
     public static boolean enableDriveSlowMode = false;
     public static boolean enableHeadingSlowMode = false;
@@ -41,8 +39,10 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(13.5, 45, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(64.9, -60.68, -Math.PI/2);
+    Pose resetPoseRed = new Pose(64, -59.7
+            , -Math.PI/2);
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
+    Pose resetCenter = new Pose(0, 0, Math.PI/2);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,7 +94,7 @@ public class TeleOP extends LinearOpMode
     public static double translationalSlow = 1;
     public static double rotateSlow = 0.6;
     public static double rotateNormal = 0.8;
-    public static double translationalNormal = 0.8;
+    public static double translationalNormal = 1;
     public static double driveSlowMultiplier = 0.8;
     public static double headingSlowMultiplier = 0.6;
     public static boolean useSlowZone = false;
@@ -139,6 +139,11 @@ public class TeleOP extends LinearOpMode
                 robot.drive.setPose(resetPoseBlue);
             }
 
+        }
+        if (gg.dpadDown()) {
+            if(gg.leftTrigger() && gg.rightTrigger()){
+                robot.drive.setPose(resetCenter);
+            }
         }
     }
 
@@ -186,7 +191,7 @@ public class TeleOP extends LinearOpMode
 
         boolean isLongShot = robot.sensors.shootingLong();
 
-        if (gg.aOnce() || gg.leftBumperOnce()) {
+        if (gg.aOnce() || gg.leftBumperOnce() && robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE) {
             if (state == Outtake.OuttakeState.IDLE) {
                 if (inZone && isStill) {
                     // Idle and in zone: shoot immediately

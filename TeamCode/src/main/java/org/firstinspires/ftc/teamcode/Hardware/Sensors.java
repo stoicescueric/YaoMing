@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import com.pedropathing.geometry.Pose;
 
@@ -25,6 +26,7 @@ public class Sensors {
     private long lastUpdateTimeNs = 0;
 
     private boolean intakeMotor1OverCurrent = false;
+    private boolean intakeSensorHigh = false;
 
     public double targetX = -66.6;
     public double targetY = -65;
@@ -71,6 +73,8 @@ public class Sensors {
 
     public static double DEFAULT_PROJECTILE_SPEED = 300.0; // inches per second, rough guess
 
+    private DigitalChannel intakeColor;
+
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
@@ -93,6 +97,9 @@ public class Sensors {
 
         expansionHub = robot.hw.get(LynxModule.class, "Expansion Hub 2");
         expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+
+        intakeColor = robot.hw.get(DigitalChannel.class, "intakeColor");
+        intakeColor.setMode(DigitalChannel.Mode.INPUT);
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
@@ -137,6 +144,12 @@ public class Sensors {
             intakeMotor1OverCurrent = robot.intakeTransfer.motor1.isOverCurrent();
         } else {
             intakeMotor1OverCurrent = false;
+        }
+
+        if (intakeColor != null) {
+            intakeSensorHigh = (intakeColor.getState());
+        } else {
+            intakeSensorHigh = false;
         }
 
         lastUpdateTimeNs = nowNs;
@@ -340,5 +353,13 @@ public class Sensors {
             if (intersect) inside = !inside;
         }
         return inside;
+    }
+
+    /**
+     * Returns true if the intake color digital sensor is reporting HIGH.
+     * If the sensor is not configured or unavailable, this returns false.
+     */
+    public boolean intakeSensorHigh() {
+        return intakeSensorHigh;
     }
 }

@@ -276,10 +276,10 @@ public  class Launcher implements Module {
                 power = pid.update(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
-                robot.outtake.turret.backlashEvet();
+                //robot.outtake.turret.backlashEvet();
                 break;
             case SHOOT_STARTED:
-                robot.outtake.turret.backlashYok();
+                //robot.outtake.turret.backlashYok();
                 if(auto_aim){
                     try {
                         target = idealVelocity.get(targetDistance);
@@ -357,32 +357,17 @@ public  class Launcher implements Module {
     }
 
     public static double SHOOTER_TICKS_PER_REV = 28.0;
-    // Flywheel radius in inches (69.2 mm -> 2.7244 inches).
     public static double FLYWHEEL_RADIUS_IN = 69.2 / 25.4;
-    // Gear ratio from motor to flywheel (1:1 by user description).
     public static double FLYWHEEL_GEAR_RATIO = 1.0;
-    // Effective transfer coefficient from rim speed to projectile speed.
     public static double PROJECTILE_TRANSFER_COEFF = 0.7; // tune in dashboard
 
-    /**
-     * Estimates projectile linear speed (inches/second) based on the current
-     * launcher target TPS (ticks per second) and the physical flywheel
-     * parameters. This is used for time-of-flight in motion compensation.
-     */
+
     public double getProjectileSpeedEstimate() {
-        double tps = target; // target ticks per second the PID is chasing
+        double tps = target;
         if (SHOOTER_TICKS_PER_REV <= 0) return 0.0;
-
-        // Convert motor ticks/s -> motor rev/s
         double motorRevPerSec = tps / SHOOTER_TICKS_PER_REV;
-
-        // Apply gear ratio to get flywheel rev/s
         double flywheelRevPerSec = motorRevPerSec * FLYWHEEL_GEAR_RATIO;
-
-        // Rim linear speed: v = 2πr * rev/s
         double rimSpeedInPerSec = 2.0 * Math.PI * FLYWHEEL_RADIUS_IN * flywheelRevPerSec;
-
-        // Effective projectile speed: some fraction of rim speed
         double projSpeed = PROJECTILE_TRANSFER_COEFF * rimSpeedInPerSec;
         if (projSpeed < 0) projSpeed = 0.0;
         return projSpeed;

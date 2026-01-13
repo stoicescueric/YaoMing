@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
-@TeleOp(name = "MotorToggleABXY", group = "Utility")
+@TeleOp(name = "MotorToggleABXY", group = "Pedro Pathing")
 public class MotorToggleABXY extends LinearOpMode {
     private DcMotor m1, m2, m3, m4;
     private boolean m1On = false;

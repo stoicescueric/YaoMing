@@ -27,9 +27,13 @@ public class IntakeConstants {
     public static double rampOpen = 0.05;
     public static double rampClose = 0.95;
 
-    public static double intakeServoLow = 0.63;
+    public static double intakeServoLow = 0.62;
     public static double intakeServoHigh = 0.85;
-    public static double intakeServoIntake = 0.66;
+    public static double intakeServoIntake = 0.64;
 
     public static double preciseShotDelay = 400;
+
+    /*----- SENSOR CONSTANTS----*/
+    public static double intakeSensorThreshold = 3;
+    public static double intakeCounter = 0;
 }

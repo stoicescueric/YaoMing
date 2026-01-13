@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -12,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import com.pedropathing.follower.Follower;
 
+import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
@@ -98,6 +101,8 @@ public class Robot {
         TelemetryUtil.packet.put("Current Y", sensors.getY());
         TelemetryUtil.packet.put("Current Heading", sensors.getHeading());
         TelemetryUtil.packet.put("voltage",sensors.getVoltage());
+        TelemetryUtil.packet.put("intake sensor",sensors.intakeSensorHigh());
+        Log.w("sensor intake","" + sensors.intakeSensorHigh());
 
         Canvas field = TelemetryUtil.getPacket().fieldOverlay();
         double rxIn = sensors.getX();

@@ -66,6 +66,7 @@ public class IntakeTransfer implements Module {
     public ServoIntakeState servoIntakeState = ServoIntakeState.INTAKE;
     long startSleep = 0;
     double sleeptime = 0;
+    public double intakeSensorCounter = 0;
     IntakeState nextState = IntakeState.OFF;
 
     BinaryDeque deq = new BinaryDeque();
@@ -170,6 +171,7 @@ public class IntakeTransfer implements Module {
         if (useStall) {
             switch (stallCheck) {
                 case IDLE:
+                    intakeSensorCounter = 0;
                     if (intakeState == IntakeState.INTAKE) {
                         stallCheck = StallCheck.DETECTED;
                     }
@@ -177,24 +179,27 @@ public class IntakeTransfer implements Module {
                 case DETECTED:
                     if (intakeState != IntakeState.INTAKE) {
                         stallCheck = StallCheck.IDLE;
+                        intakeSensorCounter = 0;
                         break;
                     }
-                    if (robot.sensors != null && robot.sensors.isIntakeMotor1OverCurrent()) {
+                    if (robot.sensors != null && robot.sensors.intakeSensorHigh()) {
                          startStallCheckTime = System.currentTimeMillis();
                          stallCheck = StallCheck.CONFIRMING;
                      }
                      break;
                  case CONFIRMING:
+                     Log.w("IntakeTransfer", "intake sensor counter = " + intakeSensorCounter);
                      if (intakeState != IntakeState.INTAKE) {
                          stallCheck = StallCheck.IDLE;
                          break;
                      }
-                     if (robot.sensors == null || !robot.sensors.isIntakeMotor1OverCurrent()) {
+                     if (robot.sensors == null || !robot.sensors.intakeSensorHigh()) {
                           stallCheck = StallCheck.DETECTED;
                           break;
                       }
                       if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
                           Log.w("IntakeTransfer", "Stall detected, stopping intake");
+
                           robot.op.gamepad1.rumble(150);
                           stallTriggeredThisLoop = true;
                           setIntakeState(IntakeState.OFF);

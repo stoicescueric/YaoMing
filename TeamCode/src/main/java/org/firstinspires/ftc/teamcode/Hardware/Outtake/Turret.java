@@ -22,7 +22,7 @@ public class Turret implements Module {
     public static double mechRatio = 0.83;
 
     public static boolean backlashYok = false;
-    public static double offset = -0.009;
+    public static double offset = -0.003;
 
     public static double BOARD1_NX = 0.22;
     public static double BOARD1_NY = 0.0;
