@@ -68,22 +68,25 @@ public  class Launcher implements Module {
     public void addData() {
 
         // --- Ideal Velocity Data (unified close + far) ---
-        idealVelocity.add(36.53, 1410);
-        idealVelocity.add(43.46, 1515);
-        idealVelocity.add(51.22, 1520);
-        idealVelocity.add(57.55, 1565);
-        idealVelocity.add(59.49, 1640);
-        idealVelocity.add(62.22, 1580);
-        idealVelocity.add(66.33, 1595);
-        idealVelocity.add(71.93, 1600);
-        idealVelocity.add(75.18, 1615);
-        idealVelocity.add(79.21, 1660);
-        idealVelocity.add(82.71, 1675);
-        idealVelocity.add(85.16, 1690);
-        idealVelocity.add(89.22, 1700);
-        idealVelocity.add(93.14, 1720);
-        idealVelocity.add(96.28, 1785);
-        idealVelocity.add(100.91, 1880);
+        idealVelocity.add(41.11, 1360);
+        idealVelocity.add(43.46, 1380);
+        idealVelocity.add(49.46, 1430);
+        idealVelocity.add(51.27, 1440);
+        idealVelocity.add(54.23, 1460);
+        idealVelocity.add(57.55, 1480);
+        idealVelocity.add(59.36, 1500);
+        idealVelocity.add(62.22, 1520);
+        idealVelocity.add(66.33, 1575);
+        idealVelocity.add(71.80, 1590);
+        idealVelocity.add(75.80, 1630);
+        idealVelocity.add(79.80, 1660);
+        idealVelocity.add(82.71, 1690);
+        idealVelocity.add(85.16, 1710);
+        idealVelocity.add(87.22, 1720);
+        idealVelocity.add(91.14, 1750);
+        idealVelocity.add(94.28, 1760);
+        idealVelocity.add(98.91, 1760);
+        idealVelocity.add(100.91, 1760);
 
         idealVelocity.add(121.84, 1865);
         idealVelocity.add(125.26, 1890);
@@ -99,100 +102,101 @@ public  class Launcher implements Module {
 
 
         // --- Hood Regression Data (close zone) ---
-        // Distance: 36.53
-        hoodRegression.add(36.53, 1360, 0.17);
-        hoodRegression.add(36.53, 1385, 0.18);
-        hoodRegression.add(36.53, 1410, 0.20);
 
-        // Distance: 40.27
-        hoodRegression.add(40.27, 1420, 0.26);
-        hoodRegression.add(40.27, 1460, 0.24);
-        hoodRegression.add(40.27, 1510, 0.23);
+        // Distance: 41.11
+        hoodRegression.add(41.11, 1310, 0.00);
+        hoodRegression.add(41.11, 1330, 0.00);
+        hoodRegression.add(41.11, 1360, 0.00);
 
         // Distance: 43.46
-        hoodRegression.add(43.46, 1410, 0.28);
-        hoodRegression.add(43.46, 1485, 0.27);
-        hoodRegression.add(43.46, 1535, 0.23);
+        hoodRegression.add(43.46, 1330, 0.00);
+        hoodRegression.add(43.46, 1365, 0.00);
+        hoodRegression.add(43.46, 1380, 0.00);
 
         // Distance: 49.46
-        hoodRegression.add(49.46, 1410, 0.30);
-        hoodRegression.add(49.46, 1460, 0.26);
-        hoodRegression.add(49.46, 1510, 0.23);
+        hoodRegression.add(49.46, 1370, 0.02);
+        hoodRegression.add(49.46, 1400, 0.04);
+        hoodRegression.add(49.46, 1430, 0.05);
 
-        // Distance: 51.22
-        hoodRegression.add(51.22, 1420, 0.24);
-        hoodRegression.add(51.22, 1460, 0.24);
-        hoodRegression.add(51.22, 1520, 0.23);
+        // Distance: 51.27
+        hoodRegression.add(51.27, 1390, 0.06);
+        hoodRegression.add(51.27, 1420, 0.07);
+        hoodRegression.add(51.27, 1440, 0.10);
 
-        // Distance: 54.29
-        hoodRegression.add(54.29, 1460, 0.25);
-        hoodRegression.add(54.29, 1510, 0.25);
-        hoodRegression.add(54.29, 1540, 0.25);
+        // Distance: 54.23
+        hoodRegression.add(54.23, 1420, 0.10);
+        hoodRegression.add(54.23, 1440, 0.11);
+        hoodRegression.add(54.23, 1460, 0.11);
 
         // Distance: 57.55
-        hoodRegression.add(57.55, 1460, 0.31);
-        hoodRegression.add(57.55, 1535, 0.33);
-        hoodRegression.add(57.55, 1585, 0.29);
+        hoodRegression.add(57.55, 1440, 0.10);
+        hoodRegression.add(57.55, 1460, 0.11);
+        hoodRegression.add(57.55, 1480, 0.16);
 
-        // Distance: 59.49
-        hoodRegression.add(59.49, 1535, 0.27);
-        hoodRegression.add(59.49, 1585, 0.31);
-        hoodRegression.add(59.49, 1650, 0.30);
+        // Distance: 59.36
+        hoodRegression.add(59.36, 1455, 0.16);
+        hoodRegression.add(59.36, 1480, 0.17);
+        hoodRegression.add(59.36, 1500, 0.18);
 
         // Distance: 62.22
-        hoodRegression.add(62.22, 1520, 0.27);
-        hoodRegression.add(62.22, 1570, 0.31);
-        hoodRegression.add(62.22, 1580, 0.32);
+        hoodRegression.add(62.22, 1460, 0.15);
+        hoodRegression.add(62.22, 1490, 0.17);
+        hoodRegression.add(62.22, 1520, 0.18);
 
         // Distance: 66.33
-        hoodRegression.add(66.33, 1530, 0.27);
-        hoodRegression.add(66.33, 1580, 0.29);
-        hoodRegression.add(66.33, 1595, 0.30);
+        hoodRegression.add(66.33, 1540, 0.19);
+        hoodRegression.add(66.33, 1560, 0.20);
+        hoodRegression.add(66.33, 1575, 0.20);
 
-        // Distance: 71.93
-        hoodRegression.add(71.93, 1550, 0.26);
-        hoodRegression.add(71.93, 1585, 0.27);
-        hoodRegression.add(71.93, 1610, 0.28);
+        // Distance: 71.80
+        hoodRegression.add(71.80, 1560, 0.22);
+        hoodRegression.add(71.80, 1580, 0.23);
+        hoodRegression.add(71.80, 1590, 0.25);
 
         // Distance: 75.18
-        hoodRegression.add(75.18, 1550, 0.26);
-        hoodRegression.add(75.18, 1580, 0.25);
-        hoodRegression.add(75.18, 1615, 0.29);
+        hoodRegression.add(75.80, 1590, 0.23);
+        hoodRegression.add(75.80, 1620, 0.28);
+        hoodRegression.add(75.80, 1630, 0.31);
 
         // Distance: 79.21
-        hoodRegression.add(79.21, 1590, 0.29);
-        hoodRegression.add(79.21, 1610, 0.29);
-        hoodRegression.add(79.21, 1640, 0.29);
+        hoodRegression.add(79.80, 1610, 0.29);
+        hoodRegression.add(79.80, 1630, 0.30);
+        hoodRegression.add(79.80, 1660, 0.32);
 
         // Distance: 82.71
-        hoodRegression.add(82.71, 1610, 0.27);
-        hoodRegression.add(82.71, 1650, 0.27);
-        hoodRegression.add(82.71, 1655, 0.36);
+        hoodRegression.add(82.71, 1640, 0.29);
+        hoodRegression.add(82.71, 1660, 0.31);
+        hoodRegression.add(82.71, 1690, 0.31);
 
         // Distance: 85.16
-        hoodRegression.add(85.16, 1620, 0.26);
-        hoodRegression.add(85.16, 1655, 0.37);
-        hoodRegression.add(85.16, 1690, 0.43);
+        hoodRegression.add(85.16, 1660, 0.29);
+        hoodRegression.add(85.16, 1680, 0.32);
+        hoodRegression.add(85.16, 1710, 0.34);
 
-        // Distance: 89.22
-        hoodRegression.add(89.22, 1630, 0.29);
-        hoodRegression.add(89.22, 1660, 0.27);
-        hoodRegression.add(89.22, 1690, 0.27);
+        // Distance: 87.22
+        hoodRegression.add(87.22, 1680, 0.30);
+        hoodRegression.add(87.22, 1700, 0.33);
+        hoodRegression.add(87.22, 1720, 0.34);
 
-        // Distance: 93.14
-        hoodRegression.add(93.14, 1670, 0.30);
-        hoodRegression.add(93.14, 1690, 0.29);
-        hoodRegression.add(93.14, 1720, 0.30);
+        // Distance: 91.14
+        hoodRegression.add(91.14, 1700, 0.31);
+        hoodRegression.add(91.14, 1720, 0.32);
+        hoodRegression.add(91.14, 1750, 0.33);
 
-        // Distance: 96.28
-        hoodRegression.add(96.28, 1730, 0.24);
-        hoodRegression.add(96.28, 1760, 0.23);
-        hoodRegression.add(96.28, 1785, 0.40);
+        // Distance: 94.28
+        hoodRegression.add(94.28, 1710, 0.32);
+        hoodRegression.add(94.28, 1735, 0.34);
+        hoodRegression.add(94.28, 1760, 0.37);
+
+        // Distance: 98.91
+        hoodRegression.add(98.91, 1710, 0.32);
+        hoodRegression.add(98.91, 1735, 0.34);
+        hoodRegression.add(98.91, 1760, 0.37);
 
         // Distance: 100.91
-        hoodRegression.add(100.91, 1810, 0.32);
-        hoodRegression.add(100.91, 1845, 0.30);
-        hoodRegression.add(100.91, 1880, 0.34);
+        hoodRegression.add(100.91, 1710, 0.32);
+        hoodRegression.add(100.91, 1735, 0.34);
+        hoodRegression.add(100.91, 1760, 0.37);
 
         // --- Hood Regression Data (far zone) ---
         // Distance: 121.84
@@ -373,7 +377,3 @@ public  class Launcher implements Module {
         return projSpeed;
     }
 }
-
-
-
-

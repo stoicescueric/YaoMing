@@ -30,10 +30,10 @@ public class Sensors {
 
     public double targetX = -66.6;
     public double targetY = -65;
-    public double targetXRedClose = -70.8;
-    public double targetYRedClose = 70.8;
-    public double targetXBlueClose = -70.5;
-    public double targetYBlueClose = -70.5;
+    public double targetXRedClose = -69.8;
+    public double targetYRedClose = 69.8;
+    public double targetXBlueClose = -69.5;
+    public double targetYBlueClose = -69.5;
 
     public double targetXRedFar = -71;
     public double targetYRedFar = 70;

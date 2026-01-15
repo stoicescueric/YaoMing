@@ -169,10 +169,14 @@ public class IntakeTransfer implements Module {
 
 
         if (useStall) {
+            boolean ballPresent = robot.sensors != null && robot.sensors.intakeSensorHigh();
+            boolean intakeStalled = motor1.isOverCurrent();
+
             switch (stallCheck) {
                 case IDLE:
                     intakeSensorCounter = 0;
-                    if (intakeState == IntakeState.INTAKE) {
+                    if (intakeState == IntakeState.INTAKE && ballPresent) {
+                        intakeSensorCounter = 1;
                         stallCheck = StallCheck.DETECTED;
                     }
                     break;
@@ -182,30 +186,38 @@ public class IntakeTransfer implements Module {
                         intakeSensorCounter = 0;
                         break;
                     }
-                    if (robot.sensors != null && robot.sensors.intakeSensorHigh()) {
-                         startStallCheckTime = System.currentTimeMillis();
-                         stallCheck = StallCheck.CONFIRMING;
-                     }
-                     break;
-                 case CONFIRMING:
-                     Log.w("IntakeTransfer", "intake sensor counter = " + intakeSensorCounter);
-                     if (intakeState != IntakeState.INTAKE) {
-                         stallCheck = StallCheck.IDLE;
-                         break;
-                     }
-                     if (robot.sensors == null || !robot.sensors.intakeSensorHigh()) {
-                          stallCheck = StallCheck.DETECTED;
-                          break;
-                      }
-                      if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
-                          Log.w("IntakeTransfer", "Stall detected, stopping intake");
+                    if (ballPresent) {
+                        intakeSensorCounter++;
+                    } else {
+                        intakeSensorCounter = 0;
+                    }
 
-                          robot.op.gamepad1.rumble(150);
-                          stallTriggeredThisLoop = true;
-                          setIntakeState(IntakeState.OFF);
-                          stallCheck = StallCheck.IDLE;
-                      }
-                      break;
+                    if (intakeSensorCounter >= IntakeConstants.intakeSensorThreshold && intakeStalled) {
+                        startStallCheckTime = System.currentTimeMillis();
+                        stallCheck = StallCheck.CONFIRMING;
+                    }
+                    break;
+                case CONFIRMING:
+                    Log.w("IntakeTransfer", "intake sensor counter = " + intakeSensorCounter + " stalled=" + intakeStalled);
+                    if (intakeState != IntakeState.INTAKE) {
+                        stallCheck = StallCheck.IDLE;
+                        break;
+                    }
+
+                    if (!ballPresent || !intakeStalled) {
+                        stallCheck = StallCheck.DETECTED;
+                        break;
+                    }
+
+                    if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
+                        Log.w("IntakeTransfer", "Stall detected, stopping intake");
+
+                        robot.op.gamepad1.rumble(150);
+                        stallTriggeredThisLoop = true;
+                        setIntakeState(IntakeState.OFF);
+                        stallCheck = StallCheck.IDLE;
+                    }
+                    break;
 
             }
         }
