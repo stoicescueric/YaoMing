@@ -46,6 +46,7 @@ public class Sensors {
     public double backboardYRed =72;
     public double backboardXBlue = -73;
     public double backboardYBlue = -73;
+    public double intakeSpeed;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 13; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 12; //radians per seconds
@@ -142,6 +143,7 @@ public class Sensors {
 
         if (robot.intakeTransfer != null && robot.intakeTransfer.motor1 != null) {
             intakeMotor1OverCurrent = robot.intakeTransfer.motor1.isOverCurrent();
+            intakeSpeed = robot.intakeTransfer.motor1.getVelocity();
         } else {
             intakeMotor1OverCurrent = false;
         }
@@ -184,6 +186,9 @@ public class Sensors {
 
     public double getY() {
         return currentY;
+    }
+    public double getVelocityIntake() {
+        return intakeSpeed;
     }
     public double getHeading() {
         return currentHeading;
