@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close15;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -11,10 +11,9 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
-import org.firstinspires.ftc.teamcode.Util.Utils;
 
 @Config
-public class CloseConstants {
+public class CloseConstants15 {
 
     //DEFAULT VALUES FOR RED
     public static double shootingTime = 2350;
@@ -23,7 +22,7 @@ public class CloseConstants {
     public static double failSafeDtTime = 2500;
     public static double hoodPosition = 0.615;
     public static double launcherVelocity = 1000;
-    public static double startX = -55, startY = 47, headingStartRed = Math.toRadians(128);
+    public static double startX = -57, startY = 45.34, headingStartRed = Math.toRadians(128);
     public Pose startPose;
     public static double shootingX = -14, shootingY = 12, shootingHeading = Math.toRadians(90);
     public Pose scorePose;
@@ -43,11 +42,21 @@ public class CloseConstants {
     public static double pickUp3XIntermediary = 44, pickUp3YIntermediary = -5, pickUp3HeadingIntermediary = Math.toRadians(90);
     public Pose pickUpPose3Intermediary;
 
-    //clear
     public static double clearX = 0.5, clearY = 55.5, clearHeading = Math.toRadians(90);
     public Pose clear;
     public static double clearXIntermediary = 0.5, clearYIntermediary = 40, clearHeadingIntermediary = Math.toRadians(90);
     public Pose clearIntermediary;
+
+
+    public static double clear2XIntermediary = 8.27, clear2YIntermediary = 28.6, clear2HeadingIntermediary = 1.986;
+    public static double clear2X = 18.63, clear2Y = 61.5, clear2Heading = 2.285;
+    public static double clearPickupX = 8.27, clearPickupY = 28.6, clearPickupHeading = 2.285;
+
+
+    public Pose clear2PoseIntermediary;
+    public Pose clear2Pose;
+
+    public Pose clearPickupPose;
 
     public static double parkX = 13.5, parkY = 45, parkHeading = Math.toRadians(90);
 
@@ -57,6 +66,9 @@ public class CloseConstants {
     PathChain grabPickUp1, scorePickup1, grabPickup2, scorePickup2;
     PathChain grabPickup3, scorePickup3;
     PathChain goClear;
+    PathChain goClear2;
+    PathChain clearPickup;
+    PathChain scoreClearPickup;
     PathChain goToPark;
 
     public void buildPaths(Follower follower) {
@@ -73,6 +85,11 @@ public class CloseConstants {
         pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
         pickUpPose3Intermediary = new Pose(pickUp3XIntermediary, pickUp3YIntermediary, pickUp3HeadingIntermediary);
         clearIntermediary = new Pose(clearXIntermediary, clearYIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
+
+        clear2PoseIntermediary = new Pose(clear2XIntermediary, clear2YIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), clear2HeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
+        clear2Pose = new Pose(clear2X, clear2Y * (Info.alliance == Alliance.RED ? 1 : -1), clear2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
+
+        clearPickupPose = new Pose(clearPickupX, clearPickupY * (Info.alliance == Alliance.RED ? 1 : -1), clearPickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
@@ -97,6 +114,21 @@ public class CloseConstants {
                 .addPath(new BezierCurve(pickUpPose2, pickUpPose2Intermediary, scorePose))
                 .setLinearHeadingInterpolation(pickUpPose2.getHeading(), scorePose.getHeading())
                 .build();
+
+        goClear2 = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose, clear2PoseIntermediary, clear2Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), clear2Pose.getHeading())
+                .build();
+
+        clearPickup = follower.pathBuilder()
+                .addPath(new BezierLine(clear2Pose, clearPickupPose))
+                .setLinearHeadingInterpolation(clear2Pose.getHeading(), clearPickupPose.getHeading())
+                .build();
+        scoreClearPickup = follower.pathBuilder()
+                .addPath(new BezierLine(clearPickupPose, scorePose))
+                .setLinearHeadingInterpolation(clearPickupPose.getHeading(), scorePose.getHeading())
+                .build();
+
         grabPickup3 = follower.pathBuilder()
                 .addPath(new BezierCurve(scorePose, pickUpPose3Intermediary, pickUpPose3))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose3.getHeading())

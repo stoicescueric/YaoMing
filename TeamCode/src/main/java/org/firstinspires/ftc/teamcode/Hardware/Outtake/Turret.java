@@ -251,6 +251,7 @@ public class Turret implements Module {
         backlashYok = false;
         return 0;
     }
+    //functiile sunt folosite in launcher line 285
     public double backlashYok(){
         backlashYok = true;
         return 0;

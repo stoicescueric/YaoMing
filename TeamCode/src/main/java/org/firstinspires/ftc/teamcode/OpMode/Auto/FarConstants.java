@@ -16,7 +16,7 @@ public class FarConstants {
 
     public static double shootingTime = 3350;
     public static double failSafeDtTime = 2500;
-    public static double startX = 64.2, startY = 17.9, headingStartRed = Math.PI;
+    public static double startX = 63.17, startY = 18.30, headingStartRed = Math.PI;
     public Pose startPose;
     public static double shootingX = 50, shootingY = 8.5, shootingHeading = Math.PI;
     public Pose scorePose;
