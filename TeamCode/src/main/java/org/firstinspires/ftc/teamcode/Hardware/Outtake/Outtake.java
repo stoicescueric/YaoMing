@@ -26,7 +26,8 @@ public class Outtake {
         PRECISE_SHOOT_FEEDING,
         PRECISE_SHOOT,
         READY_FLYWHEEL,
-        STOP
+        STOP,
+        RECYCLE
     }
     public OuttakeState outtakeState = OuttakeState.IDLE;
     public Outtake(Robot robot, Sensors sensors){
@@ -50,7 +51,9 @@ public class Outtake {
             case OFF:
                 break;
             case IDLE:
-                launcher.launcherState = Launcher.LauncherState.OFF;
+                //launcher.launcherState = Launcher.LauncherState.OFF;
+                launcher.launcherState = Launcher.LauncherState.IDLE;
+
                 break;
             case START_FEEDING_RAPID_FIRE:
                 if(launcher.isReady()) {
@@ -64,7 +67,7 @@ public class Outtake {
             case PRECISE_SHOOT_FEEDING:
                 if(launcher.isReady()) {
                     Log.w("Debug shoot precise","a intrat launcher ready");
-                    robot.intakeTransfer.rampState = IntakeTransfer.RampState.OPEN;
+                    robot.intakeTransfer.blockerState = IntakeTransfer.BlockerState.OPEN;
                     robot.intakeTransfer.setPowerForTime(IntakeConstants.preciseShotPower, IntakeConstants.preciseShotDelay);
                     outtakeState = OuttakeState.PRECISE_SHOOT;
                 }
@@ -80,9 +83,16 @@ public class Outtake {
                 launcher.launcherState = Launcher.LauncherState.READY_FLYWHEEL;
                 break;
             case STOP:
-                launcher.launcherState = Launcher.LauncherState.OFF;
+                //launcher.launcherState = Launcher.LauncherState.OFF;
+                launcher.launcherState = Launcher.LauncherState.IDLE;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 outtakeState = OuttakeState.IDLE;
+                break;
+            case RECYCLE:
+                launcher.launcherState = Launcher.LauncherState.RECYCLE;
+                if (launcher.isReady()) {
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.RECYCLE);
+                }
                 break;
 
         }
@@ -114,4 +124,3 @@ public class Outtake {
         shootingWhileMoving = enabled;
     }
 }
-

@@ -19,6 +19,10 @@ public class TurretTest extends LinearOpMode {
     public static double servoRight = 0.5;
     public static boolean isSecondReversed = false;
     Servo shooter1,shooter2;
+
+    private boolean joystickMode = false;
+    private boolean previousA = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -28,9 +32,20 @@ public class TurretTest extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()){
-            shooter1.setPosition(servoLeft);
-            shooter2.setPosition(servoRight);
+            boolean currentA = gamepad1.a;
+            if (currentA && !previousA) {
+                joystickMode = !joystickMode;
+            }
+            previousA = currentA;
 
+            if (joystickMode) {
+                double joystickValue = (gamepad1.left_stick_x + 1) / 2.0;
+                shooter1.setPosition(joystickValue);
+                shooter2.setPosition(joystickValue);
+            } else {
+                shooter1.setPosition(servoLeft);
+                shooter2.setPosition(servoRight);
+            }
 
         }
 

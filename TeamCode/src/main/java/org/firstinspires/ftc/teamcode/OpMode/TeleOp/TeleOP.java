@@ -172,10 +172,13 @@ public class TeleOP extends LinearOpMode
     // formula: -0.006248 * distance + 0.001034 * ticksPerSecond + -0.682723
 
     public void outtakeUpdate() {
-        if (gg.yOnce()) {
-            Launcher.auto_aim = !Launcher.auto_aim;
-            turretTracking = !turretTracking;
-        }
+//        if (gg.yOnce()) {
+//            if (robot.outtake.outtakeState == Outtake.OuttakeState.RECYCLE) {
+//                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+//            } else {
+//                robot.outtake.outtakeState = Outtake.OuttakeState.RECYCLE;
+//            }
+//        }
 
         if (gg.xOnce()) {
             shootWhileMoving = !shootWhileMoving;

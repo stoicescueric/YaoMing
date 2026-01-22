@@ -33,18 +33,20 @@ public  class Launcher implements Module {
         OFF,
         SPIN_UP,
         SHOOT_STARTED,
-
-        STEADY_VELOCITY,
+        IDLE,
         LAUNCHING,
-        READY_FLYWHEEL
+        READY_FLYWHEEL,
+        RECYCLE
     }
 
 
     Sensors sensors;
     public double target = 0;
     public static boolean auto_aim = true;
-
+    public static double idleAlpha = 0.5;
     public double currentVel = 0;
+    public static double recycleVelocity = 500;
+    public static double recycleTilt = 1;
     public LauncherState launcherState = LauncherState.OFF;
     public FlyWheelPID pid = new FlyWheelPID();
     Robot robot;
@@ -53,7 +55,7 @@ public  class Launcher implements Module {
         this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0);
         this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0);
 
-        tilt = new CachingServo(robot.hw.get(Servo.class,"TurretTilt"));
+        tilt = new CachingServo(robot.hw.get(Servo.class,"hood"));
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         addData();
@@ -269,7 +271,7 @@ public  class Launcher implements Module {
     }
     @Override
     public void update() {
-        currentVel = motor1.getVelocity();
+        currentVel = motor2.getVelocity();
         changeTarget();
 
         double targetDistance = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
@@ -281,6 +283,11 @@ public  class Launcher implements Module {
                 motor1.setPower(power);
                 motor2.setPower(power);
                 robot.outtake.turret.backlashEvet();
+                break;
+            case IDLE:
+                power = pid.update(target*idleAlpha, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+                motor1.setPower(power);
+                motor2.setPower(power);
                 break;
             case SHOOT_STARTED:
                 robot.outtake.turret.backlashYok();
@@ -325,6 +332,13 @@ public  class Launcher implements Module {
                         break;
                     }
                 }
+                power = pid.update(target, currentVel, sensors.getVoltage());
+                motor1.setPower(power);
+                motor2.setPower(power);
+                break;
+            case RECYCLE:
+                target = recycleVelocity;
+                target_tilt = recycleTilt;
                 power = pid.update(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);

@@ -24,15 +24,15 @@ public class DigitalWrapper {
 
     public boolean getValue() {
 
-        boolean debouncedValue = debouncer.calculate(device.getState());
+        boolean debouncedValue = debouncer.calculate(getRaw());
 
         ringBuffer.getValue(debouncedValue);
 
         boolean allSame = ringBuffer.getList().stream().allMatch(val -> val == debouncedValue);
 
-        return allSame ? debouncedValue : !debouncedValue;
+        return allSame == debouncedValue;
     }
     public boolean getRaw() {
-        return device.getState();
+        return !device.getState();
     }
 }

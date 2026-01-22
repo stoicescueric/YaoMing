@@ -91,8 +91,8 @@ public class Robot {
         TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
         TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
-        TelemetryUtil.packet.put("Intake amps",intakeTransfer.motor1.getCurrent(CurrentUnit.AMPS));
-        TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.motor2.getCurrent(CurrentUnit.AMPS));
+        TelemetryUtil.packet.put("Intake amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
+        TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
         if (flDriveMotor != null) {
             TelemetryUtil.packet.put("FL Motor amps", flDriveMotor.getCurrent(CurrentUnit.AMPS));
         }
@@ -101,8 +101,10 @@ public class Robot {
         TelemetryUtil.packet.put("Current Y", sensors.getY());
         TelemetryUtil.packet.put("Current Heading", sensors.getHeading());
         TelemetryUtil.packet.put("voltage",sensors.getVoltage());
-        TelemetryUtil.packet.put("intake sensor",sensors.intakeSensorHigh());
-        Log.w("sensor intake","" + sensors.intakeSensorHigh());
+        TelemetryUtil.packet.put("beam 1 value",sensors.isBreakBeamPos1Low());
+        TelemetryUtil.packet.put("beam 2 value",sensors.isBreakBeamPos2Low());
+        TelemetryUtil.packet.put("beam 3 value",sensors.isBreakBeamPos3Low());
+        TelemetryUtil.packet.put("beam 3 first update",sensors.firstTrueBeam3);
 
         Canvas field = TelemetryUtil.getPacket().fieldOverlay();
         double rxIn = sensors.getX();

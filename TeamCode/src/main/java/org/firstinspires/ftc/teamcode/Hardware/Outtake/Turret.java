@@ -51,7 +51,7 @@ public class Turret implements Module {
         TRACKING
     }
 
-    public static double centerPose = 0.5;
+    public static double centerPose = 0.624;
     public TurretState turretState = TurretState.FIXED_ANGLE;
     Robot robot;
 
@@ -59,8 +59,8 @@ public class Turret implements Module {
 
     public Turret(Robot rb, Sensors sensors){
         this.robot = rb;
-        servoLeft = new CachingServo(rb.hw.get(Servo.class,"turretLeft"));
-        servoRight = new CachingServo(rb.hw.get(Servo.class,"turretRight"));
+        servoLeft = new CachingServo(rb.hw.get(Servo.class,"turretL"));
+        servoRight = new CachingServo(rb.hw.get(Servo.class,"turretR"));
         this.sensors = sensors;
 
         if (Info.alliance == Alliance.RED) {

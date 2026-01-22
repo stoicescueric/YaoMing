@@ -18,13 +18,11 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.BinaryDeque;
 
 @Config
 public class IntakeTransfer implements Module {
-    public CachingDcMotorEx motor1, motor2;
+    public CachingDcMotorEx intake, conveyor;
     private Robot robot;
-
-    CachingServo intakeServo;
-    CachingServo left;
-    CachingServo right;
-    CachingServo ramp;
+    CachingServo powerArm;
+    CachingServo blocker;
+    CachingServo capac;
 
     public static boolean useStall = false;
     public boolean stallTriggeredThisLoop = false;
@@ -39,18 +37,21 @@ public class IntakeTransfer implements Module {
         OFF_OPEN,
         SLEEP,
         TRANSFER,
-        HOLD
+        HOLD,
+        RECYCLE
     }
 
-    public enum RampState {
+    public enum BlockerState {
         CLOSE,
         OPEN
     }
 
-    public enum ServoIntakeState {
-        LOW,
+    public enum PowerArmState {
+        BLEG,
         INTAKE,
-        HIGH
+        LOW,
+        RECYCLE,
+        TRANSFER
     }
 
     public enum StallCheck {
@@ -58,12 +59,25 @@ public class IntakeTransfer implements Module {
         DETECTED,
         CONFIRMING
     }
+    public enum ConveyorState {
+        OFF,
+        ON,
+        POWER_FOR_TIME,
+        REVERSE
+    }
+    public enum CapacState{
+        BLEG,
+        RECYCLE,
+        WIGGLEWIGGLEWIGGLE
+    }
 
     public StallCheck stallCheck = StallCheck.IDLE;
 
     public IntakeState intakeState = IntakeState.OFF;
-    public RampState rampState = RampState.CLOSE;
-    public ServoIntakeState servoIntakeState = ServoIntakeState.INTAKE;
+    public BlockerState blockerState = BlockerState.CLOSE;
+    public PowerArmState powerArmState = PowerArmState.INTAKE;
+    public ConveyorState conveyorState = ConveyorState.OFF;
+    public CapacState capacState = CapacState.BLEG;
     long startSleep = 0;
     double sleeptime = 0;
     public double intakeSensorCounter = 0;
@@ -73,18 +87,17 @@ public class IntakeTransfer implements Module {
 
     public IntakeTransfer(Robot robot, Sensors sensors) {
         this.robot = robot;
-        motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "conveyor1"), 0);
-        motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "conveyor2"), 0);
+        intake = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "intake"), 0);
+        conveyor = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "transfer"), 0);
 
-        intakeServo = new CachingServo(robot.hw.get(Servo.class, "intakeTilt"));
-        ramp = new CachingServo(robot.hw.get(Servo.class, "ramp"));
-        left = new CachingServo(robot.hw.get(Servo.class, "left"));
-        right = new CachingServo(robot.hw.get(Servo.class, "right"));
-        HardwareUtils.unlock(motor1);
-        HardwareUtils.unlock(motor2);
-        motor1.setCurrentAlert(IntakeConstants.intakeAmpsThreshold, CurrentUnit.AMPS);
-        motor1.setDirection(IntakeConstants.isConveyer1Reversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
-        motor2.setDirection(IntakeConstants.isConveyer2Reversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+        powerArm = new CachingServo(robot.hw.get(Servo.class, "powerArm"));
+        blocker = new CachingServo(robot.hw.get(Servo.class, "blockerMingi"));
+        capac = new CachingServo(robot.hw.get(Servo.class, "capac"));
+        HardwareUtils.unlock(intake);
+        HardwareUtils.unlock(conveyor);
+        intake.setCurrentAlert(IntakeConstants.intakeAmpsThreshold, CurrentUnit.AMPS);
+        intake.setDirection(IntakeConstants.isIntakeReversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+        conveyor.setDirection(IntakeConstants.isTransferReversed ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
 
     }
 
@@ -92,51 +105,73 @@ public class IntakeTransfer implements Module {
     public double time_power = 500;
     public double startStallCheckTime = 0;
     public static double stalCheckDuration = 100;
+    public boolean beamChecked = false;
 
     @Override
     public void update() {
         stallTriggeredThisLoop = false;
 
+        if(intakeState != IntakeState.INTAKE) beamChecked = false;
         switch (intakeState) {
             case OFF:
-                rampState = RampState.CLOSE;
-                servoIntakeState = ServoIntakeState.INTAKE;
-                motor1.setPower(0);
-                motor2.setPower(0);
+                blockerState = BlockerState.CLOSE;
+                powerArmState = PowerArmState.INTAKE;
+                intake.setPower(0);
+                conveyorState = ConveyorState.OFF;
+                capacState = CapacState.BLEG;
                 break;
             case OFF_OPEN:
-                rampState = RampState.OPEN;
-                servoIntakeState = ServoIntakeState.LOW;
-                motor1.setPower(0);
-                motor2.setPower(0);
+                blockerState = BlockerState.OPEN;
+                powerArmState = PowerArmState.INTAKE;
+                intake.setPower(0);
+                conveyorState = ConveyorState.OFF;
+                capacState = CapacState.BLEG;
                 break;
             case INTAKE:
-                rampState = RampState.CLOSE;
-                servoIntakeState = ServoIntakeState.INTAKE;
-                motor1.setPower(IntakeConstants.intakePowerConveyer);
-                motor2.setPower(IntakeConstants.intakeShushi);
+                blockerState = BlockerState.CLOSE;
+                capacState = CapacState.BLEG;
+                powerArmState = PowerArmState.INTAKE;
+                intake.setPower(IntakeConstants.intakePowerIntake);
+                if((robot.sensors.isBreakBeamPos3Low() && robot.sensors.getHowLongBeam3() > IntakeConstants.beam3StopDelay)  || beamChecked) {
+                    conveyorState = ConveyorState.OFF;
+                    beamChecked = true;
+                } else {
+                    conveyorState = ConveyorState.ON;
+                }
+
+                if(robot.sensors.isBreakBeamPos1Low()
+                        && (robot.sensors.getHowLongBeam1()) > IntakeConstants.beamAllStopDelay
+                        && (robot.sensors.isBreakBeamPos2Low() && robot.sensors.getHowLongBeam2() > IntakeConstants.beamAllStopDelay)){
+                    intakeState = IntakeState.OFF;
+                }
 
                 break;
             case REVERSE:
-                rampState = RampState.CLOSE;
-                motor1.setPower(-IntakeConstants.reversePower);
-                motor2.setPower(-IntakeConstants.reversePower);
+                blockerState = BlockerState.CLOSE;
+                intake.setPower(-IntakeConstants.reversePower);
+                conveyorState = ConveyorState.REVERSE;
+                capacState = CapacState.BLEG;
                 break;
             case START_TRANSFER:
-                rampState = RampState.OPEN;
-                servoIntakeState = ServoIntakeState.LOW;
+                blockerState = BlockerState.OPEN;
+                powerArmState = PowerArmState.LOW;
+                intake.setPower(IntakeConstants.transferPowerIntake);
+                conveyorState = ConveyorState.ON;
                 sleep(250, IntakeState.TRANSFER);
+                capacState = CapacState.BLEG;
                 break;
             case POWER_FOR_TIME:
-                servoIntakeState = ServoIntakeState.LOW;
-                motor1.setPower(power_time);
-                motor2.setPower(power_time);
+                powerArmState = PowerArmState.LOW;
+                intake.setPower(power_time);
+                conveyorState = ConveyorState.POWER_FOR_TIME;
                 sleep(time_power, IntakeState.OFF_OPEN);
+                capacState = CapacState.BLEG;
                 break;
             case TRANSFER:
-                servoIntakeState = ServoIntakeState.LOW;
-                motor1.setPower(IntakeConstants.transferPowerConveyer);
-                motor2.setPower(IntakeConstants.transferPowerSushi);
+                powerArmState = PowerArmState.TRANSFER;
+                intake.setPower(IntakeConstants.transferPowerIntake);
+                conveyorState = ConveyorState.ON;
+                capacState = CapacState.BLEG;
                 break;
             case SLEEP:
                 Log.w("Debug shoot precise", " " + (System.currentTimeMillis() - startSleep));
@@ -145,32 +180,74 @@ public class IntakeTransfer implements Module {
                     intakeState = nextState;
                 }
                 break;
+            case RECYCLE:
+                capacState = CapacState.RECYCLE;
+                powerArmState = PowerArmState.RECYCLE;
+                intake.setPower(IntakeConstants.intakePowerRecycle);
+                conveyorState = ConveyorState.ON;
+                blockerState = BlockerState.OPEN;
+                break;
         }
 
-        switch (rampState) {
+        switch (blockerState) {
             case OPEN:
-                ramp.setPosition(IntakeConstants.rampOpen);
+                blocker.setPosition(IntakeConstants.blockerOpen);
                 break;
             case CLOSE:
-                ramp.setPosition(IntakeConstants.rampClose);
+                blocker.setPosition(IntakeConstants.blockerClose);
                 break;
         }
-        switch (servoIntakeState) {
+        switch (powerArmState) {
             case LOW:
-                intakeServo.setPosition(IntakeConstants.intakeServoLow);
+                powerArm.getController().pwmEnable();
+                powerArm.setPosition(IntakeConstants.powerArmLow);
                 break;
             case INTAKE:
-                intakeServo.setPosition(IntakeConstants.intakeServoIntake);
+                powerArm.getController().pwmEnable();
+                powerArm.setPosition(IntakeConstants.powerArmIntake);
                 break;
-            case HIGH:
-                intakeServo.setPosition(IntakeConstants.intakeServoHigh);
+            case BLEG:
+                powerArm.getController().pwmDisable();
+                break;
+            case RECYCLE:
+                powerArm.getController().pwmEnable();
+                powerArm.setPosition(IntakeConstants.powerArmRecycle);
+                break;
+            case TRANSFER:
+                powerArm.getController().pwmEnable();
+                powerArm.setPosition(IntakeConstants.powerArmVeryLow);
+                break;
+        }
+        switch (capacState){
+            case BLEG:
+                capac.setPosition(IntakeConstants.capacBleg);
+                break;
+            case RECYCLE:
+                capac.setPosition(IntakeConstants.capacRecycle);
+                break;
+            case WIGGLEWIGGLEWIGGLE:
+                //Wiggle Wiggle Wiggle, du-tu-tu du du du, Wiggle Wiggle Wiggle...
+                break;
+        }
+        switch (conveyorState) {
+            case OFF:
+                conveyor.setPower(0);
+                break;
+            case ON:
+                conveyor.setPower(IntakeConstants.transferPowerTransfer);
+                break;
+            case POWER_FOR_TIME:
+                conveyor.setPower(power_time);
+                break;
+            case REVERSE:
+                conveyor.setPower(-IntakeConstants.reversePower);
                 break;
         }
 
-
+        //useStall este depricated si nu trebuie folosit sub nici un fel!!!
         if (useStall) {
-            boolean ballPresent = robot.sensors != null && robot.sensors.intakeSensorHigh();
-            boolean intakeStalled = motor1.isOverCurrent();
+            boolean ballPresent = robot.sensors != null && robot.sensors.isBreakBeamPos1Low();
+            boolean intakeStalled = intake.isOverCurrent();
 
             switch (stallCheck) {
                 case IDLE:
@@ -222,20 +299,18 @@ public class IntakeTransfer implements Module {
             }
         }
 
-        left.setPosition(IntakeConstants.leftTransfer);
-        right.setPosition(IntakeConstants.rightTransfer);
     }
 
     public void setIntakeState(IntakeState intakeState) {
         this.intakeState = intakeState;
     }
 
-    public void setRampState(RampState rampState) {
-        this.rampState = rampState;
+    public void setBlockerState(BlockerState blockerState) {
+        this.blockerState = blockerState;
     }
 
-    public void setServoIntakeState(ServoIntakeState servoIntakeState) {
-        this.servoIntakeState = servoIntakeState;
+    public void setpowerArmState(PowerArmState state) {
+        this.powerArmState = state;
     }
 
     public void increaseIntakeServo(double delta) {

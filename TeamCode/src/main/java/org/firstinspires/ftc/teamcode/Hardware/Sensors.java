@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import com.pedropathing.geometry.Pose;
@@ -26,7 +25,9 @@ public class Sensors {
     private long lastUpdateTimeNs = 0;
 
     private boolean intakeMotor1OverCurrent = false;
-    private boolean intakeSensorHigh = false;
+    private boolean breakBeamPos1High = false;
+    private boolean breakBeamPos2High = false;
+    private boolean breakBeamPos3High = false;
 
     public double targetX = -66.6;
     public double targetY = -65;
@@ -74,8 +75,10 @@ public class Sensors {
 
     public static double DEFAULT_PROJECTILE_SPEED = 300.0; // inches per second, rough guess
 
-    private DigitalChannel intakeColor;
+    private DigitalChannel breakBeamPos1, breakBeamPos2, breakBeamPos3;
+    public boolean lastValueBreakBreamPos1,lastValuebreamBeamPos2,lastValuebreamBeamPos3;
 
+    public long firstTrueBeam1,firstTrueBeam2,firstTrueBeam3;
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
@@ -99,8 +102,16 @@ public class Sensors {
         expansionHub = robot.hw.get(LynxModule.class, "Expansion Hub 2");
         expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 
-        intakeColor = robot.hw.get(DigitalChannel.class, "intakeColor");
-        intakeColor.setMode(DigitalChannel.Mode.INPUT);
+
+        breakBeamPos1 = robot.hw.get(DigitalChannel.class, "beamBrakePos1");;
+        breakBeamPos1.setMode(DigitalChannel.Mode.INPUT);
+        lastValueBreakBreamPos1 = breakBeamPos1.getState();
+        breakBeamPos2 = robot.hw.get(DigitalChannel.class, "beamBrakePos2");;
+        breakBeamPos2.setMode(DigitalChannel.Mode.INPUT);
+        lastValuebreamBeamPos2= breakBeamPos1.getState();
+        breakBeamPos3 = robot.hw.get(DigitalChannel.class, "beamBrakePos3");;
+        breakBeamPos3.setMode(DigitalChannel.Mode.INPUT);
+        lastValuebreamBeamPos3= breakBeamPos1.getState();
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
@@ -141,17 +152,40 @@ public class Sensors {
             readVoltageTime = System.currentTimeMillis();
         }
 
-        if (robot.intakeTransfer != null && robot.intakeTransfer.motor1 != null) {
-            intakeMotor1OverCurrent = robot.intakeTransfer.motor1.isOverCurrent();
-            intakeSpeed = robot.intakeTransfer.motor1.getVelocity();
+        if (robot.intakeTransfer != null && robot.intakeTransfer.intake != null) {
+            intakeMotor1OverCurrent = robot.intakeTransfer.intake.isOverCurrent();
+            intakeSpeed = robot.intakeTransfer.intake.getVelocity();
         } else {
             intakeMotor1OverCurrent = false;
         }
 
-        if (intakeColor != null) {
-            intakeSensorHigh = (intakeColor.getState());
+        if (breakBeamPos1 != null) {
+            lastValueBreakBreamPos1 = breakBeamPos1High;
+            breakBeamPos1High = !(breakBeamPos1.getState());
+            if(breakBeamPos1High && !lastValueBreakBreamPos1) {
+                firstTrueBeam1 = System.currentTimeMillis();
+            }
         } else {
-            intakeSensorHigh = false;
+            breakBeamPos1High = false;
+        }
+        if (breakBeamPos2 != null) {
+            lastValuebreamBeamPos2 = breakBeamPos2High;
+            breakBeamPos2High = !(breakBeamPos2.getState());
+            if(breakBeamPos2High && !lastValuebreamBeamPos2) {
+                firstTrueBeam2 = System.currentTimeMillis();
+            }
+        } else {
+            breakBeamPos2High = false;
+        }
+        if (breakBeamPos3 != null) {
+            lastValuebreamBeamPos3 = breakBeamPos3High;
+            breakBeamPos3High = !(breakBeamPos3.getState());
+
+            if(breakBeamPos3High && !lastValuebreamBeamPos3) {
+                firstTrueBeam3 = System.currentTimeMillis();
+            }
+        } else {
+            breakBeamPos3High = false;
         }
 
         lastUpdateTimeNs = nowNs;
@@ -360,11 +394,25 @@ public class Sensors {
         return inside;
     }
 
-    /**
-     * Returns true if the intake color digital sensor is reporting HIGH.
-     * If the sensor is not configured or unavailable, this returns false.
-     */
-    public boolean intakeSensorHigh() {
-        return intakeSensorHigh;
+   public boolean isBreakBeamPos1Low(){
+        return breakBeamPos1High;
+    }
+    public boolean isBreakBeamPos2Low(){
+          return breakBeamPos2High;
+     }
+    public boolean isBreakBeamPos3Low(){
+          return breakBeamPos3High;
+     }
+
+     public long getHowLongBeam3() {
+        return System.currentTimeMillis() - firstTrueBeam3;
+     }
+
+    public long getHowLongBeam2() {
+        return System.currentTimeMillis() - firstTrueBeam2;
+    }
+
+    public long getHowLongBeam1() {
+        return System.currentTimeMillis() - firstTrueBeam1;
     }
 }
