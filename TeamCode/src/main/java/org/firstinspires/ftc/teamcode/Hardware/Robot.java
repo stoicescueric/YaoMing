@@ -33,6 +33,9 @@ public class Robot {
     Telemetry telemetry;
     private double loopTime = 0;
     private DcMotorEx flDriveMotor = null;
+    private DcMotorEx blDriveMotor = null;
+    private DcMotorEx frDriveMotor = null;
+    private DcMotorEx brriveMotor = null;
 
     public Robot(OpMode op)
     {
@@ -48,7 +51,10 @@ public class Robot {
     private void ensureFlMotor() {
         if (flDriveMotor == null && hw != null) {
             try {
-                flDriveMotor = hw.get(DcMotorEx.class, "fl");
+                flDriveMotor = hw.get(DcMotorEx.class, "leftFront");
+                blDriveMotor = hw.get(DcMotorEx.class, "leftBack");
+                frDriveMotor = hw.get(DcMotorEx.class, "rightFront");
+                brriveMotor = hw.get(DcMotorEx.class, "rightBack");
             } catch (Exception ignored) {
             }
         }
@@ -65,6 +71,10 @@ public class Robot {
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
         double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
         TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
+
+        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
+        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
+
         loopTime = loop;
         TelemetryUtil.sendTelemetry();
 
@@ -88,13 +98,13 @@ public class Robot {
         TelemetryUtil.packet.put("Outtake State", outtake.outtakeState);
         TelemetryUtil.packet.put("Launcher State", outtake.launcher.launcherState);
 
-        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
-        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
-
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
         TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
         if (flDriveMotor != null) {
             TelemetryUtil.packet.put("FL Motor amps", flDriveMotor.getCurrent(CurrentUnit.AMPS));
+            TelemetryUtil.packet.put("BL Motor amps", blDriveMotor.getCurrent(CurrentUnit.AMPS));
+            TelemetryUtil.packet.put("BR Motor amps", brriveMotor.getCurrent(CurrentUnit.AMPS));
+            TelemetryUtil.packet.put("FR Motor amps", frDriveMotor.getCurrent(CurrentUnit.AMPS));
         }
 
         for (DcMotorEx m : hw.getAll(DcMotorEx.class)){

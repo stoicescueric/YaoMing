@@ -51,7 +51,7 @@ public class Sensors {
     public double targetYBlueClose = -69.5;
 
     public double targetXRedFar = -71;
-    public double servoPos = 0.4;
+    public static double servoPos = 0.4;
     public double targetYRedFar = 70;
     public double targetXBlueFar = -71;
     public double targetYBlueFar = -72;
