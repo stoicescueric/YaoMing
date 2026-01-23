@@ -97,6 +97,10 @@ public class Robot {
             TelemetryUtil.packet.put("FL Motor amps", flDriveMotor.getCurrent(CurrentUnit.AMPS));
         }
 
+        for (DcMotorEx m : hw.getAll(DcMotorEx.class)){
+            TelemetryUtil.packet.put(m.getDeviceName() + " amps", m.getCurrent(CurrentUnit.AMPS));
+        }
+
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());
         TelemetryUtil.packet.put("Current Heading", sensors.getHeading());

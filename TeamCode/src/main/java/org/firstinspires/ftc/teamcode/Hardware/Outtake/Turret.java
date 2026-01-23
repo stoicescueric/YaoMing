@@ -51,7 +51,7 @@ public class Turret implements Module {
         TRACKING
     }
 
-    public static double centerPose = 0.624;
+    public static double centerPose = 0.494;
     public TurretState turretState = TurretState.FIXED_ANGLE;
     Robot robot;
 

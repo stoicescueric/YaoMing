@@ -24,16 +24,16 @@ public class IntakeConstants {
 
     /*----- SERVO POSITIONS----*/
 
-    public static double capacBleg = 0.51;
+    public static double capacBleg = 0.53;
     public static double capacRecycle = 0.68;
 
     public static double blockerOpen = 0.75;
     public static double blockerClose = 0.41;
 
-    public static double powerArmLow = 0.41;
+    public static double powerArmLow = 0.43;
     public static double powerArmRecycle = 0.68;
-    public static double powerArmIntake = 0.41;
-    public static double powerArmVeryLow = 0.41;
+    public static double powerArmIntake = 0.43;
+    public static double powerArmVeryLow = 0.43;
 
     public static double preciseShotDelay = 400;
     public static double beam3StopDelay = 250;

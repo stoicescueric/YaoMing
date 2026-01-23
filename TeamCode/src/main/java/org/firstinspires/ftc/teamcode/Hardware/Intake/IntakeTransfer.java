@@ -142,6 +142,7 @@ public class IntakeTransfer implements Module {
                 if(robot.sensors.isBreakBeamPos1Low()
                         && (robot.sensors.getHowLongBeam1()) > IntakeConstants.beamAllStopDelay
                         && (robot.sensors.isBreakBeamPos2Low() && robot.sensors.getHowLongBeam2() > IntakeConstants.beamAllStopDelay)){
+                    robot.op.gamepad1.rumble(150);
                     intakeState = IntakeState.OFF;
                 }
 

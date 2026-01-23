@@ -76,9 +76,12 @@ public  class Launcher implements Module {
         idealVelocity.add(57.55, 1350);
         idealVelocity.add(59.36, 1390);
         idealVelocity.add(62.22, 1390);
+        idealVelocity.add(64.46, 1410);
         idealVelocity.add(66.33, 1370);
+        idealVelocity.add(68.60, 1410);
         idealVelocity.add(71.80, 1420);
         idealVelocity.add(75.18, 1450);
+        idealVelocity.add(77.92, 1480);
         idealVelocity.add(79.21, 1480);
         idealVelocity.add(81.50, 1515);
         idealVelocity.add(82.71, 1530);
@@ -134,10 +137,20 @@ public  class Launcher implements Module {
         hoodRegression.add(62.22, 1340, 0.20);
         hoodRegression.add(62.22, 1390, 0.24);
 
+        // Distance: 64.46
+        hoodRegression.add(64.46, 1350, 0.195);
+        hoodRegression.add(64.46, 1390, 0.22);
+        hoodRegression.add(64.46, 1410, 0.255);
+
         // Distance: 66.33
         hoodRegression.add(66.33, 1320, 0.19);
         hoodRegression.add(66.33, 1350, 0.22);
         hoodRegression.add(66.33, 1370, 0.25);
+
+        // Distance: 68.60
+        hoodRegression.add(68.60, 1360, 0.225);
+        hoodRegression.add(68.60, 1390, 0.24);
+        hoodRegression.add(68.60, 1410, 0.26);
 
         // Distance: 71.80
         hoodRegression.add(71.80, 1370, 0.20);
@@ -148,6 +161,11 @@ public  class Launcher implements Module {
         hoodRegression.add(75.18, 1410, 0.21);
         hoodRegression.add(75.18, 1430, 0.22);
         hoodRegression.add(75.18, 1450, 0.26);
+
+        // Distance: 77.92
+        hoodRegression.add(77.92, 1435, 0.23);
+        hoodRegression.add(77.92, 1460, 0.245);
+        hoodRegression.add(77.92, 1480,0.255);
 
         // Distance: 79.21
         hoodRegression.add(79.21, 1430, 0.23);

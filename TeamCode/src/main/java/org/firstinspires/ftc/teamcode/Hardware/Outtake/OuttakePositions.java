@@ -29,10 +29,10 @@ public class OuttakePositions {
     public static double kS = 0.08;
 
     /*--TURRET--*/
-    public static double MIN_TURRET_ANGLE = -3.7802;
-    public static double MAX_TURRET_ANGLE = 2.2730;
-    public static double MIN_TURRET_POSITION = 0;
-    public static double MAX_TURRET_POSITION = 1;
+    public static double MIN_TURRET_ANGLE = -2.515;
+    public static double MAX_TURRET_ANGLE = 2.572;
+    public static double MIN_TURRET_POSITION = 0.08;
+    public static double MAX_TURRET_POSITION = 0.92;
 
 
 }
