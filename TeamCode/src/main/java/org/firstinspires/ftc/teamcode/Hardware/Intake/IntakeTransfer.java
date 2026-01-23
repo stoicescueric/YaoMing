@@ -119,6 +119,9 @@ public class IntakeTransfer implements Module {
                 intake.setPower(0);
                 conveyorState = ConveyorState.OFF;
                 capacState = CapacState.BLEG;
+                if(robot.sensors.lightColor == Sensors.LightColor.BLUE) {
+                    robot.sensors.setLedColor(Sensors.LightColor.OFF);
+                }
                 break;
             case OFF_OPEN:
                 blockerState = BlockerState.OPEN;
@@ -128,6 +131,7 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case INTAKE:
+                robot.sensors.setLedColor(Sensors.LightColor.RED);
                 blockerState = BlockerState.CLOSE;
                 capacState = CapacState.BLEG;
                 powerArmState = PowerArmState.INTAKE;
@@ -142,7 +146,8 @@ public class IntakeTransfer implements Module {
                 if(robot.sensors.isBreakBeamPos1Low()
                         && (robot.sensors.getHowLongBeam1()) > IntakeConstants.beamAllStopDelay
                         && (robot.sensors.isBreakBeamPos2Low() && robot.sensors.getHowLongBeam2() > IntakeConstants.beamAllStopDelay)){
-                    robot.op.gamepad1.rumble(150);
+                    robot.op.gamepad1.rumble(250);
+                    robot.sensors.setLedColor(Sensors.LightColor.GREEN);
                     intakeState = IntakeState.OFF;
                 }
 
@@ -160,6 +165,7 @@ public class IntakeTransfer implements Module {
                 conveyorState = ConveyorState.ON;
                 sleep(250, IntakeState.TRANSFER);
                 capacState = CapacState.BLEG;
+                robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 break;
             case POWER_FOR_TIME:
                 powerArmState = PowerArmState.LOW;

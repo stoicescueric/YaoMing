@@ -109,7 +109,7 @@ public class Robot {
         TelemetryUtil.packet.put("beam 2 value",sensors.isBreakBeamPos2Low());
         TelemetryUtil.packet.put("beam 3 value",sensors.isBreakBeamPos3Low());
         TelemetryUtil.packet.put("beam 3 first update",sensors.firstTrueBeam3);
-
+        TelemetryUtil.packet.put("Sensor light",sensors.lightColor.toString());
         Canvas field = TelemetryUtil.getPacket().fieldOverlay();
         double rxIn = sensors.getX();
         double ryIn = sensors.getY();
@@ -167,5 +167,6 @@ public class Robot {
 
         TelemetryUtil.packet.put("Robot velX", sensors.getVelX());
         TelemetryUtil.packet.put("Robot velY", sensors.getVelY());
+
     }
 }
