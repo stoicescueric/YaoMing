@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Module;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Controllers.FlyWheelPID;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 import org.firstinspires.ftc.teamcode.Util.Math.MultipleRegression;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 
 @Config
 public  class Launcher implements Module {
@@ -358,6 +360,8 @@ public  class Launcher implements Module {
                 break;
         }
         tilt.setPosition(target_tilt);
+        TelemetryUtil.packet.put("shooter1  amps",motor1.getCurrent(CurrentUnit.AMPS));
+        TelemetryUtil.packet.put("shooter2 amps",motor2.getCurrent(CurrentUnit.AMPS));
     }
 
     public void increaseDecreaseTarget(double delta) {
