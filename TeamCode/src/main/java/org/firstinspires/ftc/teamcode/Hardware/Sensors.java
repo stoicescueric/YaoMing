@@ -5,6 +5,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
@@ -14,6 +15,19 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 public class Sensors {
     private Robot robot;
 
+    Servo light;
+
+    public enum LightColor {
+        OFF(0),
+        RED(0.277),
+        GREEN(0.5),
+        BLUE(0.611);
+        final double value;
+        LightColor(double value) {
+            this.value = value;
+        }
+    }
+    public LightColor lightColor = LightColor.OFF;
     Pose pose;
     double currentX,currentY,currentHeading;
 
@@ -37,6 +51,7 @@ public class Sensors {
     public double targetYBlueClose = -69.5;
 
     public double targetXRedFar = -71;
+    public double servoPos = 0.4;
     public double targetYRedFar = 70;
     public double targetXBlueFar = -71;
     public double targetYBlueFar = -72;
@@ -102,6 +117,7 @@ public class Sensors {
         expansionHub = robot.hw.get(LynxModule.class, "Expansion Hub 2");
         expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 
+        light = robot.hw.get(Servo.class,"led");
 
         breakBeamPos1 = robot.hw.get(DigitalChannel.class, "beamBrakePos1");;
         breakBeamPos1.setMode(DigitalChannel.Mode.INPUT);
@@ -147,6 +163,7 @@ public class Sensors {
             }
         }
 
+
         if(System.currentTimeMillis() - readVoltageTime > 250) {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
@@ -188,6 +205,7 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
+        light.setPosition(servoPos);
         lastUpdateTimeNs = nowNs;
     }
 
@@ -340,7 +358,9 @@ public class Sensors {
             targetY = isFar ? targetYRedFar : targetYRedClose;
         }
     }
-
+    public void setLedColor(LightColor state) {
+        lightColor = state;
+    }
     /**
      * Returns the current estimated translational velocity of the robot in the
      * field frame (units per second).
@@ -367,7 +387,7 @@ public class Sensors {
         double[] ys;
 
         if (Info.alliance == Alliance.BLUE) {
-            ys = new double[]{ -SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4 };
+             ys = new double[]{ -SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4 };
         } else {
             ys = new double[]{ SLOWZONE_Y1, SLOWZONE_Y2, SLOWZONE_Y3, SLOWZONE_Y4 };
         }

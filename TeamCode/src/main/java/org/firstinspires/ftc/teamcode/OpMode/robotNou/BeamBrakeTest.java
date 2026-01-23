@@ -11,7 +11,11 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.DigitalWrapper;
 @TeleOp(name = "Beam brake test")
 public class BeamBrakeTest extends LinearOpMode {
     public static String beamBrakeName = "beamBrakePos1";
+    public static String beamBrakeName2 = "beamBrakePos2";
+    public static String beamBrakeName3 = "beamBrakePos3";
     DigitalChannel rawBeamBrake;
+    DigitalChannel rawBeamBrake2;
+    DigitalChannel rawBeamBrake3;
 
     DigitalWrapper sensor;
     boolean currentValue = false;
@@ -20,14 +24,26 @@ public class BeamBrakeTest extends LinearOpMode {
         sensor = new DigitalWrapper(hardwareMap, beamBrakeName);
         rawBeamBrake = hardwareMap.get(DigitalChannel.class, beamBrakeName);
         rawBeamBrake.setMode(DigitalChannel.Mode.INPUT);
+
+        rawBeamBrake2 = hardwareMap.get(DigitalChannel.class, beamBrakeName2);
+        rawBeamBrake2.setMode(DigitalChannel.Mode.INPUT);
+
+        rawBeamBrake3 = hardwareMap.get(DigitalChannel.class, beamBrakeName3);
+        rawBeamBrake3.setMode(DigitalChannel.Mode.INPUT);
         waitForStart();
         while (opModeIsActive()){
             currentValue = sensor.getValue();
             telemetry.addData("Beam brake Wrapper state", currentValue);
             telemetry.addData("Beam brake Wrapper state raw", sensor.getRaw());
 
-            telemetry.addData("Beam brake raw state", rawBeamBrake.getState());
-            telemetry.addData("Beam brake raw state raw", !rawBeamBrake.getState());
+            telemetry.addData("Beam brake  raw state", rawBeamBrake.getState());
+            telemetry.addData("Beam brake raw state raw", rawBeamBrake.getState());
+
+            telemetry.addData("Beam brake 2 raw state", rawBeamBrake2.getState());
+            telemetry.addData("Beam brake 2 raw state raw", rawBeamBrake2.getState());
+
+            telemetry.addData("Beam brake 3 raw state", rawBeamBrake3.getState());
+            telemetry.addData("Beam brake 3 raw state raw", rawBeamBrake3.getState());
 
             telemetry.update();
         }
