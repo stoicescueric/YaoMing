@@ -70,25 +70,24 @@ public  class Launcher implements Module {
     public void addData() {
 
         // --- Ideal Velocity Data (unified close + far) ---
-        idealVelocity.add(41.11, 1360);
-        idealVelocity.add(43.46, 1380);
-        idealVelocity.add(49.46, 1430);
-        idealVelocity.add(51.27, 1440);
-        idealVelocity.add(54.23, 1460);
-        idealVelocity.add(57.55, 1480);
-        idealVelocity.add(59.36, 1500);
-        idealVelocity.add(62.22, 1520);
-        idealVelocity.add(66.33, 1575);
-        idealVelocity.add(71.80, 1590);
-        idealVelocity.add(75.80, 1630);
-        idealVelocity.add(79.80, 1660);
-        idealVelocity.add(82.71, 1690);
-        idealVelocity.add(85.16, 1710);
-        idealVelocity.add(87.22, 1720);
-        idealVelocity.add(91.14, 1750);
-        idealVelocity.add(94.28, 1760);
-        idealVelocity.add(98.91, 1760);
-        idealVelocity.add(100.91, 1760);
+        idealVelocity.add(49.46, 1330);
+        idealVelocity.add(51.27, 1330);
+        idealVelocity.add(54.23, 1350);
+        idealVelocity.add(57.55, 1350);
+        idealVelocity.add(59.36, 1390);
+        idealVelocity.add(62.22, 1390);
+        idealVelocity.add(66.33, 1370);
+        idealVelocity.add(71.80, 1420);
+        idealVelocity.add(75.18, 1450);
+        idealVelocity.add(79.21, 1480);
+        idealVelocity.add(81.50, 1515);
+        idealVelocity.add(82.71, 1530);
+        idealVelocity.add(85.16, 1535);
+        idealVelocity.add(87.22, 1575);
+        idealVelocity.add(91.14, 1620);
+        idealVelocity.add(94.28, 1660);
+        idealVelocity.add(98.91, 1710);
+        idealVelocity.add(100.91, 1730);
 
         idealVelocity.add(121.84, 1865);
         idealVelocity.add(125.26, 1890);
@@ -105,100 +104,96 @@ public  class Launcher implements Module {
 
         // --- Hood Regression Data (close zone) ---
 
-        // Distance: 41.11
-        hoodRegression.add(41.11, 1310, 0.00);
-        hoodRegression.add(41.11, 1330, 0.00);
-        hoodRegression.add(41.11, 1360, 0.00);
-
-        // Distance: 43.46
-        hoodRegression.add(43.46, 1330, 0.00);
-        hoodRegression.add(43.46, 1365, 0.00);
-        hoodRegression.add(43.46, 1380, 0.00);
-
         // Distance: 49.46
-        hoodRegression.add(49.46, 1370, 0.02);
-        hoodRegression.add(49.46, 1400, 0.04);
-        hoodRegression.add(49.46, 1430, 0.05);
+        hoodRegression.add(41.46, 1270, 0.05);
+        hoodRegression.add(41.46, 1290, 0.06);
+        hoodRegression.add(41.46, 1330, 0.09);
 
         // Distance: 51.27
-        hoodRegression.add(51.27, 1390, 0.06);
-        hoodRegression.add(51.27, 1420, 0.07);
-        hoodRegression.add(51.27, 1440, 0.10);
+        hoodRegression.add(51.27, 1280, 0.07);
+        hoodRegression.add(51.27, 1310, 0.08);
+        hoodRegression.add(51.27, 1330, 0.10);
 
         // Distance: 54.23
-        hoodRegression.add(54.23, 1420, 0.10);
-        hoodRegression.add(54.23, 1440, 0.11);
-        hoodRegression.add(54.23, 1460, 0.11);
+        hoodRegression.add(54.23, 1310, 0.11);
+        hoodRegression.add(54.23, 1330, 0.12);
+        hoodRegression.add(54.23, 1350, 0.16);
 
         // Distance: 57.55
-        hoodRegression.add(57.55, 1440, 0.10);
-        hoodRegression.add(57.55, 1460, 0.11);
-        hoodRegression.add(57.55, 1480, 0.16);
+        hoodRegression.add(57.55, 1290, 0.16);
+        hoodRegression.add(57.55, 1320, 0.17);
+        hoodRegression.add(57.55, 1350, 0.20);
 
         // Distance: 59.36
-        hoodRegression.add(59.36, 1455, 0.16);
-        hoodRegression.add(59.36, 1480, 0.17);
-        hoodRegression.add(59.36, 1500, 0.18);
+        hoodRegression.add(59.36, 1340, 0.17);
+        hoodRegression.add(59.36, 1365, 0.15);
+        hoodRegression.add(59.36, 1390, 0.1875); //P.s schema ca sa o suga ericoi cioroi!!!
 
         // Distance: 62.22
-        hoodRegression.add(62.22, 1460, 0.15);
-        hoodRegression.add(62.22, 1490, 0.17);
-        hoodRegression.add(62.22, 1520, 0.18);
+        hoodRegression.add(62.22, 1320, 0.18);
+        hoodRegression.add(62.22, 1340, 0.20);
+        hoodRegression.add(62.22, 1390, 0.24);
 
         // Distance: 66.33
-        hoodRegression.add(66.33, 1540, 0.19);
-        hoodRegression.add(66.33, 1560, 0.20);
-        hoodRegression.add(66.33, 1575, 0.20);
+        hoodRegression.add(66.33, 1320, 0.19);
+        hoodRegression.add(66.33, 1350, 0.22);
+        hoodRegression.add(66.33, 1370, 0.25);
 
         // Distance: 71.80
-        hoodRegression.add(71.80, 1560, 0.22);
-        hoodRegression.add(71.80, 1580, 0.23);
-        hoodRegression.add(71.80, 1590, 0.25);
+        hoodRegression.add(71.80, 1370, 0.20);
+        hoodRegression.add(71.80, 1400, 0.20);
+        hoodRegression.add(71.80, 1420, 0.22); //420 hehehehhehehehehhehehehehhe nice
 
         // Distance: 75.18
-        hoodRegression.add(75.80, 1590, 0.23);
-        hoodRegression.add(75.80, 1620, 0.28);
-        hoodRegression.add(75.80, 1630, 0.31);
+        hoodRegression.add(75.18, 1410, 0.21);
+        hoodRegression.add(75.18, 1430, 0.22);
+        hoodRegression.add(75.18, 1450, 0.26);
 
         // Distance: 79.21
-        hoodRegression.add(79.80, 1610, 0.29);
-        hoodRegression.add(79.80, 1630, 0.30);
-        hoodRegression.add(79.80, 1660, 0.32);
+        hoodRegression.add(79.21, 1430, 0.23);
+        hoodRegression.add(79.21, 1455, 0.26);
+        hoodRegression.add(79.21, 1480, 0.29);
+
+        // Distance: 81.50
+        hoodRegression.add(81.50, 1450, 0.265);
+        hoodRegression.add(81.50, 1480, 0.27);
+        hoodRegression.add(81.50, 1515, 0.28);
 
         // Distance: 82.71
-        hoodRegression.add(82.71, 1640, 0.29);
-        hoodRegression.add(82.71, 1660, 0.31);
-        hoodRegression.add(82.71, 1690, 0.31);
+        hoodRegression.add(82.71, 1470, 0.28);
+        hoodRegression.add(82.71, 1490, 0.32);
+        hoodRegression.add(82.71, 1530, 0.38); //diferenta este din pid nu din valoare
 
         // Distance: 85.16
-        hoodRegression.add(85.16, 1660, 0.29);
-        hoodRegression.add(85.16, 1680, 0.32);
-        hoodRegression.add(85.16, 1710, 0.34);
+        hoodRegression.add(85.16, 1490, 0.34);
+        hoodRegression.add(85.16, 1510, 0.37);
+        hoodRegression.add(85.16, 1535, 0.39);
 
         // Distance: 87.22
-        hoodRegression.add(87.22, 1680, 0.30);
-        hoodRegression.add(87.22, 1700, 0.33);
-        hoodRegression.add(87.22, 1720, 0.34);
+        hoodRegression.add(87.22, 1510, 0.36);
+        hoodRegression.add(87.22, 1540, 0.375);
+        hoodRegression.add(87.22, 1575, 0.395);
 
         // Distance: 91.14
-        hoodRegression.add(91.14, 1700, 0.31);
-        hoodRegression.add(91.14, 1720, 0.32);
-        hoodRegression.add(91.14, 1750, 0.33);
+        hoodRegression.add(91.14, 1555, 0.365);
+        hoodRegression.add(91.14, 1590, 0.355);
+        hoodRegression.add(91.14, 1620, 0.39);
 
         // Distance: 94.28
-        hoodRegression.add(94.28, 1710, 0.32);
-        hoodRegression.add(94.28, 1735, 0.34);
-        hoodRegression.add(94.28, 1760, 0.37);
+        hoodRegression.add(94.28, 1610, 0.37);
+        hoodRegression.add(94.28, 1630, 0.42);
+        hoodRegression.add(94.28, 1660, 0.46);
 
         // Distance: 98.91
-        hoodRegression.add(98.91, 1710, 0.32);
-        hoodRegression.add(98.91, 1735, 0.34);
-        hoodRegression.add(98.91, 1760, 0.37);
+        hoodRegression.add(98.91, 1630, 0.39);
+        hoodRegression.add(98.91, 1670, 0.45);
+        hoodRegression.add(98.91, 1710, 0.48);
 
         // Distance: 100.91
-        hoodRegression.add(100.91, 1710, 0.32);
-        hoodRegression.add(100.91, 1735, 0.34);
-        hoodRegression.add(100.91, 1760, 0.37);
+        hoodRegression.add(100.91, 1680, 0.45);
+        hoodRegression.add(100.91, 1710, 0.48);
+        hoodRegression.add(100.91, 1730, 0.495);
+
 
         // --- Hood Regression Data (far zone) ---
         // Distance: 121.84
