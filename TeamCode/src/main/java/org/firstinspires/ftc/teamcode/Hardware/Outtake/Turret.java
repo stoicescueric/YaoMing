@@ -27,14 +27,14 @@ public class Turret implements Module {
     public static double BOARD1_NX = 0.17;
     public static double BOARD1_NY = 0.0;
     public static double BOARD2_NX = 0.0;
-    public static double BOARD2_NY = 0.15;
+    public static double BOARD2_NY = 0.14;
 
     public double BOARD1_NXrl;
     public double BOARD1_NYrl;
     public double BOARD2_NXrl;
     public double BOARD2_NYrl;
 
-    public static double BACKBOARD_AIM_GAIN = 0.08;
+    public static double BACKBOARD_AIM_GAIN = 0.09;
     public static double MAX_BACKBOARD_AIM_OFFSET = Math.toRadians(10.0);
 
 
