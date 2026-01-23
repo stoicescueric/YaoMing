@@ -303,7 +303,7 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 break;
             case SHOOT_STARTED:
-                robot.outtake.turret.backlashYok();
+                //robot.outtake.turret.backlashYok();
                 if(auto_aim){
                     try {
                         target = idealVelocity.get(targetDistance);
