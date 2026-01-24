@@ -19,7 +19,7 @@ public class Sensors {
 
     public enum LightColor {
         OFF(0),
-        RED(0.277),
+        RED(0.3),
         GREEN(0.5),
         BLUE(0.611);
         final double value;
@@ -205,7 +205,7 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
-        light.setPosition(servoPos);
+        light.setPosition(lightColor.value);
         lastUpdateTimeNs = nowNs;
     }
 

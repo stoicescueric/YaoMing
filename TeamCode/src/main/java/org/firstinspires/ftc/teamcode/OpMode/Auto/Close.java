@@ -54,7 +54,7 @@ public class Close extends OpMode {
         robot.drive.setPose(constants.startPose);
 
 
-        robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
+        robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
         robot.outtake.launcher.autoAimOn(true);
 
         gg = new GamePadController(gamepad1);
@@ -116,6 +116,7 @@ public class Close extends OpMode {
             case IDLE:
                 break;
             case GO_TO_SCORE_FROM_START:
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 robot.drive.followPath(constants.scorePreload,true);
                 robot.outtake.turret.setPosFixed(constants.getTurretPosition());
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
@@ -156,6 +157,7 @@ public class Close extends OpMode {
                 break;
             case GO_TO_SCORE1:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
                 robot.drive.followPath(constants.scorePickup1);
                 setPathState(AutoStates.WAIT_SCORE_1);
                 break;
@@ -170,7 +172,7 @@ public class Close extends OpMode {
                 }
                 break;
             case GO_PICKUP2:
-                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
                 robot.drive.followPath(constants.grabPickup2, constants.getMaxPower(), true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 setPathState(AutoStates.GO_TO_SCORE2);
@@ -192,7 +194,7 @@ public class Close extends OpMode {
                 }
                 break;
             case GO_PICKUP3:
-                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
                 robot.drive.followPath(constants.grabPickup3, constants.getMaxPower(), true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 setPathState(AutoStates.GO_TO_SCORE3);
@@ -209,13 +211,13 @@ public class Close extends OpMode {
                 sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK);
                 break;
             case GO_TO_PARK:
-                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
                 robot.drive.followPath(constants.goToPark);
                 setPathState(AutoStates.PARK);
                 break;
             case PARK:
                 if(robot.drive.isBusy()) break;
-                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
 
                 requestOpModeStop();
                 break;

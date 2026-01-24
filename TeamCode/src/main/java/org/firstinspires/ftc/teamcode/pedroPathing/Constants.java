@@ -16,9 +16,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(12)
-            .forwardZeroPowerAcceleration(-27.50)
-            .lateralZeroPowerAcceleration(-56.21)
+            .mass(15.45)
+            .forwardZeroPowerAcceleration((-29.20-30.72-31.99)/3)
+            .lateralZeroPowerAcceleration((-60.06-54.97-55.97)/3)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.18, 0, 0.02, 0.008))
             .headingPIDFCoefficients(new PIDFCoefficients(1.7, 0, 0.1, 0.02))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.01, 0, 0.0001,0, 0.03))
@@ -45,8 +45,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(78.39)
-            .yVelocity(62.91);
+            .xVelocity(64.11)
+            .yVelocity((51.63+52.08+50.1)/3);
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-3.248031)
             .strafePodX(4.1181102)

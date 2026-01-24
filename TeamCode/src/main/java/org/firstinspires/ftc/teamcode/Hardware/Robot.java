@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 import org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
@@ -120,6 +121,7 @@ public class Robot {
         TelemetryUtil.packet.put("beam 3 value",sensors.isBreakBeamPos3Low());
         TelemetryUtil.packet.put("beam 3 first update",sensors.firstTrueBeam3);
         TelemetryUtil.packet.put("Sensor light",sensors.lightColor.toString());
+        TelemetryUtil.packet.put("Hood Target", outtake.launcher.getHoodPosition());
         Canvas field = TelemetryUtil.getPacket().fieldOverlay();
         double rxIn = sensors.getX();
         double ryIn = sensors.getY();

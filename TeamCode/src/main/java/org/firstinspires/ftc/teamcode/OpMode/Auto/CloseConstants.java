@@ -17,34 +17,34 @@ import org.firstinspires.ftc.teamcode.Util.Utils;
 public class CloseConstants {
 
     //DEFAULT VALUES FOR RED
-    public static double shootingTime = 2350;
+    public static double shootingTime = 1350;
     public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
-    public static double failSafeDtTime = 2500;
+    public static double failSafeDtTime = 3500;
     public static double hoodPosition = 0.615;
     public static double launcherVelocity = 1000;
-    public static double startX = -55, startY = 47, headingStartRed = Math.toRadians(128);
+    public static double startX = -55.99, startY = 47.32, headingStartRed = Math.toRadians(128);
     public Pose startPose;
     public static double shootingX = -14, shootingY = 12, shootingHeading = Math.toRadians(90);
     public Pose scorePose;
 
-    public static double pickUp1X = -11.3, pickUp1Y = 55, pickUp1Heading = Math.toRadians(90);
+    public static double pickUp1X = -11.3, pickUp1Y = 50, pickUp1Heading = Math.toRadians(90);
     public Pose pickUpPose;
-    public static double max_power_pickUp = 0.8;
+    public static double max_power_pickUp = 0.85;
     public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
-    public static double pickUp2X = 14.5, pickUp2Y = 61.5, pickUp2Heading = Math.toRadians(90);
+    public static double pickUp2X = 14.5, pickUp2Y = 57, pickUp2Heading = Math.toRadians(90);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 
-    public static double pickUp3X = 38, pickUp3Y = 61.5, pickUp3Heading = Math.toRadians(90);
+    public static double pickUp3X = 38, pickUp3Y = 57, pickUp3Heading = Math.toRadians(90);
     public Pose pickUpPose3;
     public static double pickUp3XIntermediary = 44, pickUp3YIntermediary = -5, pickUp3HeadingIntermediary = Math.toRadians(90);
     public Pose pickUpPose3Intermediary;
 
     //clear
-    public static double clearX = 0.5, clearY = 55.5, clearHeading = Math.toRadians(90);
+    public static double clearX = 0.5, clearY = 52, clearHeading = Math.toRadians(90);
     public Pose clear;
     public static double clearXIntermediary = 0.5, clearYIntermediary = 40, clearHeadingIntermediary = Math.toRadians(90);
     public Pose clearIntermediary;
