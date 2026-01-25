@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import java.util.List;
 
 @Config
-@TeleOp(name = "Suge o dondera")
+@TeleOp(name = "Suge ou dondera")
 public class RapidIntakeTestSuge extends LinearOpMode {
 
     DcMotorEx leftFront,rightFront,leftBack,rightBack;

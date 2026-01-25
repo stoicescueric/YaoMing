@@ -45,7 +45,7 @@ public  class Launcher implements Module {
     Sensors sensors;
     public double target = 0;
     public static boolean auto_aim = true;
-    public static double idleAlpha = 0.5;
+    public static double idleAlpha = 0;
     public double currentVel = 0;
     public static double recycleVelocity = 500;
     public static double recycleTilt = 1;

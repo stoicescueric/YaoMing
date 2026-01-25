@@ -26,6 +26,7 @@ public class IntakeConstants {
 
     public static double capacBleg = 0.53;
     public static double capacRecycle = 0.68;
+    public static double capacReleaseTransfer = 350;
 
     public static double blockerOpen = 0.75;
     public static double blockerClose = 0.41;

@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 public class Outtake {
     Robot robot;
     public Launcher launcher;
+    ElapsedTime shooterConsistency;
     public Turret turret;
 
     public boolean shootingWhileMoving = false;

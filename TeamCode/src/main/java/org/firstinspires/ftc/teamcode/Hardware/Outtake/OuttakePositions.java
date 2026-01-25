@@ -34,5 +34,7 @@ public class OuttakePositions {
     public static double MIN_TURRET_POSITION = 0.08;
     public static double MAX_TURRET_POSITION = 0.92;
 
+    public static double launcherThreeshold = 100;
+
 
 }

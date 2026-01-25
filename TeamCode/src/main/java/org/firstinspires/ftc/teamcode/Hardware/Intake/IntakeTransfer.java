@@ -163,7 +163,7 @@ public class IntakeTransfer implements Module {
                 powerArmState = PowerArmState.LOW;
                 intake.setPower(IntakeConstants.transferPowerIntake);
                 conveyorState = ConveyorState.ON;
-                sleep(250, IntakeState.TRANSFER);
+                sleep(IntakeConstants.capacReleaseTransfer, IntakeState.TRANSFER);
                 capacState = CapacState.BLEG;
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 break;
