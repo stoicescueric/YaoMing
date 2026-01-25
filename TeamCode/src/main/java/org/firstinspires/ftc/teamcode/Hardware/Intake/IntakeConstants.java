@@ -24,7 +24,7 @@ public class IntakeConstants {
 
     /*----- SERVO POSITIONS----*/
 
-    public static double capacBleg = 0.53;
+    public static double capacBleg = 0.39;
     public static double capacRecycle = 0.68;
     public static double capacReleaseTransfer = 350;
 

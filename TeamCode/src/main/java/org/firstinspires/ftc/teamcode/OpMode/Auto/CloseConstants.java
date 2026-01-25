@@ -28,23 +28,23 @@ public class CloseConstants {
     public static double shootingX = -14, shootingY = 12, shootingHeading = Math.toRadians(90);
     public Pose scorePose;
 
-    public static double pickUp1X = -11.3, pickUp1Y = 50, pickUp1Heading = Math.toRadians(90);
+    public static double pickUp1X = -11.3, pickUp1Y = 52, pickUp1Heading = Math.toRadians(90);
     public Pose pickUpPose;
     public static double max_power_pickUp = 0.85;
     public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
-    public static double pickUp2X = 14.5, pickUp2Y = 57, pickUp2Heading = Math.toRadians(90);
+    public static double pickUp2X = 14.5, pickUp2Y = 59, pickUp2Heading = Math.toRadians(90);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 
-    public static double pickUp3X = 38, pickUp3Y = 57, pickUp3Heading = Math.toRadians(90);
+    public static double pickUp3X = 38, pickUp3Y = 59, pickUp3Heading = Math.toRadians(90);
     public Pose pickUpPose3;
     public static double pickUp3XIntermediary = 44, pickUp3YIntermediary = -5, pickUp3HeadingIntermediary = Math.toRadians(90);
     public Pose pickUpPose3Intermediary;
 
     //clear
-    public static double clearX = 0.5, clearY = 52, clearHeading = Math.toRadians(90);
+    public static double clearX = 0.5, clearY = 54, clearHeading = Math.toRadians(90);
     public Pose clear;
     public static double clearXIntermediary = 0.5, clearYIntermediary = 40, clearHeadingIntermediary = Math.toRadians(90);
     public Pose clearIntermediary;

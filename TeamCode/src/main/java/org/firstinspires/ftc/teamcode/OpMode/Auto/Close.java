@@ -158,7 +158,7 @@ public class Close extends OpMode {
             case GO_TO_SCORE1:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
-                robot.drive.followPath(constants.scorePickup1);
+                robot.drive.followPath(constants.scorePickup1, true);
                 setPathState(AutoStates.WAIT_SCORE_1);
                 break;
             case WAIT_SCORE_1:
@@ -179,7 +179,7 @@ public class Close extends OpMode {
                 break;
             case GO_TO_SCORE2:
                 if (robot.drive.isBusy() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                robot.drive.followPath(constants.scorePickup2,false);
+                robot.drive.followPath(constants.scorePickup2,true);
                 setPathState(AutoStates.WAIT_SCORE2);
                 break;
             case WAIT_SCORE2:
@@ -212,7 +212,7 @@ public class Close extends OpMode {
                 break;
             case GO_TO_PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
-                robot.drive.followPath(constants.goToPark);
+                robot.drive.followPath(constants.goToPark, true);
                 setPathState(AutoStates.PARK);
                 break;
             case PARK:
