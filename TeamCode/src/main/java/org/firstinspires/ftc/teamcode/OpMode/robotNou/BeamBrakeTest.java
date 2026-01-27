@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.DigitalWrapper;
 
 @Config
-@TeleOp(name = "Beam brake test")
+@TeleOp(name = "Beam brake test", group = "Pedro Pathing")
 public class BeamBrakeTest extends LinearOpMode {
     public static String beamBrakeName = "beamBrakePos1";
     public static String beamBrakeName2 = "beamBrakePos2";

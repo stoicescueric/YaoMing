@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @Config
-@TeleOp(name = "TurretTest testNou")
+@TeleOp(name = "TurretTest testNou", group = "Pedro Pathing")
 public class TurretTest extends LinearOpMode {
 
     public static double servoLeft = 0.5;
