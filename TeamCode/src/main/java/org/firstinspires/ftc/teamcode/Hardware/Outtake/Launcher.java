@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 
 import static org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions.FAR_ZONE_X_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions.idlePower;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.InterpLUT;
@@ -297,8 +298,14 @@ public  class Launcher implements Module {
 //                power = pid.update(target*idleAlpha, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
 //                motor1.setPower(power);
 //                motor2.setPower(power);
-                motor1.setPower(0);
-                motor2.setPower(0);
+                if(currentVel > OuttakePositions.idleVelocity) {
+                    motor1.setPower(0);
+                    motor2.setPower(0);
+                }else {
+                    motor1.setPower(idlePower);
+                    motor1.setPower(idlePower);
+                }
+
                 break;
             case SHOOT_STARTED:
                 //robot.outtake.turret.backlashYok();

@@ -12,6 +12,8 @@ public class OuttakePositions {
     public static double errorVelThreeshold = 15;
 
     public static double farLaunchVelocity = 2100;
+    public static double idleVelocity = 2100;
+    public static double idlePower = 0.4;
     public static double closeLaunchVelocity = 1750;
 
     public static double defaultVel = 1470;
