@@ -229,7 +229,7 @@ public class TeleOP extends LinearOpMode
 
         if(state == Outtake.OuttakeState.READY_FLYWHEEL && inZone && isStill){
             if (isLongShot) {
-                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
             } else {
                 robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
             }
