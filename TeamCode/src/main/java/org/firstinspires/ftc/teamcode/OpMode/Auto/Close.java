@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
-@Autonomous(name = "Close")
 public class Close extends OpMode {
     Robot robot;
     Timer pathTimer;
@@ -112,6 +112,9 @@ public class Close extends OpMode {
 
     @Override
     public void loop() {
+        if (robot.sensors.areAllBeamsLowForTime(250)) {
+            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+        }
         switch (autoStates) {
             case IDLE:
                 break;

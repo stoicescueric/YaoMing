@@ -435,4 +435,8 @@ public class Sensors {
     public long getHowLongBeam1() {
         return System.currentTimeMillis() - firstTrueBeam1;
     }
+
+    public boolean areAllBeamsLowForTime(long msThreshold) {
+        return getHowLongBeam1() < msThreshold && getHowLongBeam2() < msThreshold && getHowLongBeam3() < msThreshold;
+    }
 }

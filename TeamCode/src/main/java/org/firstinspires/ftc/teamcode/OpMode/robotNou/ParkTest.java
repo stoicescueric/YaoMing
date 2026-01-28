@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import java.util.List;
 
 @Config
-@TeleOp(name = "Suge o dondera")
+@TeleOp(name = "Park Test", group = "Pedro Pathing")
 public abstract class ParkTest extends LinearOpMode {
 
     DcMotorEx leftFront,rightFront,leftBack,rightBack;

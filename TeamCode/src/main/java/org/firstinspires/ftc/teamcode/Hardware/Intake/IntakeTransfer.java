@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Module;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
@@ -43,7 +44,8 @@ public class IntakeTransfer implements Module {
 
     public enum BlockerState {
         CLOSE,
-        OPEN
+        OPEN,
+        BLOCKER_ACTUALLY_OPEN
     }
 
     public enum PowerArmState {
@@ -82,6 +84,8 @@ public class IntakeTransfer implements Module {
     double sleeptime = 0;
     public double intakeSensorCounter = 0;
     IntakeState nextState = IntakeState.OFF;
+
+    private long blockerOpenTriggeredTime = 0;
 
     BinaryDeque deq = new BinaryDeque();
 
@@ -198,9 +202,18 @@ public class IntakeTransfer implements Module {
 
         switch (blockerState) {
             case OPEN:
+                if (blockerOpenTriggeredTime == 0) {
+                    blockerOpenTriggeredTime = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - blockerOpenTriggeredTime >= OuttakePositions.blockerOpenDelayMs) {
+                    blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                }
+                break;
+            case BLOCKER_ACTUALLY_OPEN:
                 blocker.setPosition(IntakeConstants.blockerOpen);
                 break;
             case CLOSE:
+                blockerOpenTriggeredTime = 0;
                 blocker.setPosition(IntakeConstants.blockerClose);
                 break;
         }

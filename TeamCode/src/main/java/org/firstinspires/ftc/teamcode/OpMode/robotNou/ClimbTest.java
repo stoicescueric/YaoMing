@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
 @Config
-@TeleOp(name = "Climb Test", group = "robotNou")
+@TeleOp(name = "Climb Test", group = "Pedro Pathing")
 public class ClimbTest extends LinearOpMode {
     CRServoImplEx left1,right,right2,left;
     public static double climbPower = 1;

@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 
 
 @Config
-
 public class TeleOP extends LinearOpMode
 {
     public static boolean turretTracking = true;
@@ -39,7 +38,7 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(13.5, 45, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(63.17, -61.73, -Math.PI/2);
+    Pose resetPoseRed = new Pose(62.03, -61.92, -Math.PI/2);
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
     Pose resetCenter = new Pose(0, 0, Math.PI/2);
 
@@ -193,12 +192,13 @@ public class TeleOP extends LinearOpMode
 
         boolean isLongShot = robot.sensors.shootingLong();
 
-        if (gg.aOnce() || gg.leftBumperOnce() && robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE) {
+        if (gg.aOnce() || gg.leftBumperOnce() ) { //&& robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE
+            robot.intakeTransfer.intakeState = IntakeTransfer.IntakeState.OFF;
             if (state == Outtake.OuttakeState.IDLE) {
                 if (inZone && isStill) {
                     // Idle and in zone: shoot immediately
                     if (isLongShot) {
-                        robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     } else {
                         robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     }
@@ -211,7 +211,7 @@ public class TeleOP extends LinearOpMode
                 if (inZone && isStill) {
                     // Spinning up/in ready state and in zone: shoot
                     if (isLongShot) {
-                        robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     } else {
                         robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     }

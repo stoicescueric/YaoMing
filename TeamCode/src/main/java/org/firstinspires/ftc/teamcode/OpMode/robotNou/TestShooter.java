@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 @Config
-@TeleOp(name = "Shooter testNou")
+@TeleOp(name = "Shooter testNou", group = "Pedro Pathing")
 public class TestShooter extends LinearOpMode {
 
     public static double shooterPower1 = 1;
