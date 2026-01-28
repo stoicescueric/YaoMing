@@ -37,8 +37,8 @@ public class IntakeConstants {
     public static double powerArmVeryLow = 0.43;
 
     public static double preciseShotDelay = 400;
-    public static double beam3StopDelay = 250;
-    public static double beamAllStopDelay = 150;
+    public static double beam3StopDelay = 300;
+    public static double beamAllStopDelay = 250;
 
     /*----- SENSOR CONSTANTS----*/
     public static double intakeSensorThreshold = 3;

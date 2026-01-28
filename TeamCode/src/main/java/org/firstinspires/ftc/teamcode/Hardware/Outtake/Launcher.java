@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 
 import static org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions.FAR_ZONE_X_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions.idlePower;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.util.InterpLUT;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -37,6 +39,7 @@ public  class Launcher implements Module {
         SHOOT_STARTED,
         IDLE,
         LAUNCHING,
+        GO_TO_VEL_HOOD,
         READY_FLYWHEEL,
         RECYCLE
     }
@@ -69,6 +72,17 @@ public  class Launcher implements Module {
         this.sensors = sensors;
     }
 
+
+    public void goToSpecificValues(double vel,double hood) {
+        target = vel;
+        target_tilt = hood;
+        launcherState = LauncherState.GO_TO_VEL_HOOD;
+    }
+    public void goToSpecificValues(Pose pose) {
+        target = idealVelocity.get(sensors.getDistanceFromPose(pose));
+        target_tilt = hoodRegression.getHoodAngle(sensors.getDistanceFromPose(pose),target);
+        launcherState = LauncherState.GO_TO_VEL_HOOD;
+    }
     public void addData() {
 
         // --- Ideal Velocity Data (unified close + far) ---
@@ -94,12 +108,14 @@ public  class Launcher implements Module {
         idealVelocity.add(98.91, 1710);
         idealVelocity.add(100.91, 1730);
 
-        idealVelocity.add(136.00, 2090);
-        idealVelocity.add(137.04, 1880);
-//        idealVelocity.add(137.59, 1910);
-//        idealVelocity.add(141.04, 1950);
-//        idealVelocity.add(144.30, 1985);
-//        idealVelocity.add(146.96, 1995);
+        idealVelocity.add(135.61, 1900);
+        idealVelocity.add(136.00, 1900);
+        idealVelocity.add(137.04, 1900);
+
+        idealVelocity.add(140.30, 1910);
+        idealVelocity.add(142.96, 1910);
+        idealVelocity.add(145.44, 1920);
+        idealVelocity.add(147.13, 1920);
 
 
 
@@ -213,38 +229,48 @@ public  class Launcher implements Module {
 
         // --- Hood Regression Data (far zone) ---
 
+        // Distance: 135.61
+        hoodRegression.add(135.61, 1850, 0.45);
+        hoodRegression.add(135.61, 1880, 0.46);
+        hoodRegression.add(135.61, 1910, 0.48);
+
         // Distance: 136.00
-        hoodRegression.add(136.00, 1850, 0.51);
-        hoodRegression.add(136.00, 1910, 0.54);
-        hoodRegression.add(136.00, 1970, 0.58);
-        hoodRegression.add(136.00, 2030, 0.62);
-        hoodRegression.add(136.00, 2090, 0.64);
+        hoodRegression.add(136.00, 1850, 0.45);
+        hoodRegression.add(136.00, 1880, 0.47);
+        hoodRegression.add(136.00, 1910, 0.50);
 
         // Distance: 137.04
-        hoodRegression.add(137.04, 1850, 0.51);
-        hoodRegression.add(137.04, 1910, 0.54);
-        hoodRegression.add(137.04, 1970, 0.58);
-        hoodRegression.add(137.04, 2030, 0.62);
-        hoodRegression.add(137.04, 2090, 0.64);
+        hoodRegression.add(137.04, 1850, 0.45);
+        hoodRegression.add(137.04, 1880, 0.46);
+        hoodRegression.add(137.04, 1910, 0.56);
+
+        //TODO: ADD POSITION
+
         // Distance: 140.30
-//        hoodRegression.add(140.30, 0, 0);
-//        hoodRegression.add(140.30, 0, 0);
-//        hoodRegression.add(140.30, 0, 0);
-//
-//        // Distance: 142.96
-//        hoodRegression.add(142.96, 0, 0);
-//        hoodRegression.add(142.96, 0, 0);
-//        hoodRegression.add(142.96, 0, 0);
-//
-//        // Distance: 145.44
-//        hoodRegression.add(145.44, 0, 0);
-//        hoodRegression.add(145.44, 0, 0);
-//        hoodRegression.add(145.44, 0, 0);
-//
-//        // Distance: 147.13
-//        hoodRegression.add(147.13, 0, 0);
-//        hoodRegression.add(147.13, 0, 0);
-//        hoodRegression.add(147.13, 0, 0);
+        hoodRegression.add(140.30, 1860, 0.45);
+        hoodRegression.add(140.30, 1890, 0.46); //previously 190 and 0.47
+        hoodRegression.add(140.30, 1930, 0.47); //previously 1920 and 0.46
+
+        // Distance: 142.96
+        hoodRegression.add(142.96, 1860, 0.40);
+        hoodRegression.add(142.96, 1890, 0.43);
+        hoodRegression.add(142.96, 1920, 0.46);
+
+        //TODO: ADD POSITION
+
+        // Distance: 145.44
+        hoodRegression.add(145.44, 1870, 0.40);
+        hoodRegression.add(145.44, 1900, 0.40);
+        hoodRegression.add(145.44, 1930, 0.42); //was previously 0.41 to test
+
+        //TODO: ADD POSITION
+
+        // Distance: 147.13
+        hoodRegression.add(147.13, 1870, 0.4);
+        hoodRegression.add(147.13, 1900, 0.41);
+        hoodRegression.add(147.13, 1930, 0.42);
+
+
 
         idealVelocity.createLUT();
         hoodRegression.create();
@@ -279,9 +305,17 @@ public  class Launcher implements Module {
                 robot.outtake.turret.backlashEvet();
                 break;
             case IDLE:
-                power = pid.update(target*idleAlpha, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
-                motor1.setPower(power);
-                motor2.setPower(power);
+//                power = pid.update(target*idleAlpha, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+//                motor1.setPower(power);
+//                motor2.setPower(power);
+                if(currentVel > OuttakePositions.idleVelocity) {
+                    motor1.setPower(0);
+                    motor2.setPower(0);
+                }else {
+                    motor1.setPower(idlePower);
+                    motor1.setPower(idlePower);
+                }
+
                 break;
             case SHOOT_STARTED:
                 //robot.outtake.turret.backlashYok();
@@ -296,6 +330,11 @@ public  class Launcher implements Module {
                     }
                 }
                 launcherState = LauncherState.SPIN_UP;
+                break;
+            case GO_TO_VEL_HOOD:
+                power = pid.update(target,currentVel,sensors.getVoltage());
+                motor1.setPower(power);
+                motor2.setPower(power);
                 break;
             case READY_FLYWHEEL:
                 try {

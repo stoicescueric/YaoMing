@@ -436,6 +436,10 @@ public class Sensors {
         return System.currentTimeMillis() - firstTrueBeam1;
     }
 
+    public double getDistanceFromPose(Pose pose) {
+        return Math.hypot(targetY-pose.getY(),targetX-pose.getX());
+    }
+
     public boolean areAllBeamsLowForTime(long msThreshold) {
         return getHowLongBeam1() < msThreshold && getHowLongBeam2() < msThreshold && getHowLongBeam3() < msThreshold;
     }

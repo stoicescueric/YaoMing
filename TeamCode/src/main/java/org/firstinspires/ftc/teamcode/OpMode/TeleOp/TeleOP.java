@@ -198,7 +198,7 @@ public class TeleOP extends LinearOpMode
                 if (inZone && isStill) {
                     // Idle and in zone: shoot immediately
                     if (isLongShot) {
-                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                        robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     } else {
                         robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     }
@@ -211,7 +211,7 @@ public class TeleOP extends LinearOpMode
                 if (inZone && isStill) {
                     // Spinning up/in ready state and in zone: shoot
                     if (isLongShot) {
-                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                        robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     } else {
                         robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
                     }

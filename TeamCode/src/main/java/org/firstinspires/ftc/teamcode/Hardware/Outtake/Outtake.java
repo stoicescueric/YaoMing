@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 import android.util.Log;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -28,6 +29,7 @@ public class Outtake {
         PRECISE_SHOOT_FEEDING,
         PRECISE_SHOOT,
         READY_FLYWHEEL,
+        SPECIFIC,
         STOP,
         RECYCLE
     }
@@ -43,11 +45,11 @@ public class Outtake {
         outtakeState = OuttakeState.START_FEEDING_RAPID_FIRE;
     }
 
-    public void
-    start_feed_precise(double target,double hood) {
+    public void start_feed_precise(double target,double hood) {
         launcher.setTarget(target,hood);
         outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
     }
+
     public void update() {
         switch (outtakeState) {
             case OFF:
@@ -81,6 +83,9 @@ public class Outtake {
                     Log.w("Debug shoot precise","se intoarce inapoi in feeding");
                 }
                 break;
+            case SPECIFIC:
+                launcher.launcherState = Launcher.LauncherState.GO_TO_VEL_HOOD;
+                break;
             case READY_FLYWHEEL:
                 launcher.launcherState = Launcher.LauncherState.READY_FLYWHEEL;
                 break;
@@ -101,6 +106,14 @@ public class Outtake {
 
         launcher.update();
         turret.update();
+    }
+
+    public void specificValues(double vel,double hood) {
+        launcher.goToSpecificValues(vel,hood);
+    }
+    public void specificValues(Pose pose) {
+        outtakeState = OuttakeState.SPECIFIC;
+        launcher.goToSpecificValues(pose);
     }
 
     public void flywheelSpin(double target) {
