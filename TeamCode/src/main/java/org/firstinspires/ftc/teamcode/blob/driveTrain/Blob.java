@@ -17,7 +17,13 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 @Config
 public class Blob {
 
+    public enum DriveMode {
+        PID,
+        TELEOP,
+        IDLE
+    }
 
+    DriveMode driveMode;
     DcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
@@ -54,8 +60,9 @@ public class Blob {
     public PIDControllerBlob controllerY = new PIDControllerBlob(kP, kI, kD);
     public PIDControllerBlob controllerHeading = new PIDControllerBlob(hP, hI, hD);
 
-    public Blob(HardwareMap hardwareMap){
+    public Blob(HardwareMap hardwareMap,DriveMode driveMode){
 
+        this.driveMode  = driveMode;
         odo = new Odometry(hardwareMap);
         vs = hardwareMap.voltageSensor.iterator().next();
         leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
@@ -63,10 +70,10 @@ public class Blob {
         rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
         rightBack = hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName);
 
-        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
@@ -200,6 +207,7 @@ public class Blob {
     {
 
 
+        if(driveMode != DriveMode.PID) return;
         if(i == 10){
             voltage = vs.getVoltage();
             i = 0;
