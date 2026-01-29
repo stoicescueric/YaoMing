@@ -17,6 +17,9 @@ import com.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 import org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP;
+import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
+import org.firstinspires.ftc.teamcode.Util.Info;
+import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
@@ -28,7 +31,8 @@ public class Robot {
     public IntakeTransfer intakeTransfer;
     public Outtake outtake;
     public Sensors sensors;
-    public Follower drive;
+    public Follower drive = null;
+    public Blob blob = null;
     public OpMode op;
     public static boolean showTelemetry = false;
     Telemetry telemetry;
@@ -42,7 +46,14 @@ public class Robot {
     {
         this.op = op;
         this.hw = op.hardwareMap;
-        drive = Constants.createFollower(hw);
+        if(Info.phase == Phase.AUTONOMOUS && Info.useBlob) {
+            blob = new Blob(op.hardwareMap);
+
+
+        }
+        else {
+            drive = Constants.createFollower(op.hardwareMap);
+        }
         sensors = new Sensors(this);
         intakeTransfer = new IntakeTransfer(this,sensors);
         outtake = new Outtake(this,sensors);
@@ -66,7 +77,11 @@ public class Robot {
         outtake.update();
         sensors.update();
         sensors.updateTargetForZone();
-        drive.update();
+        if(Info.phase == Phase.TELEOP || !Info.useBlob) drive.update();
+        else {
+            drive = null;
+            blob.update();
+        }
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));

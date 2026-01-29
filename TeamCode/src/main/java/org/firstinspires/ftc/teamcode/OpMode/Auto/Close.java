@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
+import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
+import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
 public class Close extends OpMode {
@@ -48,6 +50,8 @@ public class Close extends OpMode {
 
     @Override
     public void init() {
+        Info.phase = Phase.AUTONOMOUS;
+        Info.useBlob = false;
         robot = new Robot(this);
         constants = new CloseConstants();
         constants.buildPaths(robot.drive);

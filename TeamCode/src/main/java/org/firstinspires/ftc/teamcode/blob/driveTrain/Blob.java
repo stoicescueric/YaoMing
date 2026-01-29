@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blob.driveTrain;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import com.pedropathing.geometry.Pose;
@@ -17,13 +19,7 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 @Config
 public class Blob {
 
-    public enum DriveMode {
-        PID,
-        TELEOP,
-        IDLE
-    }
 
-    DriveMode driveMode;
     DcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
@@ -60,9 +56,8 @@ public class Blob {
     public PIDControllerBlob controllerY = new PIDControllerBlob(kP, kI, kD);
     public PIDControllerBlob controllerHeading = new PIDControllerBlob(hP, hI, hD);
 
-    public Blob(HardwareMap hardwareMap,DriveMode driveMode){
+    public Blob(HardwareMap hardwareMap){
 
-        this.driveMode  = driveMode;
         odo = new Odometry(hardwareMap);
         vs = hardwareMap.voltageSensor.iterator().next();
         leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
@@ -143,8 +138,8 @@ public class Blob {
 
     public void setTargetVector(double x , double y , double rx){
 
+        Log.w("Blob Values","" + x +" " + y + " " + rx );
         x *= lateralMultiplier;
-
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx) , 1);
         frontLeftPower = ((y + x + rx) / denominator) * maxPower;
         backLeftPower = ((y - x + rx) / denominator) * maxPower;
@@ -207,7 +202,6 @@ public class Blob {
     {
 
 
-        if(driveMode != DriveMode.PID) return;
         if(i == 10){
             voltage = vs.getVoltage();
             i = 0;

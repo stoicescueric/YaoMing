@@ -101,7 +101,7 @@ public  class Launcher implements Module {
         idealVelocity.add(79.21, 1480);
         idealVelocity.add(81.50, 1515);
         idealVelocity.add(82.71, 1530);
-        idealVelocity.add(85.16, 1535);
+        idealVelocity.add(85.16, 1595);
         idealVelocity.add(87.22, 1575);
         idealVelocity.add(91.14, 1620);
         idealVelocity.add(94.28, 1660);
@@ -197,9 +197,11 @@ public  class Launcher implements Module {
         hoodRegression.add(82.71, 1530, 0.39); //diferenta este din pid nu din valoare
 
         // Distance: 85.16
-        hoodRegression.add(85.16, 1490, 0.35);
-        hoodRegression.add(85.16, 1510, 0.37);
-        hoodRegression.add(85.16, 1535, 0.39);
+        hoodRegression.add(85.16, 1460, 0.33);
+        hoodRegression.add(85.16, 1510, 0.35);
+        hoodRegression.add(85.16, 1535, 0.37);
+        hoodRegression.add(85.16, 1585, 0.4);
+        hoodRegression.add(85.16, 1600, 0.42);
 
         // Distance: 87.22
         hoodRegression.add(87.22, 1510, 0.37);

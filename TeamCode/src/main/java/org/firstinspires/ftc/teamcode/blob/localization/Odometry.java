@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.blob.localization;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -49,6 +50,9 @@ public class Odometry {
     public void reset(){
         odo.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0));
     }
+    public void setPose(Pose pose){
+        odo.setPosition(new Pose2D(DistanceUnit.INCH, pose.getX(), pose.getY(), AngleUnit.RADIANS, pose.getHeading()));
+    }
 
     public double getVelX(){
         return odo.getVelX(DistanceUnit.INCH);
@@ -56,6 +60,9 @@ public class Odometry {
 
     public double getVelY(){
         return odo.getVelY(DistanceUnit.INCH);
+    }
+    public Pose getPose() {
+        return new Pose( x, y,heading);
     }
 
     public static double filterParameter = 0.8;

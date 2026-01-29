@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 
 public class Info {
     public static Phase phase = Phase.TELEOP;
+    public static boolean useBlob = false;
     public static String opModeName = "";
     public static Alliance alliance = Alliance.RED;
     public void setAlliance(Alliance seted) {

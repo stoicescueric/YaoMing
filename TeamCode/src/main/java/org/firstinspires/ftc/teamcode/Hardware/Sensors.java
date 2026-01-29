@@ -148,8 +148,12 @@ public class Sensors {
         double prevY = currentY;
 
         long prevUpdateTimeNs = lastUpdateTimeNs;
+        if(robot.drive == null) {
+            pose = robot.blob.odo.getPose();
+        }else {
+            pose = robot.drive.getPose();
+        }
 
-        pose = robot.drive.getPose();
         currentX = pose.getX();
         currentY = pose.getY();
         currentHeading = pose.getHeading();
