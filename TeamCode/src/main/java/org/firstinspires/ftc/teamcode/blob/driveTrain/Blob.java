@@ -7,10 +7,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
 import org.firstinspires.ftc.teamcode.blob.constants.BlobConstants;
 import org.firstinspires.ftc.teamcode.blob.localization.Odometry;
 import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
@@ -20,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 public class Blob {
 
 
-    DcMotorEx leftFront, leftBack, rightFront, rightBack;
+    CachingDcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
     public double targetHeading, rotation, realHeading, targetHeadingBlob;
@@ -60,10 +62,10 @@ public class Blob {
 
         odo = new Odometry(hardwareMap);
         vs = hardwareMap.voltageSensor.iterator().next();
-        leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
-        leftBack = hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName);
-        rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
-        rightBack = hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName);
+        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName), 0.01);
+        leftBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName), 0.01);
+        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName), 0.01);
+        rightBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName), 0.01);
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -73,7 +75,7 @@ public class Blob {
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
-        rightBack.setDirection(DcMotorEx.Direction.FORWARD);
+        rightBack.setDirection(DcMotorEx.Direction.REVERSE  );
 
         setTargetVector(0, 0, 0);
     }

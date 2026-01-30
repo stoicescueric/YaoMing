@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -25,6 +26,9 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
+
+import java.util.List;
+
 @Config
 public class Robot {
     public HardwareMap hw;
@@ -42,8 +46,13 @@ public class Robot {
     private DcMotorEx frDriveMotor = null;
     private DcMotorEx brriveMotor = null;
 
+    LynxModule cHub;
+
     public Robot(OpMode op)
     {
+        cHub = op.hardwareMap.get(LynxModule.class, "Control Hub");
+
+        cHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         this.op = op;
         this.hw = op.hardwareMap;
         if(Info.phase == Phase.AUTONOMOUS && Info.useBlob) {
@@ -73,32 +82,35 @@ public class Robot {
     }
 
     public void update() {
-        intakeTransfer.update();
-        outtake.update();
-        sensors.update();
-        sensors.updateTargetForZone();
+        cHub.clearBulkCache();
         if(Info.phase == Phase.TELEOP || !Info.useBlob) drive.update();
         else {
             drive = null;
             blob.update();
         }
+        sensors.update();
+        sensors.updateTargetForZone();
+        intakeTransfer.update();
+        outtake.update();
+
+
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
-        double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
-        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
+//        double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
+//        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
 
-        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
-        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
+//        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
+//        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
         loopTime = loop;
         TelemetryUtil.sendTelemetry();
 
-        if (op != null && op.telemetry != null) {
-            op.telemetry.addData("Distance to Shooting Target (in)", distShootIn);
-            op.telemetry.addData("Shooting While Moving", org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP.shootWhileMoving);
-            op.telemetry.update();
-        }
+//        if (op != null && op.telemetry != null) {
+//            op.telemetry.addData("Distance to Shooting Target (in)", distShootIn);
+//            op.telemetry.addData("Shooting While Moving", org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP.shootWhileMoving);
+//            op.telemetry.update();
+//        }
     }
 
     public long getLoopTimeNs() {

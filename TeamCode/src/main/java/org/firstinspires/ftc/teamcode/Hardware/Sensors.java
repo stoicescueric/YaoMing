@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 public class Sensors {
     private Robot robot;
 
-    Servo light;
+    CachingServo light;
 
     public enum LightColor {
         OFF(0),
@@ -33,7 +34,6 @@ public class Sensors {
 
     private double currentVelocityShooter = 0;
     private double voltage;
-    private LynxModule controlHub, expansionHub;
 
     public long readVoltageTime = 0;
     private long lastUpdateTimeNs = 0;
@@ -111,13 +111,8 @@ public class Sensors {
     }
 
     private void initSensors() {
-        controlHub = robot.hw.get(LynxModule.class, "Control Hub");
-        controlHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
 
-        expansionHub = robot.hw.get(LynxModule.class, "Expansion Hub 2");
-        expansionHub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-
-        light = robot.hw.get(Servo.class,"led");
+        light = new CachingServo(robot.hw.get(Servo.class,"led"));
 
         breakBeamPos1 = robot.hw.get(DigitalChannel.class, "beamBrakePos1");;
         breakBeamPos1.setMode(DigitalChannel.Mode.INPUT);
@@ -168,17 +163,12 @@ public class Sensors {
         }
 
 
-        if(System.currentTimeMillis() - readVoltageTime > 250) {
+        if(System.currentTimeMillis() - readVoltageTime > 350) {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
         }
 
-        if (robot.intakeTransfer != null && robot.intakeTransfer.intake != null) {
-            intakeMotor1OverCurrent = robot.intakeTransfer.intake.isOverCurrent();
-            intakeSpeed = robot.intakeTransfer.intake.getVelocity();
-        } else {
-            intakeMotor1OverCurrent = false;
-        }
+
 
         if (breakBeamPos1 != null) {
             lastValueBreakBreamPos1 = breakBeamPos1High;

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpMode.Auto.Close15Blob;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
@@ -18,6 +19,7 @@ public class CloseBlob extends OpMode {
     Timer pathTimer;
     int gateCycleCounter = 0;
 
+    ElapsedTime timerAuto = null;
     public enum AutoStates {
         IDLE,
         GO_TO_SCORE_FROM_START,
@@ -67,6 +69,7 @@ public class CloseBlob extends OpMode {
         pathTimer = new Timer();
         gateCycleCounter = 0;
         setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+        timerAuto = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     }
 
     @Override
@@ -96,7 +99,7 @@ public class CloseBlob extends OpMode {
             case GO_PICKUP2_2:
                 robot.blob.setTargetPosition(constants.pickUpPose2_2);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                setPathState(AutoStates.GO_TO_SCORE2);
+                setPathState(AutoStates.GO_CLEAR);
                 break;
             case GO_TO_SCORE2:
 
@@ -134,6 +137,9 @@ public class CloseBlob extends OpMode {
                 }
                 break;
             case GO_SCORE_GATE_PICKUP:
+                if(timerAuto.time() > constants.parkThreeshold) {
+                    setPathState(AutoStates.GO_TO_PARK);
+                }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 //robot.drive.followPath(constants.scoreGatePickup, true);
                 robot.blob.setTargetPosition(constants.scorePoseGateInter);
@@ -159,13 +165,13 @@ public class CloseBlob extends OpMode {
                 //robot.drive.followPath(constants.grabPickUp1, constants.getMaxPower(), true);
                 robot.blob.setTargetPosition(constants.pickUpPose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                setPathState(AutoStates.GO_CLEAR);
+                setPathState(AutoStates.GO_TO_SCORE1);
                 break;
             case GO_CLEAR:
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.blob.setTargetPosition(constants.clear);
-                setPathState(AutoStates.GO_TO_SCORE1);
+                setPathState(AutoStates.GO_TO_SCORE2);
                 break;
             case GO_TO_SCORE1:
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;

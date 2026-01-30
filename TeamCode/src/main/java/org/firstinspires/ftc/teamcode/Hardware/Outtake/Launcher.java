@@ -54,12 +54,13 @@ public  class Launcher implements Module {
     public static double recycleTilt = 1;
     public LauncherState launcherState = LauncherState.OFF;
     public FlyWheelPID pid = new FlyWheelPID();
+    DcMotorEx encoder;
     Robot robot;
     public Launcher(Robot robot, Sensors sensors) {
         this.robot = robot;
         this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0);
         this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0);
-
+        encoder = robot.hw.get(DcMotorEx.class,"rightBack");
         tilt = new CachingServo(robot.hw.get(Servo.class,"hood"));
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
@@ -100,9 +101,9 @@ public  class Launcher implements Module {
         idealVelocity.add(77.92, 1480);
         idealVelocity.add(79.21, 1480);
         idealVelocity.add(81.50, 1515);
-        idealVelocity.add(82.71, 1530);
+        idealVelocity.add(82.71, 1560);
         idealVelocity.add(85.16, 1595);
-        idealVelocity.add(87.22, 1575);
+        idealVelocity.add(87.22, 1580);
         idealVelocity.add(91.14, 1620);
         idealVelocity.add(94.28, 1660);
         idealVelocity.add(98.91, 1710);
@@ -192,21 +193,32 @@ public  class Launcher implements Module {
         hoodRegression.add(81.50, 1525, 0.30);
 
         // Distance: 82.71
-        hoodRegression.add(82.71, 1470, 0.29);
-        hoodRegression.add(82.71, 1490, 0.33);
-        hoodRegression.add(82.71, 1530, 0.39); //diferenta este din pid nu din valoare
+        hoodRegression.add(82.71, 1480, 0.29);
+        hoodRegression.add(82.71, 1490, 0.31);
+        hoodRegression.add(82.71, 1530, 0.38);
+        hoodRegression.add(82.71, 1560, 0.40);
+        hoodRegression.add(82.71, 1580, 0.41);
+
+        // Distance: 83.91
+        hoodRegression.add(83.91, 1490, 0.33);
+        hoodRegression.add(83.91, 1520, 0.34);
+        hoodRegression.add(83.91, 1545, 0.35);
+        hoodRegression.add(83.91, 1580, 0.36);
+        hoodRegression.add(83.91, 1600, 0.38);
 
         // Distance: 85.16
         hoodRegression.add(85.16, 1460, 0.33);
         hoodRegression.add(85.16, 1510, 0.35);
         hoodRegression.add(85.16, 1535, 0.37);
-        hoodRegression.add(85.16, 1585, 0.4);
+        hoodRegression.add(85.16, 1585, 0.40);
         hoodRegression.add(85.16, 1600, 0.42);
 
         // Distance: 87.22
-        hoodRegression.add(87.22, 1510, 0.37);
-        hoodRegression.add(87.22, 1540, 0.385);
-        hoodRegression.add(87.22, 1575, 0.405);
+        hoodRegression.add(87.22, 1510, 0.36);
+        hoodRegression.add(87.22, 1540, 0.37);
+        hoodRegression.add(87.22, 1575, 0.38);
+        hoodRegression.add(87.22, 1590, 0.39);
+        hoodRegression.add(87.22, 1615, 0.40);
 
         // Distance: 91.14
         hoodRegression.add(91.14, 1555, 0.39);
@@ -293,7 +305,7 @@ public  class Launcher implements Module {
     }
     @Override
     public void update() {
-        currentVel = motor2.getVelocity();
+        currentVel = encoder.getVelocity();
         changeTarget();
 
         double targetDistance = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
@@ -388,8 +400,6 @@ public  class Launcher implements Module {
                 break;
         }
         tilt.setPosition(target_tilt);
-        TelemetryUtil.packet.put("shooter1  amps",motor1.getCurrent(CurrentUnit.AMPS));
-        TelemetryUtil.packet.put("shooter2 amps",motor2.getCurrent(CurrentUnit.AMPS));
     }
 
     public void increaseDecreaseTarget(double delta) {

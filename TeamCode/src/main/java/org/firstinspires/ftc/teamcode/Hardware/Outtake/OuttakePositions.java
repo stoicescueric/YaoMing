@@ -13,7 +13,7 @@ public class OuttakePositions {
 
     public static double farLaunchVelocity = 2100;
     public static double idleVelocity = 1400;
-    public static double idlePower = 0.4;
+    public static double idlePower = 0.35;
 
     public static double defaultVel = 1470;
 

@@ -35,21 +35,22 @@ public class CloseBlobConstants {
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
     public static double pickUp2X = 13.38,pickUp2Y = 30, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 13.6,pickUp2Y2 = 48.2, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X2 = 13.6,pickUp2Y2 = 49.4, pickUp2Heading2 = Math.toRadians(270);
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
     public Pose pickUpPose2Intermediary;
+    public static double parkThreeshold = 29000;
 
     //gate
-    public static long failSafePickupTime = 1500;
+    public static long failSafePickupTime = 2300;
     public static int gateCycleCount = 3;
-    public static double gatePickupX = 12.4, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
+    public static double gatePickupX = 12.6, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
     public Pose gatePickupPose;
     public Pose gatePickupPoseIntermediary;
     public static double percentage = 0.75;
 
     //clear gate
-    public static double clearX = -0.5, clearY = 50, clearHeading = Math.toRadians(90)-Math.PI;
+    public static double clearX = -0.5, clearY = 54, clearHeading = Math.toRadians(90)-Math.PI;
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;

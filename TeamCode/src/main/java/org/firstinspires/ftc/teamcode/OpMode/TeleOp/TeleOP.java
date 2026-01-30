@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
+import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
@@ -44,6 +45,8 @@ public class TeleOP extends LinearOpMode
 
     @Override
     public void runOpMode() throws InterruptedException {
+         Info.phase = Phase.TELEOP;
+         Info.useBlob = false;
          robot = new Robot(this);
          //60.48 58.22
 

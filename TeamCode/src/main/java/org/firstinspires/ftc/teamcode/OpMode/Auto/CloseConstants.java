@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Util.Utils;
 public class CloseConstants {
 
     //DEFAULT VALUES FOR RED
-    public static double shootingTime = 1350;
+    public static double shootingTime = 1500;
     public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 3500;
@@ -44,7 +44,7 @@ public class CloseConstants {
     public Pose pickUpPose3Intermediary;
 
     //clear
-    public static double clearX = 0.5, clearY = 54, clearHeading = Math.toRadians(90);
+    public static double clearX = 0.5, clearY = 55, clearHeading = Math.toRadians(90);
     public Pose clear;
     public static double clearXIntermediary = 0.5, clearYIntermediary = 40, clearHeadingIntermediary = Math.toRadians(90);
     public Pose clearIntermediary;
