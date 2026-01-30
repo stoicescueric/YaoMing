@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpMode.robotNou;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
 import java.util.List;
+
+@Disabled
 
 @Config
 @TeleOp(name = "Park Test", group = "Pedro Pathing")

@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpMode.robotNou;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
+
+@Disabled
 
 @Config
 @TeleOp(name = "Climb Test", group = "Pedro Pathing")

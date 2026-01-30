@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
+
+@Disabled
 
 @TeleOp(name = "MotorToggleABXY", group = "Pedro Pathing")
 public class MotorToggleABXY extends LinearOpMode {

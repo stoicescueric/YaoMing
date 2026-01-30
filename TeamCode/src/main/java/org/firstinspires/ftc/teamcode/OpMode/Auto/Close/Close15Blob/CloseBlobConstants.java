@@ -32,8 +32,6 @@ public class CloseBlobConstants {
     public static double pickUp1X = -11.3, pickUp1Y = 52, pickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public static double max_power_pickUp = 1;
-    public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
-
     public static double pickUp2X = 13.38,pickUp2Y = 30, pickUp2Heading = Math.toRadians(270);
     public static double pickUp2X2 = 13.6,pickUp2Y2 = 49.4, pickUp2Heading2 = Math.toRadians(270);
     public Pose pickUpPose2;
@@ -44,9 +42,8 @@ public class CloseBlobConstants {
     //gate
     public static long failSafePickupTime = 2300;
     public static int gateCycleCount = 3;
-    public static double gatePickupX = 12.6, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
+    public static double gatePickupX = 12.5, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
     public Pose gatePickupPose;
-    public Pose gatePickupPoseIntermediary;
     public static double percentage = 0.75;
 
     //clear gate
@@ -72,8 +69,6 @@ public class CloseBlobConstants {
         pickUpPose2_2 = new Pose(pickUp2X2, pickUp2Y2 * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading2 * (Info.alliance == Alliance.RED ? 1 : -1));
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
-
-        pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
 
 
     }
@@ -105,6 +100,9 @@ public class CloseBlobConstants {
     }
     public double getFailSafePickupTime(){
         return failSafePickupTime;
+    }
+    public double getParkThreeshold() {
+        return parkThreeshold;
     }
 
 

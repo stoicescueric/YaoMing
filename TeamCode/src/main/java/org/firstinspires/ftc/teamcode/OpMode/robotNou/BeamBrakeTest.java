@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpMode.robotNou;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.Util.Wrapper.DigitalWrapper;
 
+@Disabled
 @Config
 @TeleOp(name = "Beam brake test", group = "Pedro Pathing")
 public class BeamBrakeTest extends LinearOpMode {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 import android.content.Context;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,6 +10,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
+
+@Disabled
 
 @TeleOp(name = "Write Test")
 public class WriteTest extends OpMode {

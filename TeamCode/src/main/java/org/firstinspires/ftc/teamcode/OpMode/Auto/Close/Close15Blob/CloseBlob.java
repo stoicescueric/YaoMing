@@ -69,6 +69,7 @@ public class CloseBlob extends OpMode {
         gateCycleCounter = 0;
         setPathState(AutoStates.GO_TO_SCORE_FROM_START);
         timerAuto = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        timerAuto.startTime();
     }
 
     @Override
@@ -136,8 +137,9 @@ public class CloseBlob extends OpMode {
                 }
                 break;
             case GO_SCORE_GATE_PICKUP:
-                if(timerAuto.time() > constants.parkThreeshold) {
+                if(timerAuto.time() > constants.getParkThreeshold()) {
                     setPathState(AutoStates.GO_TO_PARK);
+                    break;
                 }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 //robot.drive.followPath(constants.scoreGatePickup, true);

@@ -102,8 +102,8 @@ public  class Launcher implements Module {
         idealVelocity.add(79.21, 1480);
         idealVelocity.add(81.50, 1515);
         idealVelocity.add(82.71, 1560);
-        idealVelocity.add(85.16, 1595);
-        idealVelocity.add(87.22, 1580);
+        idealVelocity.add(85.16, 1600);
+        idealVelocity.add(87.22, 1590);
         idealVelocity.add(91.14, 1620);
         idealVelocity.add(94.28, 1660);
         idealVelocity.add(98.91, 1710);

@@ -20,8 +20,8 @@ public class Close12Blob extends OpMode {
         GO_TO_SCORE_FROM_START,
         WAIT_SCORE_PRELOAD,
         GO_PICKUP1,
-        GO_PICKUP1_INTERMEDIARY,
         GO_CLEAR,
+        GO_CLEAR_INTER,
         GO_TO_SCORE1,
         WAIT_SCORE_1,
         GO_PICKUP2,
@@ -62,9 +62,6 @@ public class Close12Blob extends OpMode {
 
     @Override
     public void loop() {
-        if (robot.sensors.areAllBeamsLowForTime(250)) {
-            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-        }
         switch (autoStates) {
             case IDLE:
                 break;
@@ -76,29 +73,29 @@ public class Close12Blob extends OpMode {
             case WAIT_SCORE_PRELOAD:
                 if (!robot.blob.inPosition()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_INTERMEDIARY);
+                sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1);
                 break;
-            case GO_PICKUP1_INTERMEDIARY:
-                robot.blob.setTargetPosition(constants.pickUpPose);
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                setPathState(AutoStates.GO_PICKUP1);
-                break;
+
             case GO_PICKUP1:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                robot.blob.setTargetPosition(constants.pickUpPoseIntermediary);
+                robot.blob.setTargetPosition(constants.pickUpPose);
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.blob.setTargetPosition(constants.clearInter);
+                setPathState(AutoStates.GO_CLEAR);
+                break;
+            case GO_CLEAR_INTER:
+                robot.blob.setTargetPosition(constants.clearInter);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.GO_CLEAR);
                 break;
             case GO_CLEAR:
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.blob.setTargetPosition(constants.clear);
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime() && !robot.blob.isStuck()) break;
                 setPathState(AutoStates.GO_TO_SCORE1);
                 break;
             case GO_TO_SCORE1:
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
                 robot.outtake.specificValues(constants.scorePose);
                 robot.blob.setTargetPosition(constants.scorePose);
                 setPathState(AutoStates.WAIT_SCORE_1);
@@ -109,6 +106,7 @@ public class Close12Blob extends OpMode {
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP2_INTERMEDIARY);
                 break;
             case GO_PICKUP2_INTERMEDIARY:
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 robot.blob.setTargetPosition(constants.pickUpPose2Intermediary);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.GO_PICKUP2);
@@ -133,8 +131,9 @@ public class Close12Blob extends OpMode {
                 break;
             case GO_PICKUP3_INTERMEDIARY:
                 robot.blob.setTargetPosition(constants.pickUpPose3Intermediary);
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                setPathState(AutoStates.GO_PICKUP2);
+                setPathState(AutoStates.GO_PICKUP3);
                 break;
             case GO_PICKUP3:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
@@ -169,10 +168,10 @@ public class Close12Blob extends OpMode {
                 }
                 break;
         }
-        TelemetryUtil.packet.put("x", robot.blob.odo.x);
-        TelemetryUtil.packet.put("y", robot.blob.odo.y);
-        TelemetryUtil.packet.put("heading", robot.blob.odo.heading);
-        TelemetryUtil.sendTelemetry();
+//        TelemetryUtil.packet.put("x", robot.blob.odo.x);
+//        TelemetryUtil.packet.put("y", robot.blob.odo.y);
+//        TelemetryUtil.packet.put("heading", robot.blob.odo.heading);
+//        TelemetryUtil.sendTelemetry();
         robot.update();
     }
 

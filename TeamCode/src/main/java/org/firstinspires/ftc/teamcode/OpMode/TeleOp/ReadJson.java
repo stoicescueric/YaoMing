@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 import android.content.Context;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,6 +11,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+
+@Disabled
 
 @TeleOp(name = "Read Test")
 public class ReadJson extends OpMode {

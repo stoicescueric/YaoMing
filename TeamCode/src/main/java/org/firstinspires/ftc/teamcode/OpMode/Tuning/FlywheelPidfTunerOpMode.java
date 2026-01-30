@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode.Tuning;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+@Disabled
 
 @TeleOp(name = "Suge o stefanel", group = "Pedro Pathing")
 @Config
