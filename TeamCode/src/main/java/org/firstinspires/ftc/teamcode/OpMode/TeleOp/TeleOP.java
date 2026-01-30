@@ -50,10 +50,14 @@ public class TeleOP extends LinearOpMode
          robot = new Robot(this);
          //60.48 58.22
 
-        if (Info.alliance == Alliance.RED) {
-            startPose = startPoseRed;
-        }else {
-            startPose = startPoseBlue;
+        if (Info.hasLastPose) {
+            startPose = new Pose(Info.lastPoseX, Info.lastPoseY, Info.lastPoseHeading);
+        } else {
+            if (Info.alliance == Alliance.RED) {
+                startPose = startPoseRed;
+            } else {
+                startPose = startPoseBlue;
+            }
         }
          gg = new GamePadController(gamepad1);
 

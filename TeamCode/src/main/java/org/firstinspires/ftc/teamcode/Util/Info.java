@@ -27,4 +27,9 @@ public class Info {
 
     public static int cycleCounts = 0;
     public static boolean hasSample = false;
+
+    public static double lastPoseX = 0.0;
+    public static double lastPoseY = 0.0;
+    public static double lastPoseHeading = 0.0;
+    public static boolean hasLastPose = false;
 }

@@ -93,6 +93,10 @@ public class Robot {
         intakeTransfer.update();
         outtake.update();
 
+        Info.lastPoseX = sensors.getX();
+        Info.lastPoseY = sensors.getY();
+        Info.lastPoseHeading = sensors.getHeading();
+        if (!Info.hasLastPose) Info.hasLastPose = true;
 
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
