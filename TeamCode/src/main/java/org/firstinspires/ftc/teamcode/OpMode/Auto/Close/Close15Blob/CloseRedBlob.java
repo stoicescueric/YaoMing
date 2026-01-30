@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto.Close15;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close15Blob;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 
-@Autonomous(name = "Auto Blue Close 15")
-public class CloseBlue15 extends Close15{
+@Autonomous(name = "Auto Red Close Blob 15")
+public class CloseRedBlob extends CloseBlob {
     @Override
     public void init() {
-        Info.alliance = Alliance.BLUE;
+        Info.alliance = Alliance.RED;
 
         super.init();
     }

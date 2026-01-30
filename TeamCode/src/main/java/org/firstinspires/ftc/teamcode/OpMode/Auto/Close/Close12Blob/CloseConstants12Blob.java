@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close12Blob;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -11,13 +11,12 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
-import org.firstinspires.ftc.teamcode.Util.Utils;
 
 @Config
-public class CloseConstants {
+public class CloseConstants12Blob {
 
     //DEFAULT VALUES FOR RED
-    public static double shootingTime = 1500;
+    public static double shootingTime = 1350;
     public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 3500;
@@ -30,6 +29,8 @@ public class CloseConstants {
 
     public static double pickUp1X = -11.3, pickUp1Y = 52, pickUp1Heading = Math.toRadians(90);
     public Pose pickUpPose;
+    public static double pickUp1XIntermediary = -20, pickUp1YIntermediary = 46, pickUp1HeadingIntermediary = Math.toRadians(90);
+    public Pose pickUpPoseIntermediary;
     public static double max_power_pickUp = 0.85;
     public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
@@ -44,7 +45,7 @@ public class CloseConstants {
     public Pose pickUpPose3Intermediary;
 
     //clear
-    public static double clearX = 0.5, clearY = 55, clearHeading = Math.toRadians(90);
+    public static double clearX = 0.5, clearY = 54, clearHeading = Math.toRadians(90);
     public Pose clear;
     public static double clearXIntermediary = 0.5, clearYIntermediary = 40, clearHeadingIntermediary = Math.toRadians(90);
     public Pose clearIntermediary;
@@ -53,12 +54,6 @@ public class CloseConstants {
 
     public Pose parkPose;
 
-    Path scorePreload;
-    PathChain grabPickUp1, scorePickup1, grabPickup2, scorePickup2;
-    PathChain grabPickup3, scorePickup3;
-    PathChain goClear;
-    PathChain goToPark;
-
     public void buildPaths(Follower follower) {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -66,6 +61,7 @@ public class CloseConstants {
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPoseIntermediary = new Pose(pickUp1XIntermediary, pickUp1YIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1HeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose3 = new Pose(pickUp3X, pickUp3Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp3Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -73,43 +69,6 @@ public class CloseConstants {
         pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
         pickUpPose3Intermediary = new Pose(pickUp3XIntermediary, pickUp3YIntermediary, pickUp3HeadingIntermediary);
         clearIntermediary = new Pose(clearXIntermediary, clearYIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
-
-        scorePreload = new Path(new BezierLine(startPose, scorePose));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
-
-        grabPickUp1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickUpPose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose.getHeading())
-                .build();
-        goClear = follower.pathBuilder()
-                .addPath(new BezierCurve(pickUpPose, clearIntermediary, clear))
-                .setLinearHeadingInterpolation(pickUpPose3.getHeading(), clear.getHeading())
-                .build();;
-        scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(clear, scorePose))
-                .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading())
-                .build();
-        grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickUpPose2Intermediary, pickUpPose2))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose2.getHeading())
-                .build();
-        scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickUpPose2, pickUpPose2Intermediary, scorePose))
-                .setLinearHeadingInterpolation(pickUpPose2.getHeading(), scorePose.getHeading())
-                .build();
-        grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePose, pickUpPose3Intermediary, pickUpPose3))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose3.getHeading())
-                .build();
-        scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierCurve(pickUpPose3, pickUpPose3Intermediary, scorePose))
-                .setLinearHeadingInterpolation(pickUpPose3.getHeading(), scorePose.getHeading())
-                .build();
-
-        goToPark = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, parkPose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading())
-                .build();
 
     }
 

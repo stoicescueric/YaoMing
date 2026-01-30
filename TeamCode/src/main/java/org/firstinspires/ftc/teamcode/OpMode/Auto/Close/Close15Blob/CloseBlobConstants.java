@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto.Close15Blob;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close15Blob;
 
 
 import com.acmerobotics.dashboard.config.Config;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto.Close15;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Pedro;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 
 @Config
-public class Close15Constants {
+public class CloseConstants {
 
     //DEFAULT VALUES FOR RED
-    public static double shootingTime = 1400;
+    public static double shootingTime = 1500;
     public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 3500;
@@ -24,25 +24,29 @@ public class Close15Constants {
     public static double launcherVelocity = 1000;
     public static double startX = -62.22, startY = 37.00, headingStartRed =  Math.toRadians(0);
     public Pose startPose;
-    public static double shootingX = -6.03, shootingY = 11.55, shootingHeading = 2.066;
+    public static double shootingX = -14, shootingY = 12, shootingHeading = Math.toRadians(90);
     public Pose scorePose;
 
     public static double pickUp1X = -11.3, pickUp1Y = 52, pickUp1Heading = Math.toRadians(90);
     public Pose pickUpPose;
     public static double max_power_pickUp = 0.85;
+    public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 17, pickUp2YIntermediary = 8, pickUp2HeadingIntermediary = Math.toRadians(90);
 
     public static double pickUp2X = 14.5, pickUp2Y = 59, pickUp2Heading = Math.toRadians(90);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 
-    //gate
-    public static long failSafePickupTime = 4000;
-    public static int gateCycleCount = 1;
-    public static double gatePickupX = 15.48, gatePickupY = 57.87, gatePickupHeading = 2.066;
-    public Pose gatePickupPose;
-    public Pose gatePickupPoseIntermediary;
+    public static double pickUp3X = 38, pickUp3Y = 59, pickUp3Heading = Math.toRadians(90);
+    public Pose pickUpPose3;
+    public static double pickUp3XIntermediary = 44, pickUp3YIntermediary = -5, pickUp3HeadingIntermediary = Math.toRadians(90);
+    public Pose pickUpPose3Intermediary;
 
+    //clear
+    public static double clearX = 0.5, clearY = 55, clearHeading = Math.toRadians(90);
+    public Pose clear;
+    public static double clearXIntermediary = 0.5, clearYIntermediary = 40, clearHeadingIntermediary = Math.toRadians(90);
+    public Pose clearIntermediary;
 
     public static double parkX = 13.5, parkY = 45, parkHeading = Math.toRadians(90);
 
@@ -50,7 +54,8 @@ public class Close15Constants {
 
     Path scorePreload;
     PathChain grabPickUp1, scorePickup1, grabPickup2, scorePickup2;
-    PathChain grabGatePickup, scoreGatePickup;
+    PathChain grabPickup3, scorePickup3;
+    PathChain goClear;
     PathChain goToPark;
 
     public void buildPaths(Follower follower) {
@@ -61,9 +66,13 @@ public class Close15Constants {
 
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
-        gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPose3 = new Pose(pickUp3X, pickUp3Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp3Heading * (Info.alliance == Alliance.RED ? 1 : -1));
+        clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
         pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
+        pickUpPose3Intermediary = new Pose(pickUp3XIntermediary, pickUp3YIntermediary, pickUp3HeadingIntermediary);
+        clearIntermediary = new Pose(clearXIntermediary, clearYIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
+
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
@@ -71,8 +80,12 @@ public class Close15Constants {
                 .addPath(new BezierLine(scorePose, pickUpPose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose.getHeading())
                 .build();
+        goClear = follower.pathBuilder()
+                .addPath(new BezierCurve(pickUpPose, clearIntermediary, clear))
+                .setLinearHeadingInterpolation(pickUpPose3.getHeading(), clear.getHeading())
+                .build();;
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickUpPose, scorePose))
+                .addPath(new BezierLine(clear, scorePose))
                 .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading())
                 .build();
         grabPickup2 = follower.pathBuilder()
@@ -83,13 +96,13 @@ public class Close15Constants {
                 .addPath(new BezierCurve(pickUpPose2, pickUpPose2Intermediary, scorePose))
                 .setLinearHeadingInterpolation(pickUpPose2.getHeading(), scorePose.getHeading())
                 .build();
-        grabGatePickup = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, gatePickupPose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), gatePickupPose.getHeading())
+        grabPickup3 = follower.pathBuilder()
+                .addPath(new BezierCurve(scorePose, pickUpPose3Intermediary, pickUpPose3))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpPose3.getHeading())
                 .build();
-        scoreGatePickup = follower.pathBuilder()
-                .addPath(new BezierLine(gatePickupPose,scorePose))
-                .setLinearHeadingInterpolation(gatePickupPose.getHeading(), scorePose.getHeading())
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierCurve(pickUpPose3, pickUpPose3Intermediary, scorePose))
+                .setLinearHeadingInterpolation(pickUpPose3.getHeading(), scorePose.getHeading())
                 .build();
 
         goToPark = follower.pathBuilder()
@@ -121,11 +134,9 @@ public class Close15Constants {
     public double getMaxPower(){
         return max_power_pickUp;
     }
+    public double getMaxClearPower() {return max_power_clear;}
     public double getFailSafeDtTime() {
         return failSafeDtTime;
-    }
-    public double getFailSafePickupTime(){
-        return failSafePickupTime;
     }
 
 

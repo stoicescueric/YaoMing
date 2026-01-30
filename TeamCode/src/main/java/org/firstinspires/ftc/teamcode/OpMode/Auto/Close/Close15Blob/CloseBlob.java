@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto.Close15Blob;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close15Blob;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
-import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 public class CloseBlob extends OpMode {
     Robot robot;
