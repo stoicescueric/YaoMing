@@ -22,8 +22,9 @@ public class Far extends OpMode {
     boolean disablePickup1 = false;
     boolean disablePickup2 = false;
     boolean enableInitialWait = false;
+    boolean skipPreload = false;
 
-    int selectedIndex = 0; // 0: pickup1, 1: pickup2, 2: enable initial wait
+    int selectedIndex = 0; // 0: pickup1, 1: pickup2, 2: enable initial wait, 3: skip preload
 
     public enum AutoStates {
         IDLE,
@@ -62,11 +63,11 @@ public class Far extends OpMode {
 
         if (gg.dpadUpOnce()) {
             selectedIndex--;
-            if (selectedIndex < 0) selectedIndex = 2;
+            if (selectedIndex < 0) selectedIndex = 3;
         }
         if (gg.dpadDownOnce()) {
             selectedIndex++;
-            if (selectedIndex > 2) selectedIndex = 0;
+            if (selectedIndex > 3) selectedIndex = 0;
         }
 
         if (gg.aOnce()) {
@@ -80,6 +81,9 @@ public class Far extends OpMode {
                 case 2:
                     enableInitialWait = !enableInitialWait;
                     break;
+                case 3:
+                    skipPreload = !skipPreload;
+                    break;
             }
         }
 
@@ -87,6 +91,7 @@ public class Far extends OpMode {
         telemetry.addLine(formatOptionLine(0, "Disable Pickup 1", disablePickup1));
         telemetry.addLine(formatOptionLine(1, "Disable Pickup 2", disablePickup2));
         telemetry.addLine(formatOptionLine(2, "Enable wait at start", enableInitialWait));
+        telemetry.addLine(formatOptionLine(3, "Skip preload", skipPreload));
         telemetry.update();
     }
 
@@ -102,7 +107,17 @@ public class Far extends OpMode {
         if (enableInitialWait) {
             setPathState(AutoStates.WAIT_AT_START);
         } else {
-            setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+            if (skipPreload) {
+                if (!disablePickup1) {
+                    setPathState(AutoStates.GO_PICKUP1);
+                } else if (!disablePickup2) {
+                    setPathState(AutoStates.GO_PICKUP2);
+                } else {
+                    setPathState(AutoStates.GO_TO_PARK);
+                }
+            } else {
+                setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+            }
         }
     }
 
@@ -114,7 +129,17 @@ public class Far extends OpMode {
 
             case WAIT_AT_START:
                 if (pathTimer.getElapsedTime() > initialWaitSeconds) {
-                    setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+                    if (skipPreload) {
+                        if (!disablePickup1) {
+                            setPathState(AutoStates.GO_PICKUP1);
+                        } else if (!disablePickup2) {
+                            setPathState(AutoStates.GO_PICKUP2);
+                        } else {
+                            setPathState(AutoStates.GO_TO_PARK);
+                        }
+                    } else {
+                        setPathState(AutoStates.GO_TO_SCORE_FROM_START);
+                    }
                 }
                 break;
 
