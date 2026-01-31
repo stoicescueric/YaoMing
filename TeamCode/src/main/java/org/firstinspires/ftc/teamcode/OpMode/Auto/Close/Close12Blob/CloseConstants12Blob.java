@@ -42,8 +42,8 @@ public class CloseConstants12Blob {
     public Pose pickUpPose3Intermediary;
 
     //clear
-    public static double clearX = 1, clearY = 54.7, clearHeading = Math.toRadians(270);
-    public static double clearXInter = 2.79, clearYInter = 46.8, clearHeadingInter = Math.toRadians(270);
+    public static double clearX = -1, clearY = 56, clearHeading = Math.toRadians(270);
+    public static double clearXInter = -5, clearYInter = 47, clearHeadingInter = Math.toRadians(270);
     public Pose clear;
     public Pose clearInter;
 
@@ -63,8 +63,8 @@ public class CloseConstants12Blob {
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
 
-        pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary, pickUp2HeadingIntermediary);
-        pickUpPose3Intermediary = new Pose(pickUp3XIntermediary, pickUp3YIntermediary, pickUp3HeadingIntermediary);
+        pickUpPose2Intermediary = new Pose(pickUp2XIntermediary, pickUp2YIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2HeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPose3Intermediary = new Pose(pickUp3XIntermediary, pickUp3YIntermediary * (Info.alliance == Alliance.RED ? 1 : -1), pickUp3HeadingIntermediary * (Info.alliance == Alliance.RED ? 1 : -1));
     }
 
     public double getLauncherVelocity() {

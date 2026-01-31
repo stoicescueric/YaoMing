@@ -42,7 +42,7 @@ public class CloseBlobConstants {
     //gate
     public static long failSafePickupTime = 2300;
     public static int gateCycleCount = 3;
-    public static double gatePickupX = 12.5, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
+    public static double gatePickupX = 12.7, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 

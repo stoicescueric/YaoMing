@@ -53,15 +53,15 @@ public class Sensors {
     public double targetXRedFar = -71;
     public static double servoPos = 0.4;
     public double targetYRedFar = 70;
-    public double targetXBlueFar = -71;
-    public double targetYBlueFar = -72;
+    public double targetXBlueFar = -70;
+    public double targetYBlueFar = -70;
 
     public double backboardX;
     public double backboardY;
     public double backboardXRed = -72;
     public double backboardYRed =72;
-    public double backboardXBlue = -73;
-    public double backboardYBlue = -73;
+    public double backboardXBlue = -70;
+    public double backboardYBlue = -75;
     public double intakeSpeed;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 13; // field units per second

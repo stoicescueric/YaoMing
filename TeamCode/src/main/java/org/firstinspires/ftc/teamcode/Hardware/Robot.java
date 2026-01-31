@@ -104,8 +104,6 @@ public class Robot {
 //        double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
 //        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
 
-//        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
-//        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
         loopTime = loop;
         TelemetryUtil.sendTelemetry();
@@ -129,6 +127,9 @@ public class Robot {
         TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);
         TelemetryUtil.packet.put("Outtake State", outtake.outtakeState);
         TelemetryUtil.packet.put("Launcher State", outtake.launcher.launcherState);
+
+        TelemetryUtil.packet.put("Launcher Target ", outtake.launcher.target);
+        TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
         TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));

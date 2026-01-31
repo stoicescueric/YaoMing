@@ -82,7 +82,7 @@ public class Close12Blob extends OpMode {
                 robot.blob.setTargetPosition(constants.pickUpPose);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.blob.setTargetPosition(constants.clearInter);
-                setPathState(AutoStates.GO_CLEAR);
+                setPathState(AutoStates.GO_CLEAR_INTER);
                 break;
             case GO_CLEAR_INTER:
                 robot.blob.setTargetPosition(constants.clearInter);
