@@ -22,17 +22,17 @@ public class CloseConstants12Blob {
     public static double failSafeDtTime = 3500;
     public static double hoodPosition = 0.615;
     public static double launcherVelocity = 1000;
-    public static double startX = -62.22, startY = 37.00, headingStartRed =  Math.toRadians(0);
+    public static double startX = -59.60, startY = 45.43, headingStartRed =  -Math.toRadians(49.9965); //TODO
     public Pose startPose;
     public static double shootingX = -4.1, shootingY = 14.5, shootingHeading = Math.toRadians(270);
     public Pose scorePose;
-    public static double pickUp1X = -11.3, pickUp1Y = 51, pickUp1Heading = Math.toRadians(270);
+    public static double pickUp1X = -11.3, pickUp1Y = 53, pickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public static double max_power_pickUp = 0.85;
     public static double max_power_clear = 0.54;
     public static double pickUp2XIntermediary = 13.38, pickUp2YIntermediary = 30, pickUp2HeadingIntermediary = Math.toRadians(270);
 
-    public static double pickUp2X = 13.6, pickUp2Y = 50.5, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X = 13.6, pickUp2Y = 53, pickUp2Heading = Math.toRadians(270);
     public Pose pickUpPose2;
     public Pose pickUpPose2Intermediary;
 

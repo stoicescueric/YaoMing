@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.blob.localization.Odometry;
 
 @TeleOp
 public class LocalizationTestBlob extends LinearOpMode {
-    public static double startX = -62.22, startY = 37.00, headingStartRed =  Math.toRadians(0);
+    public static double startX = 0, startY = 0, headingStartRed =  Math.toRadians(0);
     Pose startPose;
 
 
