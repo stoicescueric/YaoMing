@@ -47,7 +47,10 @@ public class CloseBlobConstants {
     public static double percentage = 0.75;
 
     //clear gate
-    public static double clearX = -0.5, clearY = 54, clearHeading = Math.toRadians(90)-Math.PI;
+    public static double clearX = -1, clearY = 56.2, clearHeading = Math.toRadians(90)-Math.PI;
+    public static double clearXInter = 2, clearYInter = 46, clearHeadingInter = Math.toRadians(270);
+    public Pose clearInter;
+
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
@@ -63,6 +66,7 @@ public class CloseBlobConstants {
         startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1),headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1) );
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         scorePoseGateInter = new Pose(shootingInterX, shootingInterY * (Info.alliance == Alliance.RED ? 1 : -1), shootingUnterHeading * (Info.alliance == Alliance.RED ? 1 : -1));
+        clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
 
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));

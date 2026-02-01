@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close12Blob.Close12Blob;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
@@ -34,6 +35,7 @@ public class CloseBlob extends OpMode {
         WAIT_SCORE_GATE_PICKUP,
         GO_PICKUP1,
         GO_CLEAR,
+        GO_CLEAR_INTER,
         GO_TO_SCORE1,
         WAIT_SCORE_1,
         GO_TO_PARK,
@@ -99,7 +101,7 @@ public class CloseBlob extends OpMode {
             case GO_PICKUP2_2:
                 robot.blob.setTargetPosition(constants.pickUpPose2_2);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                setPathState(AutoStates.GO_CLEAR);
+                setPathState(AutoStates.GO_CLEAR_INTER);
                 break;
             case GO_TO_SCORE2:
 
@@ -167,6 +169,11 @@ public class CloseBlob extends OpMode {
                 robot.blob.setTargetPosition(constants.pickUpPose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 setPathState(AutoStates.GO_TO_SCORE1);
+                break;
+            case GO_CLEAR_INTER:
+                robot.blob.setTargetPosition(constants.clearInter);
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                setPathState(CloseBlob.AutoStates.GO_CLEAR);
                 break;
             case GO_CLEAR:
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
