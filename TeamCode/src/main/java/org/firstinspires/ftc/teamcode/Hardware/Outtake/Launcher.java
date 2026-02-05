@@ -420,7 +420,12 @@ public  class Launcher implements Module {
         this.target=targetTPS;
 
     }
-
+    public void setTargetHood(double hood_tilt){
+        target_tilt = hood_tilt;
+    }
+    public void setAuto_aim(boolean state) {
+        auto_aim = state;
+    }
 
     public boolean  isReady(){
         return Math.abs(currentVel - target) < OuttakePositions.errorVelThreeshold;

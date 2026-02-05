@@ -6,10 +6,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Module;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
@@ -34,8 +37,12 @@ public class IntakeTransfer implements Module {
         INTAKE,
         REVERSE,
         START_TRANSFER,
+        ReCycleStart,
+        ReCycleMid,
+        ReCycleEnd,
         POWER_FOR_TIME,
         OFF_OPEN,
+
         SLEEP,
         TRANSFER,
         HOLD,
@@ -65,6 +72,10 @@ public class IntakeTransfer implements Module {
         OFF,
         ON,
         POWER_FOR_TIME,
+        recycle1,
+        recycle2,
+        recycle3,
+        reverseTransfer,
         REVERSE
     }
     public enum CapacState{
@@ -105,6 +116,10 @@ public class IntakeTransfer implements Module {
 
     }
 
+    private boolean two = false;
+    ElapsedTime recycleStartTimer = new ElapsedTime();
+    ElapsedTime recycleMidTimer = new ElapsedTime();
+    ElapsedTime recycleEndTimer = new ElapsedTime();
     public double power_time = 0.5;
     public double time_power = 500;
     public double startStallCheckTime = 0;
@@ -122,7 +137,6 @@ public class IntakeTransfer implements Module {
                 powerArmState = PowerArmState.INTAKE;
                 intake.setPower(0);
                 conveyorState = ConveyorState.OFF;
-                capacState = CapacState.BLEG;
                 if(robot.sensors.lightColor == Sensors.LightColor.BLUE) {
                     robot.sensors.setLedColor(Sensors.LightColor.OFF);
                 }
@@ -170,6 +184,69 @@ public class IntakeTransfer implements Module {
                 sleep(IntakeConstants.capacReleaseTransfer, IntakeState.TRANSFER);
                 capacState = CapacState.BLEG;
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
+                break;
+            case ReCycleStart:
+                robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
+                if(recycleStartTimer == null){
+                    recycleStartTimer = new ElapsedTime();
+                }
+                capacState = CapacState.RECYCLE;
+                powerArmState = PowerArmState.INTAKE;
+                intake.setPower(IntakeConstants.intakeFirstPhase);
+                conveyorState = ConveyorState.recycle1;
+                robot.outtake.launcher.autoAimOn(false);
+                robot.outtake.launcher.setTargetHood(1);
+                robot.outtake.setOuttakeState(Outtake.OuttakeState.OFF);
+                robot.outtake.flywheelSpin(OuttakePositions.recycleSpeed);
+                if(robot.outtake.launcher.isReady() && recycleStartTimer.milliseconds() > IntakeConstants.timerRecycleFirstPhase){
+                    powerArmState = PowerArmState.INTAKE;
+                    intakeState = IntakeState.ReCycleMid;
+                    recycleStartTimer = null;
+                }
+                break;
+            case ReCycleMid:
+                if(recycleMidTimer == null){
+                    recycleMidTimer = new ElapsedTime();
+                }
+
+                if(recycleMidTimer.milliseconds() > IntakeConstants.timerRecycleOpenBlocker) {
+                    blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                    conveyorState = ConveyorState.recycle2;
+                    intake.setPower(IntakeConstants.intakeSecondPhase);
+                }
+                if(recycleMidTimer.milliseconds() > IntakeConstants.timerRecycleOpenBlocker + IntakeConstants.powerArmRecycleUp) {
+                    powerArmState = PowerArmState.RECYCLE;
+                }
+                if(!two &&
+                        recycleMidTimer.milliseconds() > IntakeConstants.timerRecycleOpenBlocker + IntakeConstants.timerRecycleOne){
+                    conveyorState = ConveyorState.OFF;
+                    intakeState = IntakeState.ReCycleEnd;
+                }else if(two && recycleMidTimer.milliseconds() > IntakeConstants.timerRecycleOpenBlocker + IntakeConstants.timerRecycleTwo){
+                    conveyorState = ConveyorState.OFF;
+                    intakeState = IntakeState.ReCycleEnd;
+                }
+                break;
+            case ReCycleEnd:
+                if(recycleEndTimer == null){
+                    recycleEndTimer = new ElapsedTime();
+                }
+                blockerState = BlockerState.CLOSE;
+                intake.setPower(IntakeConstants.intakePhase3);
+                conveyorState = ConveyorState.reverseTransfer;
+                if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd){
+                    intake.setPower(IntakeConstants.intakePhase3);
+                    conveyorState = ConveyorState.recycle3;
+                }
+                if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd + IntakeConstants.timerIntakeEnd2) {
+                    powerArmState = PowerArmState.TRANSFER;
+                }
+                if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd + IntakeConstants.timerIntakeEnd2 + IntakeConstants.doneTransfer) {
+                    intakeState = IntakeState.OFF;
+                    robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                    robot.outtake.launcher.autoAimOn(true);
+                    robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+                }
+
                 break;
             case POWER_FOR_TIME:
                 powerArmState = PowerArmState.LOW;
@@ -253,11 +330,23 @@ public class IntakeTransfer implements Module {
             case OFF:
                 conveyor.setPower(0);
                 break;
+            case recycle1:
+                conveyor.setPower(IntakeConstants.transferFirstPhase);
+                break;
+            case recycle2:
+                conveyor.setPower(IntakeConstants.transferSecondPhase);
+                break;
+            case recycle3:
+                conveyor.setPower(IntakeConstants.conveyerPhase3);
+                break;
             case ON:
                 conveyor.setPower(IntakeConstants.transferPowerTransfer);
                 break;
             case POWER_FOR_TIME:
                 conveyor.setPower(power_time);
+                break;
+            case reverseTransfer:
+                conveyor.setPower(IntakeConstants.reverseConPhase3);
                 break;
             case REVERSE:
                 conveyor.setPower(-IntakeConstants.reversePower);
@@ -319,6 +408,14 @@ public class IntakeTransfer implements Module {
             }
         }
 
+    }
+
+    public void startRecycle(boolean two) {
+        this.two = two;
+        recycleStartTimer = null;
+        recycleMidTimer = null;
+        recycleEndTimer = null;
+        intakeState = IntakeState.ReCycleStart;
     }
 
     public void setIntakeState(IntakeState intakeState) {

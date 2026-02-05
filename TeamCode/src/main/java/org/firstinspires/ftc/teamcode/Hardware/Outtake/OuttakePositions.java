@@ -21,6 +21,8 @@ public class OuttakePositions {
     /*----Tilt ----*/
     public static double farLaunchTilt = 0.40;
 
+    public static double recycleSpeed = 300;
+
     /*--PIDF VELOCITY--*/
     public static double kP = 0.006;
     public static double kI = 0;

@@ -8,6 +8,7 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
@@ -72,15 +73,15 @@ public class TeleOP extends LinearOpMode
               gg.update();
               updateDrive();
 
-              robot.outtake.turret.turretState = turretTracking
-                     ? org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.TRACKING
-                     : org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret.TurretState.FIXED_ANGLE;
 
               robot.outtake.setShootingWhileMoving(shootWhileMoving);
 
               outtakeUpdate();
               intakeUpdate();
               readyFlywheelAfterStall();
+              telemetry.addData("intake State",robot.intakeTransfer.intakeState);
+              telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
+              telemetry.update();
               robot.update();
           }
     }
@@ -186,9 +187,9 @@ public class TeleOP extends LinearOpMode
 //            }
 //        }
 
-        if (gg.xOnce()) {
-            shootWhileMoving = !shootWhileMoving;
-        }
+//        if (gg.xOnce()) {
+//            shootWhileMoving = !shootWhileMoving;
+//        }
 
         Outtake.OuttakeState state = robot.outtake.outtakeState;
         double x = robot.sensors.getX();
@@ -234,6 +235,12 @@ public class TeleOP extends LinearOpMode
             }
         }
 
+        if(gg.yOnce()) {
+            robot.intakeTransfer.startRecycle(false);
+        }
+        if(gg.xOnce()){
+            robot.intakeTransfer.startRecycle(true);
+        }
         if(state == Outtake.OuttakeState.READY_FLYWHEEL && inZone && isStill){
             if (isLongShot) {
                 robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
@@ -256,7 +263,11 @@ public class TeleOP extends LinearOpMode
         }
 
         if(gg.dpadUpOnce()){
-            turretTracking = !turretTracking;
+            if(robot.outtake.turret.turretState == Turret.TurretState.TRACKING) {
+                robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
+            }else {
+                robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+            }
         }
 
 
