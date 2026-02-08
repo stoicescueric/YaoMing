@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
@@ -63,6 +70,8 @@ public class Sensors {
     public double backboardXBlue = -70;
     public double backboardYBlue = -75;
     public double intakeSpeed;
+    NavxMicroNavigationSensor navxMicro;
+    IntegratingGyroscope gyro;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 13; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 12; //radians per seconds
@@ -127,6 +136,11 @@ public class Sensors {
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
         lastUpdateTimeNs = System.nanoTime();
+        navxMicro = robot.hw.get(NavxMicroNavigationSensor.class, "navx");
+        gyro = (IntegratingGyroscope)navxMicro;
+        while (navxMicro.isCalibrating())  {
+
+        }
     }
     public double getTargetX(){
         return targetX;
@@ -136,6 +150,12 @@ public class Sensors {
     }
     public double getBackboardX() { return backboardX; }
     public double getBackboardY() { return backboardY; }
+
+    public double getNavxHeading() {
+
+        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
 
     public void update() {
         Pose prevPose = pose;

@@ -101,6 +101,9 @@ public class Robot {
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
+//        TelemetryUtil.packet.put("pinpoint heading", Math.toDegrees(sensors.getHeading()));
+//        TelemetryUtil.packet.put("navx heading", sensors.getNavxHeading());
+
 //        double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
 //        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
 
@@ -147,7 +150,6 @@ public class Robot {
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());
-        TelemetryUtil.packet.put("Current Heading", sensors.getHeading());
         TelemetryUtil.packet.put("voltage",sensors.getVoltage());
         TelemetryUtil.packet.put("beam 1 value",sensors.isBreakBeamPos1Low());
         TelemetryUtil.packet.put("beam 2 value",sensors.isBreakBeamPos2Low());

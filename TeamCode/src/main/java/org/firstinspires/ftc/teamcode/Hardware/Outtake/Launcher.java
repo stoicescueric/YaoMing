@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Controllers.FlyWheelPID;
+import org.firstinspires.ftc.teamcode.Util.Controllers.velocityController;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 import org.firstinspires.ftc.teamcode.Util.Math.MultipleRegression;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
@@ -41,7 +42,8 @@ public  class Launcher implements Module {
         LAUNCHING,
         GO_TO_VEL_HOOD,
         READY_FLYWHEEL,
-        RECYCLE
+        RECYCLE,
+        TUNE_PID
     }
 
 
@@ -54,6 +56,7 @@ public  class Launcher implements Module {
     public static double recycleTilt = 1;
     public LauncherState launcherState = LauncherState.OFF;
     public FlyWheelPID pid = new FlyWheelPID();
+    velocityController bangBang = new velocityController();
     DcMotorEx encoder;
     Robot robot;
     public Launcher(Robot robot, Sensors sensors) {
@@ -303,6 +306,11 @@ public  class Launcher implements Module {
     public void changeTarget(){
         // hook for manual overrides if needed
     }
+    public double getTunePidTarget() {
+        return tunePidTarget;
+    }
+
+    public static double tunePidTarget = 0;
     @Override
     public void update() {
         currentVel = encoder.getVelocity();
@@ -317,6 +325,11 @@ public  class Launcher implements Module {
                 motor1.setPower(power);
                 motor2.setPower(power);
                 robot.outtake.turret.backlashEvet();
+                break;
+            case TUNE_PID:
+                power = velocityController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
+                motor1.setPower(power);
+                motor2.setPower(power);
                 break;
             case IDLE:
 //                power = pid.update(target*idleAlpha, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
@@ -359,6 +372,7 @@ public  class Launcher implements Module {
                 } catch (Exception e) {
                     robot.op.gamepad1.rumble(250);
                     target = OuttakePositions.defaultVel;
+                    target_tilt = 0.5;
                 }
                 power = pid.update(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);

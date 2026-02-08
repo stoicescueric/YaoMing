@@ -95,6 +95,7 @@ public class IntakeTransfer implements Module {
     double sleeptime = 0;
     public double intakeSensorCounter = 0;
     IntakeState nextState = IntakeState.OFF;
+    private boolean shooterStartRecycle = false;
 
     private long blockerOpenTriggeredTime = 0;
 
@@ -117,6 +118,7 @@ public class IntakeTransfer implements Module {
     }
 
     private boolean two = false;
+    private boolean spinUpRecycleWant = false;
     ElapsedTime recycleStartTimer = new ElapsedTime();
     ElapsedTime recycleMidTimer = new ElapsedTime();
     ElapsedTime recycleEndTimer = new ElapsedTime();
@@ -229,6 +231,14 @@ public class IntakeTransfer implements Module {
             case ReCycleEnd:
                 if(recycleEndTimer == null){
                     recycleEndTimer = new ElapsedTime();
+
+
+                }
+                if(shooterStartRecycle) {
+                    if(spinUpRecycleWant)
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.READY_FLYWHEEL);
+                    else
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 }
                 blockerState = BlockerState.CLOSE;
                 intake.setPower(IntakeConstants.intakePhase3);
@@ -238,13 +248,15 @@ public class IntakeTransfer implements Module {
                     conveyorState = ConveyorState.recycle3;
                 }
                 if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd + IntakeConstants.timerIntakeEnd2) {
+                    if(!shooterStartRecycle) {
+                        shooterStartRecycle = true;
+                        robot.outtake.launcher.autoAimOn(true);
+                        robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+                    }
                     powerArmState = PowerArmState.TRANSFER;
                 }
                 if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd + IntakeConstants.timerIntakeEnd2 + IntakeConstants.doneTransfer) {
                     intakeState = IntakeState.OFF;
-                    robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                    robot.outtake.launcher.autoAimOn(true);
-                    robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 }
 
                 break;
@@ -416,6 +428,12 @@ public class IntakeTransfer implements Module {
         recycleMidTimer = null;
         recycleEndTimer = null;
         intakeState = IntakeState.ReCycleStart;
+        spinUpRecycleWant = false;
+        shooterStartRecycle = false;
+    }
+
+    public void spinUpRecycle() {
+        spinUpRecycleWant = true;
     }
 
     public void setIntakeState(IntakeState intakeState) {
@@ -439,6 +457,9 @@ public class IntakeTransfer implements Module {
         intakeState = IntakeState.POWER_FOR_TIME;
     }
 
+    public boolean isRecycle() {
+        return (intakeState == IntakeState.ReCycleStart || intakeState == IntakeState.ReCycleMid || intakeState == IntakeState.ReCycleEnd);
+    }
     private void sleep(double time, IntakeState nextState) {
         startSleep = System.currentTimeMillis();
         intakeState = IntakeState.SLEEP;

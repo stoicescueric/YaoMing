@@ -30,6 +30,13 @@ public class OuttakePositions {
     public static double kV = 0.00035;
     public static double kS = 0.06;
 
+
+    public static double bbPower = 1.0;
+    public static double bbPowerMin = 0;
+    public static double bbkV = 0.00035;
+    public static double bbKP = 0.006;
+    public static double bbThreeshold = 200;
+
     /*--TURRET--*/
     public static double MIN_TURRET_ANGLE = -2.515;
     public static double MAX_TURRET_ANGLE = 2.572;

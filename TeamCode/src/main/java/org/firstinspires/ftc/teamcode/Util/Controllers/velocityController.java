@@ -21,7 +21,9 @@ public class velocityController {
     public velocityController() {
     }
 
-    public double calculate(double targetVelocity, double currentVelocity,double voltage) {
+
+
+    public static double calculate(double targetVelocity, double currentVelocity,double voltage) {
         double error = targetVelocity - currentVelocity;
 
         if(currentVelocity < targetVelocity - bbThreeshold) {
@@ -32,7 +34,7 @@ public class velocityController {
             double pComp = kP * error;
             double pForward = kV * targetVelocity;
 
-            return (pForward * pComp) * (12.0 / voltage);
+            return (pForward + pComp) * (12.0 / voltage);
         }
     }
 

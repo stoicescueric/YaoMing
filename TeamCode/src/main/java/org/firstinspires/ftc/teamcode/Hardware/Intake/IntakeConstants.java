@@ -18,7 +18,7 @@ public class IntakeConstants {
     public static double transferSecondPhase = 0.5;
 
     public static double timerRecycleOne = 230;
-    public static double timerRecycleTwo = 430;
+    public static double timerRecycleTwo = 460;
     public static double powerArmRecycleUp = 100;
 
 
