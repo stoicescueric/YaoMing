@@ -284,9 +284,10 @@ public class Sensors {
      * Returns true if the robot is considered "still enough".
      * Safe to call multiple times per loop *after* robot.update().
      */
+
+
     public boolean isRobotStill() {
         if (pose == null) return false;
-
         long loopTimeNs = robot.getLoopTimeNs();
 
         if (Double.isNaN(lastStillX) || lastStillCheckLoopTimeNs == 0) {

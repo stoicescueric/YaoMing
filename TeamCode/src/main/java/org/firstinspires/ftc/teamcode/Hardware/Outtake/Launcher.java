@@ -359,7 +359,7 @@ public  class Launcher implements Module {
                 launcherState = LauncherState.SPIN_UP;
                 break;
             case GO_TO_VEL_HOOD:
-                power = pid.update(target,currentVel,sensors.getVoltage());
+                power = velocityController.calculate(target,currentVel,sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -374,12 +374,12 @@ public  class Launcher implements Module {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.5;
                 }
-                power = pid.update(target, currentVel, sensors.getVoltage());
+                power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case SPIN_UP:
-                power = pid.update(target, currentVel, sensors.getVoltage());
+                power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 if(auto_aim) {
@@ -401,7 +401,7 @@ public  class Launcher implements Module {
                         break;
                     }
                 }
-                power = pid.update(target, currentVel, sensors.getVoltage());
+                power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;

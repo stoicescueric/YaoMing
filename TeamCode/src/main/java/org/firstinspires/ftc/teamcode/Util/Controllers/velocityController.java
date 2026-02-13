@@ -17,7 +17,7 @@ public class velocityController {
 
     public static double minPower = -1.0;
 
-    public static double bbThreeshold = 200;
+    public static double bbThreeshold = 100;
     public velocityController() {
     }
 
