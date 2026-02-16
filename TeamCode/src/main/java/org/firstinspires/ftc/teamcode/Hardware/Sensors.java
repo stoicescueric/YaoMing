@@ -38,6 +38,7 @@ public class Sensors {
     public LightColor lightColor = LightColor.OFF;
     Pose pose;
     double currentX,currentY,currentHeading;
+    public static double FORWARD_TURRET_OFFSET = -1.6;
 
     private double currentVelocityShooter = 0;
     private double voltage;
@@ -50,12 +51,12 @@ public class Sensors {
     private boolean breakBeamPos2High = false;
     private boolean breakBeamPos3High = false;
 
-    public double targetX = -66.6;
-    public double targetY = -65;
-    public double targetXRedClose = -69.8;
-    public double targetYRedClose = 69.8;
-    public double targetXBlueClose = -69.5;
-    public double targetYBlueClose = -69.5;
+    public static double targetX = -66.6;
+    public static double targetY = -65;
+    public double targetXRedClose = -67;
+    public double targetYRedClose = 66;
+    public double targetXBlueClose = -64;
+    public double targetYBlueClose = -66;
 
     public double targetXRedFar = -71;
     public static double servoPos = 0.4;
@@ -63,15 +64,11 @@ public class Sensors {
     public double targetXBlueFar = -70;
     public double targetYBlueFar = -70;
 
-    public double backboardX;
-    public double backboardY;
-    public double backboardXRed = -72;
-    public double backboardYRed =72;
-    public double backboardXBlue = -70;
-    public double backboardYBlue = -75;
+
     public double intakeSpeed;
     NavxMicroNavigationSensor navxMicro;
     IntegratingGyroscope gyro;
+    double shooterWorldX, shooterWorldY;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 13; // field units per second
     public static double STILL_MAX_ANGULAR_SPEED = 12; //radians per seconds
@@ -109,13 +106,9 @@ public class Sensors {
         if(Info.alliance == Alliance.BLUE){
             targetX = targetXBlueClose;
             targetY = targetYBlueClose;
-            backboardX = backboardXBlue;
-            backboardY = backboardYBlue;
         }else {
             targetX = targetXRedClose;
             targetY = targetYRedClose;
-            backboardX = backboardXRed;
-            backboardY = backboardYRed;
         }
     }
 
@@ -148,8 +141,8 @@ public class Sensors {
     public double getTargetY(){
         return targetY;
     }
-    public double getBackboardX() { return backboardX; }
-    public double getBackboardY() { return backboardY; }
+    public double getBackboardX() { return targetX; }
+    public double getBackboardY() { return targetY; }
 
     public double getNavxHeading() {
 
@@ -172,6 +165,8 @@ public class Sensors {
         currentX = pose.getX();
         currentY = pose.getY();
         currentHeading = pose.getHeading();
+        shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
+        shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
 
         long nowNs = System.nanoTime();
         if (prevUpdateTimeNs != 0) {
@@ -239,11 +234,17 @@ public class Sensors {
     }
 
     public double getDistanceToBackboard() {
-        return Math.hypot(backboardX - currentX, backboardY - currentY);
+        return Math.hypot(targetX - currentX, targetY - currentY);
+    }
+    public double getShooterDistanceToBackboard() {
+        return Math.hypot(targetX - shooterWorldX, targetY - shooterWorldY);
     }
 
     public double getAngleToTarget(double targetX,double targetY) {
         return Math.atan2(targetY-currentY,targetX-currentX);
+    }
+    public double getShooterAngleToTarget(double targetX,double targetY) {
+        return Math.atan2(targetY-shooterWorldY,targetX-shooterWorldX);
     }
 
     public double getAngularVelocity() {
@@ -453,6 +454,12 @@ public class Sensors {
 
     public double getDistanceFromPose(Pose pose) {
         return Math.hypot(targetY-pose.getY(),targetX-pose.getX());
+    }
+    public double getShooterX() {
+        return shooterWorldX;
+    }
+    public double getShooterY() {
+        return shooterWorldY;
     }
 
     public boolean areAllBeamsLowForTime(long msThreshold) {

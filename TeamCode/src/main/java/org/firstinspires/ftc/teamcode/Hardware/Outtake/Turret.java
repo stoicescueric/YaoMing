@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -22,7 +24,7 @@ public class Turret implements Module {
     public static double mechRatio = 0.83;
 
     public static boolean backlashYok = false;
-    public static double offset = -0.003;
+    public static double offset = 0.005;
 
     public static double BOARD1_NX = 0.16;
     public static double BOARD1_NY = 0.0;
@@ -96,105 +98,21 @@ public class Turret implements Module {
             case TRACKING:
                 double robotHeading = sensors.getHeading(); // radians
 
-                double backboardX = sensors.getBackboardX();
-                double backboardY = sensors.getBackboardY();
+                double backboardX = sensors.getTargetX();
+                double backboardY = sensors.getTargetY();
 
-                double baseDistance = sensors.getDistanceToTarget(backboardX, backboardY);
-                if (baseDistance < 1e-6) {
-                    double center = 0.5;
-                    servoLeft.setPosition(center);
-                    servoRight.setPosition(center);
-                    break;
-                }
+                double directGlobalAngle = sensors.getShooterAngleToTarget(backboardX, backboardY);
 
-                double directGlobalAngle = sensors.getAngleToTarget(backboardX, backboardY);
-                double optimizedGlobalAngle = computeBackboardOptimizedAngle(
-                        sensors.getX(),
-                        sensors.getY(),
-                        backboardX,
-                        backboardY,
-                        directGlobalAngle
-                );
-
-                lastAdjustedGlobalAngle = optimizedGlobalAngle;
-
-                double finalGlobalAngle = optimizedGlobalAngle;
-
-                if (robot.outtake != null && robot.outtake.isShootingWhileMoving() && MOTION_LEAD_GAIN != 0.0) {
-                    double rx = sensors.getX();
-                    double ry = sensors.getY();
-
-                    double vx = sensors.getVelX();
-                    double vy = sensors.getVelY();
-
-                    double robotSpeed = Math.hypot(vx, vy);
-                    if (robotSpeed > MIN_LEAD_SPEED && robot.outtake.launcher != null) {
-                        double projSpeed = robot.outtake.launcher.getProjectileSpeedEstimate();
-                        if (projSpeed > 1e-3) {
-                            double shotTime = baseDistance / projSpeed;
-
-                            double moveGoalX = backboardX;
-                            double moveGoalY = backboardY;
-
-                            for (int i = 0; i < 5; i++) {
-                                double virtualGoalX = backboardX
-                                        - shotTime * (vx * MOTION_LEAD_GAIN);
-                                double virtualGoalY = backboardY
-                                        - shotTime * (vy * MOTION_LEAD_GAIN);
-
-                                double dx = virtualGoalX - rx;
-                                double dy = virtualGoalY - ry;
-                                double distToVirtual = Math.hypot(dx, dy);
-
-                                double newShotTime = distToVirtual / projSpeed;
-
-                                if (Math.abs(newShotTime - shotTime) <= 0.01) {
-                                    moveGoalX = virtualGoalX;
-                                    moveGoalY = virtualGoalY;
-                                    shotTime = newShotTime;
-                                    break;
-                                }
-
-                                shotTime = newShotTime;
-
-                                if (i == 4) {
-                                    moveGoalX = virtualGoalX;
-                                    moveGoalY = virtualGoalY;
-                                }
-                            }
-
-                            double dxLead = moveGoalX - rx;
-                            double dyLead = moveGoalY - ry;
-                            if (Math.hypot(dxLead, dyLead) > 1e-6) {
-                                finalGlobalAngle = Math.atan2(dyLead, dxLead);
-                            }
-                        }
-                    }
-                }
-
-                if (ANGLE_SMOOTH_ALPHA <= 0.0) {
-                    smoothedGlobalAngle = finalGlobalAngle;
-                } else {
-                    double d = Math.atan2(
-                            Math.sin(finalGlobalAngle - smoothedGlobalAngle),
-                            Math.cos(finalGlobalAngle - smoothedGlobalAngle));
-                    smoothedGlobalAngle = smoothedGlobalAngle + ANGLE_SMOOTH_ALPHA * d;
-                }
-
-                lastMotionCompensatedAngle = smoothedGlobalAngle;
 
                 double relativeAngle = Math.atan2(
-                        Math.sin(smoothedGlobalAngle - robotHeading),
-                        Math.cos(smoothedGlobalAngle - robotHeading));
+                        Math.sin(directGlobalAngle - robotHeading),
+                        Math.cos(directGlobalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);
-                if(backlashYok) {
-                    servoLeft.setPosition(pos + offset);
-                    servoRight.setPosition(pos - offset);
-                }else {
-                    servoLeft.setPosition(pos);
-                    servoRight.setPosition(pos);
-                }
+                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);
+                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY);
+                servoLeft.setPosition(pos + offset);
+                servoRight.setPosition(pos + offset);
                 break;
         }
     }

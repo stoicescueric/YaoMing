@@ -13,6 +13,8 @@ public class velocityController {
     public static double bbPower = 1.0;
     public static double bbPowerMin = 0;
 
+    public static boolean useVoltageComp = true;
+
     public static double maxPower = 1.0;
 
     public static double minPower = -1.0;
@@ -34,7 +36,8 @@ public class velocityController {
             double pComp = kP * error;
             double pForward = kV * targetVelocity;
 
-            return (pForward + pComp) * (12.0 / voltage);
+            if(useVoltageComp) return (pForward + pComp) * (12.0 / voltage);
+            else return (pForward + pComp);
         }
     }
 

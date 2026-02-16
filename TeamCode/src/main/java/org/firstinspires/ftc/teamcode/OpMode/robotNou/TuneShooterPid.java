@@ -25,11 +25,24 @@ public class TuneShooterPid extends LinearOpMode {
         robot = new Robot(this);
         waitForStart();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
+        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
         robot.outtake.setOuttakeState(Outtake.OuttakeState.OFF);
         while (opModeIsActive()) {
             gg.update();
             robot.update();
+            if(gg.rightBumper()) {
+                if(gg.rightBumperOnce()){
+                    switch (robot.intakeTransfer.intakeState){
+                        case INTAKE:
+                        case REVERSE:
+                            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                            break;
+                        case OFF:
+                            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                            break;
+                    }
+                }
+            }
             if (gg.dpadDown()) {
                 if(gg.leftTrigger() && gg.rightTrigger()){
                     robot.drive.setPose(resetCenter);
@@ -37,7 +50,7 @@ public class TuneShooterPid extends LinearOpMode {
             }
             if(gg.aOnce()) {
                 if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.TRANSFER){
-                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 }else {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
                 }
@@ -49,6 +62,7 @@ public class TuneShooterPid extends LinearOpMode {
             telemetry.addData("power",robot.outtake.launcher.getPower());
             telemetry.addData("intake state",robot.intakeTransfer.intakeState);
             telemetry.addData("launcher state",robot.outtake.launcher.launcherState);
+            telemetry.addData("distance",robot.sensors.getDistanceToBackboard());
             telemetry.update();
         }
     }

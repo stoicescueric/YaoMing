@@ -181,8 +181,7 @@ public class IntakeTransfer implements Module {
             case START_TRANSFER:
                 blockerState = BlockerState.OPEN;
                 powerArmState = PowerArmState.LOW;
-                intake.setPower(IntakeConstants.transferPowerIntake);
-                conveyorState = ConveyorState.ON;
+                conveyorState = ConveyorState.OFF;
                 sleep(IntakeConstants.capacReleaseTransfer, IntakeState.TRANSFER);
                 capacState = CapacState.BLEG;
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);

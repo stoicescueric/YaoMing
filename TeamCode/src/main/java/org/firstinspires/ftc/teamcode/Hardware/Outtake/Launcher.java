@@ -30,9 +30,16 @@ public  class Launcher implements Module {
     CachingDcMotorEx motor1,motor2;
 
     CachingServo tilt;
+    public static double[] Distances = {59, 70, 84, 95, 101, 108, 117};
+    // Corresponding Velocity values
+    public static double[] velValues = {1350, 1430, 1480, 1585, 1620, 1675, 1760};
+    public static double[] hoodValues = {0.05, 0.2, 0.225, 0.24, 0.24, 0.26, 0.3};
 
     MultipleRegression hoodRegression = new MultipleRegression();
     InterpLUT idealVelocity = new InterpLUT();
+
+    InterpLUT velocity = new InterpLUT();
+    InterpLUT hood = new InterpLUT();
 
     public enum LauncherState {
         OFF,
@@ -49,13 +56,15 @@ public  class Launcher implements Module {
 
     Sensors sensors;
     public double target = 0;
-    public static boolean auto_aim = true;
-    public static double idleAlpha = 0;
+    public  boolean auto_aim = true;
+    public  double idleAlpha = 0;
     public double currentVel = 0;
-    public static double recycleVelocity = 500;
-    public static double recycleTilt = 1;
+    public  double recycleVelocity = 500;
+    public  double recycleTilt = 1;
     public LauncherState launcherState = LauncherState.OFF;
     public FlyWheelPID pid = new FlyWheelPID();
+    public static boolean rebuildTables = false;
+
     velocityController bangBang = new velocityController();
     DcMotorEx encoder;
     Robot robot;
@@ -88,209 +97,26 @@ public  class Launcher implements Module {
         launcherState = LauncherState.GO_TO_VEL_HOOD;
     }
     public void addData() {
+        rebuildLutVelFromDashboard();
+        rebuildLutHoodFromDashboard();
 
-        // --- Ideal Velocity Data (unified close + far) ---
-        idealVelocity.add(49.46, 1330);
-        idealVelocity.add(51.27, 1330);
-        idealVelocity.add(54.23, 1350);
-        idealVelocity.add(57.55, 1350);
-        idealVelocity.add(59.36, 1390);
-        idealVelocity.add(62.22, 1390);
-        idealVelocity.add(64.46, 1410);
-        idealVelocity.add(66.33, 1370);
-        idealVelocity.add(68.60, 1410);
-        idealVelocity.add(71.80, 1420);
-        idealVelocity.add(75.18, 1450);
-        idealVelocity.add(77.92, 1480);
-        idealVelocity.add(79.21, 1480);
-        idealVelocity.add(81.50, 1515);
-        idealVelocity.add(82.71, 1560);
-        idealVelocity.add(85.16, 1600);
-        idealVelocity.add(87.22, 1590);
-        idealVelocity.add(91.14, 1620);
-        idealVelocity.add(94.28, 1660);
-        idealVelocity.add(98.91, 1710);
-        idealVelocity.add(100.91, 1730);
-
-        idealVelocity.add(135.61, 1900);
-        idealVelocity.add(136.00, 1900);
-        idealVelocity.add(137.04, 1900);
-
-        idealVelocity.add(140.30, 1910);
-        idealVelocity.add(142.96, 1910);
-        idealVelocity.add(145.44, 1920);
-        idealVelocity.add(147.13, 1920);
-
-
-
-        // --- Hood Regression Data (close zone) ---
-
-        // Distance: 49.46
-        hoodRegression.add(41.46, 1270, 0.05);
-        hoodRegression.add(41.46, 1290, 0.06);
-        hoodRegression.add(41.46, 1330, 0.09);
-
-        // Distance: 51.27
-        hoodRegression.add(51.27, 1280, 0.07);
-        hoodRegression.add(51.27, 1310, 0.08);
-        hoodRegression.add(51.27, 1330, 0.10);
-
-        // Distance: 54.23
-        hoodRegression.add(54.23, 1310, 0.11);
-        hoodRegression.add(54.23, 1330, 0.12);
-        hoodRegression.add(54.23, 1350, 0.16);
-
-        // Distance: 57.55
-        hoodRegression.add(57.55, 1290, 0.16);
-        hoodRegression.add(57.55, 1320, 0.17);
-        hoodRegression.add(57.55, 1350, 0.20);
-
-        // Distance: 59.36
-        hoodRegression.add(59.36, 1340, 0.18);
-        hoodRegression.add(59.36, 1365, 0.16);
-        hoodRegression.add(59.36, 1390, 0.20); //P.s schema ca sa o suga ericoi cioroi!!! Ps ps nu mai e schema in practica :(
-
-        // Distance: 62.22
-        hoodRegression.add(62.22, 1320, 0.22);
-        hoodRegression.add(62.22, 1340, 0.23);
-        hoodRegression.add(62.22, 1390, 0.27);
-
-        // Distance: 64.46
-        hoodRegression.add(64.46, 1350, 0.20);
-        hoodRegression.add(64.46, 1390, 0.22);
-        hoodRegression.add(64.46, 1410, 0.26);
-
-        // Distance: 66.33
-        hoodRegression.add(66.33, 1320, 0.20);
-        hoodRegression.add(66.33, 1350, 0.24);
-        hoodRegression.add(66.33, 1370, 0.26);
-
-        // Distance: 68.60
-        hoodRegression.add(68.60, 1360, 0.22);
-        hoodRegression.add(68.60, 1390, 0.25);
-        hoodRegression.add(68.60, 1410, 0.27);
-
-        // Distance: 71.80
-        hoodRegression.add(71.80, 1370, 0.20);
-        hoodRegression.add(71.80, 1400, 0.21);
-        hoodRegression.add(71.80, 1420, 0.23); //420 hehehehhehehehehhehehehehhe nice
-
-        // Distance: 75.18
-        hoodRegression.add(75.18, 1410, 0.21);
-        hoodRegression.add(75.18, 1430, 0.24);
-        hoodRegression.add(75.18, 1455, 0.28);
-
-        // Distance: 77.92
-        hoodRegression.add(77.92, 1435, 0.24);
-        hoodRegression.add(77.92, 1460, 0.255);
-        hoodRegression.add(77.92, 1480, 0.265);
-
-        // Distance: 79.21
-        hoodRegression.add(79.21, 1440, 0.24);
-        hoodRegression.add(79.21, 1465, 0.28);
-        hoodRegression.add(79.21, 1490, 0.32);
-
-        // Distance: 81.50
-        hoodRegression.add(81.50, 1460, 0.285);
-        hoodRegression.add(81.50, 1490, 0.29);
-        hoodRegression.add(81.50, 1525, 0.30);
-
-        // Distance: 82.71
-        hoodRegression.add(82.71, 1480, 0.29);
-        hoodRegression.add(82.71, 1490, 0.31);
-        hoodRegression.add(82.71, 1530, 0.38);
-        hoodRegression.add(82.71, 1560, 0.40);
-        hoodRegression.add(82.71, 1580, 0.41);
-
-        // Distance: 83.91
-        hoodRegression.add(83.91, 1490, 0.33);
-        hoodRegression.add(83.91, 1520, 0.34);
-        hoodRegression.add(83.91, 1545, 0.35);
-        hoodRegression.add(83.91, 1580, 0.36);
-        hoodRegression.add(83.91, 1600, 0.38);
-
-        // Distance: 85.16
-        hoodRegression.add(85.16, 1460, 0.33);
-        hoodRegression.add(85.16, 1510, 0.35);
-        hoodRegression.add(85.16, 1535, 0.37);
-        hoodRegression.add(85.16, 1585, 0.40);
-        hoodRegression.add(85.16, 1600, 0.42);
-
-        // Distance: 87.22
-        hoodRegression.add(87.22, 1510, 0.36);
-        hoodRegression.add(87.22, 1540, 0.37);
-        hoodRegression.add(87.22, 1575, 0.38);
-        hoodRegression.add(87.22, 1590, 0.39);
-        hoodRegression.add(87.22, 1615, 0.40);
-
-        // Distance: 91.14
-        hoodRegression.add(91.14, 1555, 0.39);
-        hoodRegression.add(91.14, 1590, 0.36);
-        hoodRegression.add(91.14, 1620, 0.42);
-
-        // Distance: 94.28
-        hoodRegression.add(94.28, 1610, 0.40);
-        hoodRegression.add(94.28, 1630, 0.42);
-        hoodRegression.add(94.28, 1660, 0.46);
-
-        // Distance: 98.91
-        hoodRegression.add(98.91, 1630, 0.40);
-        hoodRegression.add(98.91, 1670, 0.46);
-        hoodRegression.add(98.91, 1710, 0.49);
-
-        // Distance: 100.91
-        hoodRegression.add(100.91, 1680, 0.46);
-        hoodRegression.add(100.91, 1710, 0.49);
-        hoodRegression.add(100.91, 1730, 0.505);
-
-
-        // --- Hood Regression Data (far zone) ---
-
-        // Distance: 135.61
-        hoodRegression.add(135.61, 1850, 0.45);
-        hoodRegression.add(135.61, 1880, 0.46);
-        hoodRegression.add(135.61, 1910, 0.48);
-
-        // Distance: 136.00
-        hoodRegression.add(136.00, 1850, 0.45);
-        hoodRegression.add(136.00, 1880, 0.47);
-        hoodRegression.add(136.00, 1910, 0.50);
-
-        // Distance: 137.04
-        hoodRegression.add(137.04, 1850, 0.45);
-        hoodRegression.add(137.04, 1880, 0.46);
-        hoodRegression.add(137.04, 1910, 0.56);
-
-        //TODO: ADD POSITION
-
-        // Distance: 140.30
-        hoodRegression.add(140.30, 1860, 0.45);
-        hoodRegression.add(140.30, 1890, 0.46); //previously 190 and 0.47
-        hoodRegression.add(140.30, 1930, 0.47); //previously 1920 and 0.46
-
-        // Distance: 142.96
-        hoodRegression.add(142.96, 1860, 0.40);
-        hoodRegression.add(142.96, 1890, 0.43);
-        hoodRegression.add(142.96, 1920, 0.46);
-
-        //TODO: ADD POSITION
-
-        // Distance: 145.44
-        hoodRegression.add(145.44, 1870, 0.40);
-        hoodRegression.add(145.44, 1900, 0.40);
-        hoodRegression.add(145.44, 1930, 0.42); //was previously 0.41 to test
-
-        //TODO: ADD POSITION
-
-        // Distance: 147.13
-        hoodRegression.add(147.13, 1870, 0.4);
-        hoodRegression.add(147.13, 1900, 0.41);
-        hoodRegression.add(147.13, 1930, 0.42);
-
-
-
-        idealVelocity.createLUT();
-        hoodRegression.create();
+    }
+    public void rebuildLutVelFromDashboard() {
+        velocity = new InterpLUT(); // Clear old one
+        // Ensure arrays are same length to avoid crashes
+        int len = Math.min(Distances.length, velValues.length);
+        for (int i = 0; i < len; i++) {
+            velocity.add(Distances[i], velValues[i]);
+        }
+        velocity.createLUT();
+    }
+    public void rebuildLutHoodFromDashboard() {
+        hood = new InterpLUT(); // Clear old one
+        int len = Math.min(Distances.length, hoodValues.length);
+        for (int i = 0; i < len; i++) {
+            hood.add(Distances[i], hoodValues[i]);
+        }
+        hood.createLUT();
     }
     public static double target_tilt = 0.5;
     public static double power;
@@ -313,10 +139,16 @@ public  class Launcher implements Module {
     public static double tunePidTarget = 0;
     @Override
     public void update() {
+        if(rebuildTables) {
+            rebuildLutVelFromDashboard();
+            rebuildLutHoodFromDashboard();
+            rebuildTables = false;
+        }
+
         currentVel = encoder.getVelocity();
         changeTarget();
 
-        double targetDistance = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
+        double targetDistance = sensors.getShooterDistanceToBackboard();
 
         switch (launcherState){
             case OFF:
@@ -348,8 +180,8 @@ public  class Launcher implements Module {
                 //robot.outtake.turret.backlashYok();
                 if(auto_aim){
                     try {
-                        target = idealVelocity.get(targetDistance);
-                        target_tilt = hoodRegression.getHoodAngle(targetDistance, target);
+                        target = velocity.get(targetDistance);
+                        target_tilt = hood.get(targetDistance);
                     } catch (Exception e) {
                         robot.op.gamepad1.rumble(250);
                         robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
@@ -366,8 +198,8 @@ public  class Launcher implements Module {
             case READY_FLYWHEEL:
                 try {
                     if (auto_aim) {
-                        target = idealVelocity.get(targetDistance);
-                        target_tilt = hoodRegression.getHoodAngle(targetDistance, currentVel);
+                        target = velocity.get(targetDistance);
+                        target_tilt = hood.get(targetDistance);
                     }
                 } catch (Exception e) {
                     robot.op.gamepad1.rumble(250);
@@ -384,7 +216,7 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 if(auto_aim) {
                     try {
-                        target_tilt = hoodRegression.getHoodAngle(targetDistance, currentVel);
+                        target_tilt = hood.get(targetDistance);
                     } catch (Exception e) {
                         break;
                     }
@@ -393,8 +225,8 @@ public  class Launcher implements Module {
             case LAUNCHING:
                 if(auto_aim) {
                     try {
-                        target = idealVelocity.get(targetDistance);
-                        target_tilt = hoodRegression.getHoodAngle(targetDistance, currentVel);
+                        target = velocity.get(targetDistance);
+                        target_tilt = hood.get(targetDistance);
                     } catch (Exception e) {
                         robot.op.gamepad1.rumble(250);
                         robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
@@ -408,7 +240,7 @@ public  class Launcher implements Module {
             case RECYCLE:
                 target = recycleVelocity;
                 target_tilt = recycleTilt;
-                power = pid.update(target, currentVel, sensors.getVoltage());
+                power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;

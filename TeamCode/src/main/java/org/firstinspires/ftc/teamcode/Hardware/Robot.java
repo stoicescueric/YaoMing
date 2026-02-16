@@ -89,7 +89,7 @@ public class Robot {
             blob.update();
         }
         sensors.update();
-        sensors.updateTargetForZone();
+        //sensors.updateTargetForZone();
         intakeTransfer.update();
         outtake.update();
 
@@ -101,6 +101,7 @@ public class Robot {
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
+        TelemetryUtil.packet.put("distance to backboard", sensors.getDistanceToBackboard());
 //        TelemetryUtil.packet.put("pinpoint heading", Math.toDegrees(sensors.getHeading()));
 //        TelemetryUtil.packet.put("navx heading", sensors.getNavxHeading());
 
@@ -144,9 +145,6 @@ public class Robot {
             TelemetryUtil.packet.put("FR Motor amps", frDriveMotor.getCurrent(CurrentUnit.AMPS));
         }
 
-        for (DcMotorEx m : hw.getAll(DcMotorEx.class)){
-            TelemetryUtil.packet.put(m.getDeviceName() + " amps", m.getCurrent(CurrentUnit.AMPS));
-        }
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());
@@ -170,47 +168,19 @@ public class Robot {
         double shootTy = sensors.getTargetY();
         double backTx = sensors.getBackboardX();
         double backTy = sensors.getBackboardY();
+        double shooterX = sensors.getShooterX();
+        double shooterY = sensors.getShooterY();
 
         field.setStroke("#ff3366");
         field.strokeCircle(shootTx, shootTy, 2);
-        field.setStroke("#ffa500");
-        field.strokeCircle(backTx, backTy, 3);
+
         field.setStroke("#aa33ff");
-        field.strokeLine(rxIn, ryIn, backTx, backTy);
+        field.strokeLine(rxIn, ryIn, shootTx, shootTy);
+        field.setStroke("#27f576");
+        field.strokeCircle(shooterX, shooterY, 2);
 
-        double distBackIn = sensors.getDistanceToBackboard();
-        field.setStroke("#00ff00");
 
-        double normalLen = 10.0;
-        double b1mag = Math.hypot(outtake.turret.BOARD1_NXrl, outtake.turret.BOARD1_NYrl);
-        double n1x = b1mag > 1e-6 ? outtake.turret.BOARD1_NXrl / b1mag : 0.0;
-        double n1y = b1mag > 1e-6 ? outtake.turret.BOARD1_NYrl / b1mag : 0.0;
-        field.strokeLine(backTx, backTy, backTx + n1x * normalLen, backTy + n1y * normalLen);
 
-        field.setStroke("#ffcc00");
-        double b2mag = Math.hypot(outtake.turret.BOARD2_NXrl, outtake.turret.BOARD2_NYrl);
-        double n2x = b2mag > 1e-6 ? outtake.turret.BOARD2_NXrl / b2mag : 0.0;
-        double n2y = b2mag > 1e-6 ? outtake.turret.BOARD2_NYrl / b2mag : 0.0;
-        field.strokeLine(backTx, backTy, backTx + n2x * normalLen, backTy + n2y * normalLen);
-
-        double aimLen = 40.0;
-        double nominalAngle = Turret.lastAdjustedGlobalAngle;
-        field.setStroke("#ffffff");
-        field.strokeLine(rxIn, ryIn,
-                rxIn + Math.cos(nominalAngle) * aimLen,
-                ryIn + Math.sin(nominalAngle) * aimLen);
-
-        double compAngle = Turret.lastMotionCompensatedAngle;
-        if (Math.abs(compAngle - nominalAngle) > 1e-3) {
-            field.setStroke("#00ffff");
-            field.strokeLine(rxIn, ryIn,
-                    rxIn + Math.cos(compAngle) * aimLen,
-                    ryIn + Math.sin(compAngle) * aimLen);
-        }
-
-        TelemetryUtil.packet.put("Distance to Backboard (in)", distBackIn);
-        double distShootIn2 = sensors.getDistanceToTarget(shootTx, shootTy);
-        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn2);
 
         TelemetryUtil.packet.put("Robot velX", sensors.getVelX());
         TelemetryUtil.packet.put("Robot velY", sensors.getVelY());
