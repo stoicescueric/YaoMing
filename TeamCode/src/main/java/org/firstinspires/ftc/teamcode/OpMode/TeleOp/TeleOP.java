@@ -78,7 +78,6 @@ public class TeleOP extends LinearOpMode
 
               outtakeUpdate();
               intakeUpdate();
-              readyFlywheelAfterStall();
               telemetry.addData("intake State",robot.intakeTransfer.intakeState);
               telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
               telemetry.update();
@@ -89,14 +88,7 @@ public class TeleOP extends LinearOpMode
 
 
 
-    private void applyLauncherTargetByX() {
-        double x = robot.sensors.getX();
-        if (x > 17) {
-            robot.outtake.launcher.setTargetTPS(pidTargetFarzone);
-        } else {
-            robot.outtake.launcher.setTargetTPS(pidTargetClosezone);
-        }
-    }
+
     public static double translationalSlow = 1;
     public static double rotateSlow = 0.6;
     public static double rotateNormal = 0.8;
@@ -169,23 +161,10 @@ public class TeleOP extends LinearOpMode
         }
     }
 
-    public void readyFlywheelAfterStall(){
-        if (IntakeTransfer.useStall && robot.intakeTransfer.stallTriggeredThisLoop) {
-            isReadyingFlywheel = true;
-            robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
-        }
-    }
 
-    // formula: -0.006248 * distance + 0.001034 * ticksPerSecond + -0.682723
+
 
     public void outtakeUpdate() {
-//        if (gg.yOnce()) {
-//            if (robot.outtake.outtakeState == Outtake.OuttakeState.RECYCLE) {
-//                robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
-//            } else {
-//                robot.outtake.outtakeState = Outtake.OuttakeState.RECYCLE;
-//            }
-//        }
 
 //        if (gg.xOnce()) {
 //            shootWhileMoving = !shootWhileMoving;
@@ -195,41 +174,20 @@ public class TeleOP extends LinearOpMode
         double x = robot.sensors.getX();
         double y = robot.sensors.getY();
         boolean inZone = robot.sensors.isInTargetZone(x, y);
+        inZone = true;
 
-        boolean isStill = shootWhileMoving ? true : robot.sensors.isRobotStill();
+        boolean isStill = true;
 
-        boolean isLongShot = robot.sensors.shootingLong();
 
         if (gg.aOnce() || gg.leftBumperOnce() ) { //&& robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE
             if(robot.intakeTransfer.isRecycle()) {
                 robot.intakeTransfer.spinUpRecycle();
             }else {
-                robot.intakeTransfer.intakeState = IntakeTransfer.IntakeState.OFF;
                 if (state == Outtake.OuttakeState.IDLE) {
-                    if (inZone && isStill) {
+                    if (inZone) {
                         // Idle and in zone: shoot immediately
-                        if (isLongShot) {
-                            robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-                        } else {
-                            robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-                        }
-                    } else {
-                        // Idle and outside zone: spin up
-                        isReadyingFlywheel = true;
-                        robot.outtake.outtakeState = Outtake.OuttakeState.READY_FLYWHEEL;
-                    }
-                } else if (state == Outtake.OuttakeState.READY_FLYWHEEL) {
-                    if (inZone && isStill) {
-                        // Spinning up/in ready state and in zone: shoot
-                        if (isLongShot) {
-                            robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-                        } else {
-                            robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-                        }
-                    } else {
-                        // Spinning but not in zone: STOP
-                        isReadyingFlywheel = false;
-                        robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+
                     }
                 } else {
                     // Any other non-IDLE state: STOP
@@ -239,7 +197,7 @@ public class TeleOP extends LinearOpMode
             }
         }
         if(gg.startOnce()) {
-            shootWhileMoving = !shootWhileMoving;
+            robot.sensors.toggleSOTM();
         }
 
         if(gg.yOnce()) {
@@ -248,13 +206,7 @@ public class TeleOP extends LinearOpMode
         if(gg.xOnce()){
             robot.intakeTransfer.startRecycle(true);
         }
-        if(state == Outtake.OuttakeState.READY_FLYWHEEL && inZone && isStill){
-            if (isLongShot) {
-                robot.outtake.start_feed_precise(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-            } else {
-                robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
-            }
-        }
+
 
         if(gg.bOnce()) {
             if(robot.outtake.outtakeState == Outtake.OuttakeState.IDLE ) {

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.Util.Wrapper.DigitalWrapper;
 
-@Disabled
+
 @Config
 @TeleOp(name = "Beam brake test", group = "Pedro Pathing")
 public class BeamBrakeTest extends LinearOpMode {

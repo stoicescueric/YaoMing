@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
+import org.firstinspires.ftc.teamcode.Util.Utils;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.BinaryDeque;
 
 @Config
@@ -72,6 +73,7 @@ public class IntakeTransfer implements Module {
         OFF,
         ON,
         POWER_FOR_TIME,
+        TRANSFER,
         recycle1,
         recycle2,
         recycle3,
@@ -95,6 +97,7 @@ public class IntakeTransfer implements Module {
     double sleeptime = 0;
     public double intakeSensorCounter = 0;
     IntakeState nextState = IntakeState.OFF;
+    public  IntakeState previousState = IntakeState.OFF;
     private boolean shooterStartRecycle = false;
 
     private long blockerOpenTriggeredTime = 0;
@@ -107,7 +110,7 @@ public class IntakeTransfer implements Module {
         conveyor = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "transfer"), 0);
 
         powerArm = new CachingServo(robot.hw.get(Servo.class, "powerArm"));
-        blocker = new CachingServo(robot.hw.get(Servo.class, "blockerMingi"));
+        blocker = new CachingServo(robot.hw.get(Servo.class, "blocker"));
         capac = new CachingServo(robot.hw.get(Servo.class, "capac"));
         HardwareUtils.unlock(intake);
         HardwareUtils.unlock(conveyor);
@@ -122,6 +125,7 @@ public class IntakeTransfer implements Module {
     ElapsedTime recycleStartTimer = new ElapsedTime();
     ElapsedTime recycleMidTimer = new ElapsedTime();
     ElapsedTime recycleEndTimer = new ElapsedTime();
+    ElapsedTime intakeSeq = new ElapsedTime();
     public double power_time = 0.5;
     public double time_power = 500;
     public double startStallCheckTime = 0;
@@ -130,7 +134,6 @@ public class IntakeTransfer implements Module {
 
     @Override
     public void update() {
-        stallTriggeredThisLoop = false;
 
         if(intakeState != IntakeState.INTAKE) beamChecked = false;
         switch (intakeState) {
@@ -144,7 +147,7 @@ public class IntakeTransfer implements Module {
                 }
                 break;
             case OFF_OPEN:
-                blockerState = BlockerState.OPEN;
+                blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                 powerArmState = PowerArmState.INTAKE;
                 intake.setPower(0);
                 conveyorState = ConveyorState.OFF;
@@ -168,7 +171,7 @@ public class IntakeTransfer implements Module {
                         && (robot.sensors.isBreakBeamPos2Low() && robot.sensors.getHowLongBeam2() > IntakeConstants.beamAllStopDelay)){
                     robot.op.gamepad1.rumble(250);
                     robot.sensors.setLedColor(Sensors.LightColor.GREEN);
-                    intakeState = IntakeState.OFF;
+                    intakeState = IntakeState.OFF_OPEN;
                 }
 
                 break;
@@ -179,11 +182,15 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case START_TRANSFER:
-                blockerState = BlockerState.OPEN;
+                blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+
+                intake.setPower(0);
                 powerArmState = PowerArmState.LOW;
                 conveyorState = ConveyorState.OFF;
-                sleep(IntakeConstants.capacReleaseTransfer, IntakeState.TRANSFER);
+                Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
+                intakeState = IntakeState.TRANSFER;
                 capacState = CapacState.BLEG;
+
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 break;
             case ReCycleStart:
@@ -267,9 +274,10 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case TRANSFER:
+                conveyor.setPower(Utils.minMaxClip(IntakeConstants.transferPowerTransfer * (12 / robot.sensors.getVoltage()),-1,1));
+                intake.setPower(Utils.minMaxClip(IntakeConstants.transferPowerIntake * (12 / robot.sensors.getVoltage()),-1,1));
                 powerArmState = PowerArmState.TRANSFER;
-                intake.setPower(IntakeConstants.transferPowerIntake);
-                conveyorState = ConveyorState.ON;
+                conveyorState = ConveyorState.TRANSFER;
                 capacState = CapacState.BLEG;
                 break;
             case SLEEP:
@@ -351,10 +359,13 @@ public class IntakeTransfer implements Module {
                 conveyor.setPower(IntakeConstants.conveyerPhase3);
                 break;
             case ON:
-                conveyor.setPower(IntakeConstants.transferPowerTransfer);
+                conveyor.setPower(IntakeConstants.onPowerConveyer);
                 break;
             case POWER_FOR_TIME:
                 conveyor.setPower(power_time);
+                break;
+            case TRANSFER:
+                conveyor.setPower(Utils.minMaxClip(IntakeConstants.transferPowerTransfer * (12 / robot.sensors.getVoltage()),-1,1));
                 break;
             case reverseTransfer:
                 conveyor.setPower(IntakeConstants.reverseConPhase3);
@@ -418,6 +429,8 @@ public class IntakeTransfer implements Module {
 
             }
         }
+        previousState = intakeState;
+
 
     }
 

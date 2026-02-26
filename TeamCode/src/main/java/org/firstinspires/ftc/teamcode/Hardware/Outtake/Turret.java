@@ -16,36 +16,17 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 
 @Config
 public class Turret implements Module {
-    CachingServo servoLeft;
-    CachingServo servoRight;
+    Servo servoLeft;
+    Servo servoRight;
 
     Sensors sensors;
 
     public static double mechRatio = 0.83;
 
     public static boolean backlashYok = false;
-    public static double offset = 0.005;
-
-    public static double BOARD1_NX = 0.16;
-    public static double BOARD1_NY = 0.0;
-    public static double BOARD2_NX = 0.0;
-    public static double BOARD2_NY = 0.13;
-
-    public double BOARD1_NXrl;
-    public double BOARD1_NYrl;
-    public double BOARD2_NXrl;
-    public double BOARD2_NYrl;
-
-    public static double BACKBOARD_AIM_GAIN = 0.08;
-    public static double MAX_BACKBOARD_AIM_OFFSET = Math.toRadians(10.0);
+    public static double offset = 0;
 
 
-    public static double MOTION_LEAD_GAIN = 5.6;
-    public static double MIN_LEAD_SPEED = 3.0;
-    public static double ANGLE_SMOOTH_ALPHA = 0;
-
-    public static double lastMotionCompensatedAngle = 0.0;
-    private static double smoothedGlobalAngle = 0.0;
 
     public enum TurretState {
         OFF,
@@ -61,21 +42,11 @@ public class Turret implements Module {
 
     public Turret(Robot rb, Sensors sensors){
         this.robot = rb;
-        servoLeft = new CachingServo(rb.hw.get(Servo.class,"turretL"));
-        servoRight = new CachingServo(rb.hw.get(Servo.class,"turretR"));
+        servoLeft = rb.hw.get(Servo.class,"turretL");
+        servoRight = rb.hw.get(Servo.class,"turretR");
         this.sensors = sensors;
 
-        if (Info.alliance == Alliance.RED) {
-            BOARD1_NXrl = BOARD2_NX;
-            BOARD1_NYrl = -BOARD2_NY;
-            BOARD2_NXrl = BOARD1_NX;
-            BOARD2_NYrl = BOARD1_NY;
-        } else {
-            BOARD1_NXrl = BOARD1_NX;
-            BOARD1_NYrl = BOARD1_NY;
-            BOARD2_NXrl = BOARD2_NX;
-            BOARD2_NYrl = BOARD2_NY;
-        }
+
     }
 
     @Override
@@ -109,8 +80,8 @@ public class Turret implements Module {
                         Math.cos(directGlobalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);
-                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);
-                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY);
+//                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);
+//                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY + " turret pos " + pos);
                 servoLeft.setPosition(pos + offset);
                 servoRight.setPosition(pos + offset);
                 break;
@@ -121,38 +92,6 @@ public class Turret implements Module {
         centerPose = pos;
     }
 
-    private double computeBackboardOptimizedAngle(double robotX, double robotY,
-                                                  double rimX, double rimY,
-                                                  double directAngle) {
-        if (BACKBOARD_AIM_GAIN == 0.0) {
-            return directAngle;
-        }
-
-        double dx = rimX - robotX;
-        double dy = rimY - robotY;
-        double mag = Math.hypot(dx, dy);
-        if (mag < 1e-6) return directAngle;
-        double vx = dx / mag;
-        double vy = dy / mag;
-
-        // normalize alliance-adjusted board normals
-        double b1mag = Math.hypot(BOARD1_NXrl, BOARD1_NYrl);
-        double n1x = b1mag > 1e-6 ? BOARD1_NXrl / b1mag : 0.0;
-        double n1y = b1mag > 1e-6 ? BOARD1_NYrl / b1mag : 0.0;
-        double b2mag = Math.hypot(BOARD2_NXrl, BOARD2_NYrl);
-        double n2x = b2mag > 1e-6 ? BOARD2_NXrl / b2mag : 0.0;
-        double n2y = b2mag > 1e-6 ? BOARD2_NYrl / b2mag : 0.0;
-
-        double cosInc1 = vx * n1x + vy * n1y;
-        double cosInc2 = vx * n2x + vy * n2y;
-
-        double incidenceDiff = cosInc1 - cosInc2;
-
-        double offsetRad = BACKBOARD_AIM_GAIN * incidenceDiff;
-        offsetRad = Range.clip(offsetRad, -MAX_BACKBOARD_AIM_OFFSET, MAX_BACKBOARD_AIM_OFFSET);
-
-        return directAngle + offsetRad;
-    }
 
     private double angleToTurretPosition(double angle) {
         double position = Range.scale(angle,

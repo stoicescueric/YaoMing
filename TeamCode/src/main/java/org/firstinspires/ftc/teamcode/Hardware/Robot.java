@@ -101,6 +101,7 @@ public class Robot {
         if(showTelemetry) updateTelemetry();
         double loop = System.nanoTime();
         TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
+        TelemetryUtil.packet.put("sotm",sensors.sotm);
         TelemetryUtil.packet.put("distance to backboard", sensors.getDistanceToBackboard());
 //        TelemetryUtil.packet.put("pinpoint heading", Math.toDegrees(sensors.getHeading()));
 //        TelemetryUtil.packet.put("navx heading", sensors.getNavxHeading());
@@ -129,6 +130,7 @@ public class Robot {
 
         TelemetryUtil.packet.addLine("--- Robot Telemetry ---");
         TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);
+        TelemetryUtil.packet.put("Previous State", intakeTransfer.previousState);
         TelemetryUtil.packet.put("Outtake State", outtake.outtakeState);
         TelemetryUtil.packet.put("Launcher State", outtake.launcher.launcherState);
         TelemetryUtil.packet.put("Turret State", outtake.turret.turretState);
@@ -148,6 +150,7 @@ public class Robot {
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());
+        TelemetryUtil.packet.put("Current heading", sensors.getHeading());
         TelemetryUtil.packet.put("voltage",sensors.getVoltage());
         TelemetryUtil.packet.put("beam 1 value",sensors.isBreakBeamPos1Low());
         TelemetryUtil.packet.put("beam 2 value",sensors.isBreakBeamPos2Low());
@@ -166,8 +169,8 @@ public class Robot {
 
         double shootTx = sensors.getTargetX();
         double shootTy = sensors.getTargetY();
-        double backTx = sensors.getBackboardX();
-        double backTy = sensors.getBackboardY();
+        double movingGoalX = sensors.getMoveGoalX();
+        double movingGoalY = sensors.getMoveGoalY();
         double shooterX = sensors.getShooterX();
         double shooterY = sensors.getShooterY();
 
@@ -178,6 +181,8 @@ public class Robot {
         field.strokeLine(rxIn, ryIn, shootTx, shootTy);
         field.setStroke("#27f576");
         field.strokeCircle(shooterX, shooterY, 2);
+        field.setStroke("#4ef542");
+        field.strokeCircle(movingGoalX,movingGoalY,2);
 
 
 

@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.blob.localization.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 
 // Import the GoBilda Pinpoint driver
 // Make sure you have the GoBildaPinpointDriver.java in your project
@@ -36,26 +38,27 @@ public class Localization extends LinearOpMode {
     // TODO: MEASURE THESE ON YOUR ROBOT!
     // X Offset: Forward/Backward distance from center (Positive = Forward)
     // Y Offset: Left/Right distance from center (Positive = Left)
-    private static final double ODO_X_OFFSET = -82.055;
-    private static final double ODO_Y_OFFSET = 103.104;
+    private static final double ODO_X_OFFSET = -88.5;
+    private static final double ODO_Y_OFFSET = 109.35;
     public static double modifier = 0;
     Pose3D botpose;
     Pose3D botPose2;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        TelemetryUtil.setup();
 
         // ------------------------------------------------------------------
         // 1. Initialize Limelight
         // ------------------------------------------------------------------
-        limelight = hardwareMap.get(Limelight3A.class, "ll");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // Switch to pipeline 0 (usually AprilTag)
         limelight.start();
 
         // ------------------------------------------------------------------
         // 2. Initialize GoBilda Pinpoint
         // ------------------------------------------------------------------
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         // Set the offsets defined above
         odo.setOffsets(ODO_X_OFFSET, ODO_Y_OFFSET, DistanceUnit.MM);
@@ -95,7 +98,7 @@ public class Localization extends LinearOpMode {
             odo.update();
             Pose2D odoPosition = odo.getPosition();
             // Get REV IMU yaw
-            double imuYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double imuYaw = odoPosition.getHeading(AngleUnit.DEGREES);
 
             // Get Limelight MegaTag2 yaw
             limelight.updateRobotOrientation(modifier+imuYaw);
@@ -109,10 +112,34 @@ public class Localization extends LinearOpMode {
                     telemetry.addData("MegaTag2 y M", botpose.getPosition().y);
                     telemetry.addData("MegaTag2 x inch", botpose.getPosition().x * 39.37);
                     telemetry.addData("MegaTag2 y inch", botpose.getPosition().y * 39.37);
+
                     telemetry.addData("MegaTag x M", botPose2.getPosition().x);
                     telemetry.addData("MegaTag y M", botPose2.getPosition().y);
                     telemetry.addData("MegaTag x inch", botPose2.getPosition().x * 39.37);
                     telemetry.addData("MegaTag y inch", botPose2.getPosition().y * 39.37);
+
+//                    try {
+//                        Canvas field = TelemetryUtil.getPacket().fieldOverlay();
+//                        double mt2_x_in = botpose.getPosition().x * 39.37;
+//                        double mt2_y_in = botpose.getPosition().y * 39.37;
+//                        double odo_x_in = odoPosition.getX(DistanceUnit.INCH);
+//                        double odo_y_in = odoPosition.getY(DistanceUnit.INCH);
+//                        double headining = odoPosition.getHeading(AngleUnit.RADIANS);
+//                        field.setStroke("#00ff00");
+//                        field.strokeCircle(mt2_x_in, mt2_y_in, 7);
+//                        TelemetryUtil.packet.put("MT2 (in)", String.format("%.1f, %.1f", mt2_x_in, mt2_y_in));
+//                        field.strokeLine(mt2_x_in, mt2_y_in, mt2_x_in + Math.cos(headining), mt2_y_in + Math.sin(headining));
+//
+//
+//                        field.setStroke("#ff0000");
+//                        field.strokeCircle(odo_x_in, odo_y_in, 7);
+//                        field.strokeLine(odo_x_in, odo_y_in, odo_x_in + Math.cos(headining), odo_y_in + Math.sin(headining));
+//                        TelemetryUtil.packet.put("MT2 (in)", String.format("%.1f, %.1f", odo_x_in, odo_y_in));
+//
+//
+//                    } catch (Exception ignored) {
+//
+//                     }
 
                 }else {
                     botpose = null;
@@ -135,6 +162,7 @@ public class Localization extends LinearOpMode {
             }
             telemetry.addData("REV IMU Yaw", "%.2f degrees",imuYaw);
             telemetry.update();
+            TelemetryUtil.sendTelemetry();
         }
     }
 }

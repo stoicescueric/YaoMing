@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.blob.localization.GoBildaPinpointDriver;
 public abstract class BlobConstants {
 
     //HardwareMap
-    public static String leftFrontName = "leftFront";
-    public static String leftBackName = "leftBack";
-    public static String rightFrontName = "rightFront";
-    public static String rightBackName = "rightBack";
+    public static String leftFrontName = "fr";
+    public static String leftBackName = "bl";
+    public static String rightFrontName = "fr";
+    public static String rightBackName = "br";
     public static String pinpointName = "pinpoint";
 
     //PID
@@ -28,8 +28,8 @@ public abstract class BlobConstants {
     public static double voltageConstant = 12;
 
     //Localization
-    public static double xOffset = -82.055;
-    public static double yOffset = 103.104;
+    public static double xOffset = -88.5;
+    public static double yOffset = 109.35;
     public static GoBildaPinpointDriver.EncoderDirection xPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.EncoderDirection yPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.GoBildaOdometryPods podType = GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;

@@ -12,10 +12,8 @@ public class OuttakePositions {
     public static double errorVelThreeshold = 15;
 
     public static double farLaunchVelocity = 2100;
-    public static double idleVelocity = 1400;
-    public static double idlePower = 0.35;
 
-    public static double defaultVel = 1470;
+    public static double defaultVel = 1550;
 
 
     /*----Tilt ----*/
@@ -38,10 +36,10 @@ public class OuttakePositions {
     public static double bbThreeshold = 200;
 
     /*--TURRET--*/
-    public static double MIN_TURRET_ANGLE = -2.515;
-    public static double MAX_TURRET_ANGLE = 2.572;
-    public static double MIN_TURRET_POSITION = 0.08;
-    public static double MAX_TURRET_POSITION = 0.92;
+    public static double MIN_TURRET_ANGLE = Math.toRadians(90);
+    public static double MAX_TURRET_ANGLE = -Math.toRadians(90);
+    public static double MIN_TURRET_POSITION = 0.197;
+    public static double MAX_TURRET_POSITION = 0.803;
 
     /*--BLOCKER--*/
     public static long blockerOpenDelayMs = 160;

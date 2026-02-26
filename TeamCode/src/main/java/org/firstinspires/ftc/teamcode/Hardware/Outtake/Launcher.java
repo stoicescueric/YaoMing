@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 
 import static org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions.FAR_ZONE_X_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions.idlePower;
+
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.util.InterpLUT;
+
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -23,17 +24,22 @@ import org.firstinspires.ftc.teamcode.Util.Controllers.FlyWheelPID;
 import org.firstinspires.ftc.teamcode.Util.Controllers.velocityController;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 import org.firstinspires.ftc.teamcode.Util.Math.MultipleRegression;
+import org.firstinspires.ftc.teamcode.Util.Utils;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 
 @Config
 public  class Launcher implements Module {
     CachingDcMotorEx motor1,motor2;
 
-    CachingServo tilt;
-    public static double[] Distances = {59, 70, 84, 95, 101, 108, 117};
+
+    Servo tilt;
+    public static double[] Distances = {42.6, 52.8, 62.88, 72.9, 83.3, 93.5, 102,112,132,139,144,148,152.8,160};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1430, 1480, 1585, 1620, 1675, 1760};
-    public static double[] hoodValues = {0.05, 0.2, 0.225, 0.24, 0.24, 0.26, 0.3};
+    public static double[] velValues = {1235, 1300, 1370,1460, 1520, 1600, 1750, 1860,1920,1960,2010,2040,2080,2120};
+    public static double[] hoodValues = {0, 0.09, 0.16, 0.20, 0.245, 0.28, 0.43, 0.44,0.44,0.44,0.44,0.44};
+            //
+
 
     MultipleRegression hoodRegression = new MultipleRegression();
     InterpLUT idealVelocity = new InterpLUT();
@@ -57,23 +63,19 @@ public  class Launcher implements Module {
     Sensors sensors;
     public double target = 0;
     public  boolean auto_aim = true;
-    public  double idleAlpha = 0;
     public double currentVel = 0;
     public  double recycleVelocity = 500;
     public  double recycleTilt = 1;
     public LauncherState launcherState = LauncherState.OFF;
-    public FlyWheelPID pid = new FlyWheelPID();
     public static boolean rebuildTables = false;
 
-    velocityController bangBang = new velocityController();
     DcMotorEx encoder;
     Robot robot;
     public Launcher(Robot robot, Sensors sensors) {
         this.robot = robot;
         this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0);
         this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0);
-        encoder = robot.hw.get(DcMotorEx.class,"rightBack");
-        tilt = new CachingServo(robot.hw.get(Servo.class,"hood"));
+        tilt = robot.hw.get(Servo.class,"tilt");
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         addData();
@@ -81,6 +83,7 @@ public  class Launcher implements Module {
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motor1.setDirection(DcMotorSimple.Direction.FORWARD);
         motor2.setDirection(DcMotorEx.Direction.REVERSE);
         this.sensors = sensors;
     }
@@ -102,8 +105,7 @@ public  class Launcher implements Module {
 
     }
     public void rebuildLutVelFromDashboard() {
-        velocity = new InterpLUT(); // Clear old one
-        // Ensure arrays are same length to avoid crashes
+        velocity = new InterpLUT();
         int len = Math.min(Distances.length, velValues.length);
         for (int i = 0; i < len; i++) {
             velocity.add(Distances[i], velValues[i]);
@@ -111,7 +113,7 @@ public  class Launcher implements Module {
         velocity.createLUT();
     }
     public void rebuildLutHoodFromDashboard() {
-        hood = new InterpLUT(); // Clear old one
+        hood = new InterpLUT();
         int len = Math.min(Distances.length, hoodValues.length);
         for (int i = 0; i < len; i++) {
             hood.add(Distances[i], hoodValues[i]);
@@ -119,7 +121,7 @@ public  class Launcher implements Module {
         hood.createLUT();
     }
     public static double target_tilt = 0.5;
-    public static double power;
+    public double power;
 
     public double getHoodPosition() {
         return target_tilt;
@@ -129,9 +131,7 @@ public  class Launcher implements Module {
         return power;
     }
 
-    public void changeTarget(){
-        // hook for manual overrides if needed
-    }
+
     public double getTunePidTarget() {
         return tunePidTarget;
     }
@@ -145,18 +145,16 @@ public  class Launcher implements Module {
             rebuildTables = false;
         }
 
-        currentVel = encoder.getVelocity();
-        changeTarget();
+        currentVel = -motor1.getVelocity();
 
         double targetDistance = sensors.getShooterDistanceToBackboard();
 
         switch (launcherState){
             case OFF:
                 target = 0;
-                power = pid.update(target, currentVel, sensors.getVoltage());
+                power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
-                robot.outtake.turret.backlashEvet();
                 break;
             case TUNE_PID:
                 power = velocityController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
@@ -164,16 +162,17 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 break;
             case IDLE:
-//                power = pid.update(target*idleAlpha, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
-//                motor1.setPower(power);
-//                motor2.setPower(power);
-                if(currentVel > OuttakePositions.idleVelocity) {
-                    motor1.setPower(0);
-                    motor2.setPower(0);
-                }else {
-                    motor1.setPower(idlePower);
-                    motor1.setPower(idlePower);
+                double speed;
+                try{
+                    speed = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                    target_tilt = hood.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[hoodValues.length-1]));
+                } catch (Exception e) {
+                    speed = OuttakePositions.defaultVel;
+                    target_tilt = 0.3;
                 }
+                power = velocityController.calculate(speed, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+                motor1.setPower(power);
+                motor2.setPower(power);
 
                 break;
             case SHOOT_STARTED:

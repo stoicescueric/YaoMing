@@ -18,12 +18,15 @@ import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
+import org.firstinspires.ftc.teamcode.blob.math.LowPassFilter;
 
 @Config
 public class Sensors {
     private Robot robot;
 
     CachingServo light;
+    InterpLUT shotTime;
 
     public enum LightColor {
         OFF(0),
@@ -38,7 +41,7 @@ public class Sensors {
     public LightColor lightColor = LightColor.OFF;
     Pose pose;
     double currentX,currentY,currentHeading;
-    public static double FORWARD_TURRET_OFFSET = -1.6;
+    public static double FORWARD_TURRET_OFFSET = -1.66;
 
     private double currentVelocityShooter = 0;
     private double voltage;
@@ -51,23 +54,23 @@ public class Sensors {
     private boolean breakBeamPos2High = false;
     private boolean breakBeamPos3High = false;
 
-    public static double targetX = -66.6;
-    public static double targetY = -65;
-    public double targetXRedClose = -67;
-    public double targetYRedClose = 66;
+    public  double targetX = -66.6;
+    public  double targetY = -65;
+    public static double targetXRedClose = -69;
+    public static double targetYRedClose = 67;
     public double targetXBlueClose = -64;
     public double targetYBlueClose = -66;
 
-    public double targetXRedFar = -71;
+    public static double targetXRedFar = -72;
     public static double servoPos = 0.4;
-    public double targetYRedFar = 70;
+    public static double targetYRedFar = 64;
     public double targetXBlueFar = -70;
     public double targetYBlueFar = -70;
+    public double virtualTargetX = targetX;
+    public double virtualTargetY = targetY;
 
 
     public double intakeSpeed;
-    NavxMicroNavigationSensor navxMicro;
-    IntegratingGyroscope gyro;
     double shooterWorldX, shooterWorldY;
 
     public static double STILL_MAX_TRANSLATIONAL_SPEED = 13; // field units per second
@@ -85,7 +88,9 @@ public class Sensors {
     public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;
 
 
+    public boolean sotm = false;
 
+    public static double switchTarget = 40;
     public static double SLOWZONE_X1 = 10, SLOWZONE_Y1 = 35;
     public static double SLOWZONE_X2 = 35, SLOWZONE_Y2 = 35;
     public static double SLOWZONE_X3 = 10, SLOWZONE_Y3 = 72;
@@ -93,6 +98,11 @@ public class Sensors {
 
     private double velX = 0.0;
     private double velY = 0.0;
+    public double xVelocityRobot, yVelocityRobot;
+    public double xAccRobot, yAccRobot;
+    public static double filterParameter = 0.6;
+    private  final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
+    private final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameter, 0);
 
     public static double DEFAULT_PROJECTILE_SPEED = 300.0; // inches per second, rough guess
 
@@ -110,8 +120,18 @@ public class Sensors {
             targetX = targetXRedClose;
             targetY = targetYRedClose;
         }
+        shotTime = new InterpLUT();
+        createShotTime();
     }
 
+    void createShotTime() {
+        shotTime.add(42,0.695);
+        shotTime.add(52,0.516);
+        shotTime.add(62,0.704);
+        shotTime.add(72,0.608);
+        shotTime.add(82,0.670);
+        shotTime.createLUT();
+    }
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
@@ -129,29 +149,32 @@ public class Sensors {
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
         lastUpdateTimeNs = System.nanoTime();
-        navxMicro = robot.hw.get(NavxMicroNavigationSensor.class, "navx");
-        gyro = (IntegratingGyroscope)navxMicro;
-        while (navxMicro.isCalibrating())  {
-
-        }
     }
     public double getTargetX(){
+        if(sotm) {
+            return virtualTargetX;
+        }
         return targetX;
     }
     public double getTargetY(){
+        if(sotm) {
+            return virtualTargetY;
+        }
         return targetY;
     }
     public double getBackboardX() { return targetX; }
     public double getBackboardY() { return targetY; }
 
-    public double getNavxHeading() {
-
-        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
+    public double getDistanceBetweenPoints(double x1,double x2,double y1,double y2){
+        return Math.sqrt((x1 - x2) * (x1-x2) + (y1 - y2) * (y1 - y2));
     }
+    public static double threesholdTime = 0.050;
+
+    public static double latencyFactor = 0.03;
 
     public void update() {
         Pose prevPose = pose;
+
         double prevX = currentX;
         double prevY = currentY;
 
@@ -161,21 +184,51 @@ public class Sensors {
         }else {
             pose = robot.drive.getPose();
         }
-
         currentX = pose.getX();
         currentY = pose.getY();
         currentHeading = pose.getHeading();
+
+
+        calculateVelAndAcc();
+
+
+
         shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
         shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
-
-        long nowNs = System.nanoTime();
-        if (prevUpdateTimeNs != 0) {
-            double dt = (nowNs - prevUpdateTimeNs) / 1e9; // seconds
-            if (dt > 1e-4) {
-                velX = (currentX - prevX) / dt;
-                velY = (currentY - prevY) / dt;
+        double shotTimeEstimate = shotTime.get(getShooterDistanceToBackboard());
+        if(shooterWorldX > switchTarget) {
+            if(Info.alliance == Alliance.RED) {
+                targetX = targetXRedFar;
+                targetY = targetYRedFar;
+            }else {
+                targetX = targetXBlueFar;
+                targetY = targetYBlueFar;
+            }
+        }else {
+            if(Info.alliance == Alliance.RED) {
+                targetX = targetXRedClose;
+                targetY = targetYRedClose;
+            }else {
+                targetX = targetXBlueClose;
+                targetY = targetYBlueClose;
             }
         }
+
+        for(int i = 0;i<5;i++) {
+            virtualTargetX = targetX - shotTimeEstimate * (xVelocityRobot + latencyFactor * xAccRobot);
+            virtualTargetY = targetY - shotTimeEstimate * (yVelocityRobot + latencyFactor * yAccRobot);
+
+            double newShotTime = shotTime.get(getDistanceBetweenPoints(virtualTargetX,currentX,virtualTargetY,currentY));
+            if(Math.abs(newShotTime - shotTimeEstimate) <= threesholdTime) {
+                i = 4;
+            }
+            if(i != 4) {
+                shotTimeEstimate = newShotTime;
+            }
+        }
+
+
+
 
 
         if(System.currentTimeMillis() - readVoltageTime > 350) {
@@ -215,7 +268,6 @@ public class Sensors {
         }
 
         light.setPosition(lightColor.value);
-        lastUpdateTimeNs = nowNs;
     }
 
     public double getVoltage() {
@@ -229,22 +281,41 @@ public class Sensors {
         return currentX;
     }
 
-    public double getDistanceToTarget(double targetX,double targetY){
-        return Math.hypot(targetX-currentX,targetY-currentY);
+
+    public void calculateVelAndAcc() {
+        double speedXAcel = robot.drive.getAcceleration().getXComponent();
+        double speedYAcel = robot.drive.getAcceleration().getYComponent();
+//        xAccRobot = speedXAcel * Math.cos(-currentHeading) - speedYAcel * Math.sin(-currentHeading);
+//        yAccRobot = speedXAcel * Math.sin(-currentHeading) + speedYAcel * Math.cos(-currentHeading);
+        xAccRobot = speedXAcel;
+        yAccRobot = speedYAcel;
+
+        velX = xVelocityFilter.getValue(robot.drive.getVelocity().getXComponent());
+        velY  = yVelocityFilter.getValue(robot.drive.getVelocity().getYComponent());
+//        xVelocityRobot = velX * Math.cos(-currentHeading) - velY * Math.sin(-currentHeading);
+//        yVelocityRobot = velX * Math.sin(-currentHeading) + velY * Math.cos(-currentHeading);
+        xVelocityRobot = velX;
+        yVelocityRobot = velY;
+    }
+    public void toggleSOTM() {
+        sotm = !sotm;
     }
 
+    public double getMoveGoalX() {
+        return virtualTargetX;
+    }
+    public double getMoveGoalY() {
+        return virtualTargetY;
+    }
     public double getDistanceToBackboard() {
-        return Math.hypot(targetX - currentX, targetY - currentY);
+        return Math.hypot(getTargetX() - currentX, getTargetY() - currentY);
     }
     public double getShooterDistanceToBackboard() {
-        return Math.hypot(targetX - shooterWorldX, targetY - shooterWorldY);
+        return Math.hypot(getTargetX() - shooterWorldX, getTargetY() - shooterWorldY);
     }
 
-    public double getAngleToTarget(double targetX,double targetY) {
-        return Math.atan2(targetY-currentY,targetX-currentX);
-    }
     public double getShooterAngleToTarget(double targetX,double targetY) {
-        return Math.atan2(targetY-shooterWorldY,targetX-shooterWorldX);
+        return Math.atan2(getTargetY()-shooterWorldY,getTargetX()-shooterWorldX);
     }
 
     public double getAngularVelocity() {
@@ -286,48 +357,6 @@ public class Sensors {
      * Safe to call multiple times per loop *after* robot.update().
      */
 
-
-    public boolean isRobotStill() {
-        if (pose == null) return false;
-        long loopTimeNs = robot.getLoopTimeNs();
-
-        if (Double.isNaN(lastStillX) || lastStillCheckLoopTimeNs == 0) {
-            lastStillX = currentX;
-            lastStillY = currentY;
-            lastStillHeading = currentHeading;
-            lastStillCheckLoopTimeNs = loopTimeNs;
-            return false;
-        }
-        if (loopTimeNs == lastStillCheckLoopTimeNs) {
-            double dx = currentX - lastStillX;
-            double dy = currentY - lastStillY;
-            double dHeading = currentHeading - lastStillHeading;
-            double dt = (loopTimeNs - lastStillCheckLoopTimeNs) / 1e9;
-            if (dt <= 0) return false;
-            double translationalSpeed = Math.hypot(dx, dy) / dt;
-            double angularSpeed = Math.abs(dHeading) / dt;
-            return translationalSpeed <= STILL_MAX_TRANSLATIONAL_SPEED &&
-                   angularSpeed <= STILL_MAX_ANGULAR_SPEED;
-        }
-
-        double dt = (loopTimeNs - lastStillCheckLoopTimeNs) / 1e9;
-        if (dt <= 0) return false;
-
-        double dx = currentX - lastStillX;
-        double dy = currentY - lastStillY;
-        double dHeading = currentHeading - lastStillHeading;
-
-        double translationalSpeed = Math.hypot(dx, dy) / dt;
-        double angularSpeed = Math.abs(dHeading) / dt;
-
-        lastStillX = currentX;
-        lastStillY = currentY;
-        lastStillHeading = currentHeading;
-        lastStillCheckLoopTimeNs = loopTimeNs;
-
-        return translationalSpeed <= STILL_MAX_TRANSLATIONAL_SPEED &&
-               angularSpeed <= STILL_MAX_ANGULAR_SPEED;
-    }
 
     public boolean isInTargetZone(double x, double y) {
         if (isPointInTriangle(x, y,
@@ -381,8 +410,8 @@ public class Sensors {
      * Returns the current estimated translational velocity of the robot in the
      * field frame (units per second).
      */
-    public double getVelX() { return velX; }
-    public double getVelY() { return velY; }
+    public double getVelX() { return xVelocityRobot; }
+    public double getVelY() { return yVelocityRobot; }
 
     /**
      * Approximate time of flight for a shot given a planar distance. This is a

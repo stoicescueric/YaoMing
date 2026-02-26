@@ -70,15 +70,14 @@ public class Outtake {
                 break;
             case PRECISE_SHOOT_FEEDING:
                 if(launcher.isReady()) {
-                    Log.w("Debug shoot precise","a intrat launcher ready");
-                    robot.intakeTransfer.blockerState = IntakeTransfer.BlockerState.OPEN;
-                    robot.intakeTransfer.setPowerForTime(IntakeConstants.preciseShotPower, IntakeConstants.preciseShotDelay);
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
                     outtakeState = OuttakeState.PRECISE_SHOOT;
                 }
                 break;
             case PRECISE_SHOOT:
                 Log.w("Debug shoot precise","a intrat in case Precise shoot");
-                if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) {
+                if(!launcher.isReady()) {
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                     outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
                     Log.w("Debug shoot precise","se intoarce inapoi in feeding");
                 }
