@@ -132,6 +132,8 @@ public class Sensors {
         shotTime.add(82,0.670);
         shotTime.createLUT();
     }
+    public static boolean usePredictivePose = false;
+    public static double timeLatency = 0.1; //sec
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
@@ -188,6 +190,10 @@ public class Sensors {
         currentY = pose.getY();
         currentHeading = pose.getHeading();
 
+        if(usePredictivePose) {
+            currentX = currentX + (xVelocityRobot * timeLatency);
+            currentY = currentY + (yVelocityRobot * timeLatency);
+        }
 
         calculateVelAndAcc();
 

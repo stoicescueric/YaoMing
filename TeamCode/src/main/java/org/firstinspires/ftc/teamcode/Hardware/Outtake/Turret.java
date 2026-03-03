@@ -48,7 +48,8 @@ public class Turret implements Module {
 
 
     }
-
+    public static boolean useAngularComp = false;
+    public static double turretLag = 0.1;
     @Override
     public void update() {
         switch (turretState){
@@ -74,7 +75,9 @@ public class Turret implements Module {
 
                 double directGlobalAngle = sensors.getShooterAngleToTarget(backboardX, backboardY);
 
-
+                if(useAngularComp) {
+                    robotHeading = robotHeading + (sensors.getAngularVelocity() * turretLag);
+                }
                 double relativeAngle = Math.atan2(
                         Math.sin(directGlobalAngle - robotHeading),
                         Math.cos(directGlobalAngle - robotHeading));
@@ -82,6 +85,7 @@ public class Turret implements Module {
                 double pos = angleToTurretPosition(relativeAngle);
 //                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);
 //                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY + " turret pos " + pos);
+
                 servoLeft.setPosition(pos + offset);
                 servoRight.setPosition(pos + offset);
                 break;

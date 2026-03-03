@@ -7,11 +7,11 @@ public class IntakeConstants {
 
     /*-----MOTOR POWERS---*/
     public static double intakePowerIntake = 1;
-    public static double transferPowerIntake = 0.5;
+    public static double transferPowerIntake = 1;
     public static double reversePower = 1;
     public static double intakePowerRecycle = 1;
 
-    public static double transferPowerTransfer = 0.85;
+    public static double transferPowerTransfer = 1;
     public static double intakeFirstPhase = 0.7;
     public static double intakeSecondPhase = 0.5;
     public static double transferFirstPhase = 0.3;
@@ -40,10 +40,10 @@ public class IntakeConstants {
     public static double blockerOpen = 0.42;
     public static double blockerClose = 0.83;
 
-    public static double powerArmLow = 0.83;
-    public static double powerArmRecycle = 0.83;
-    public static double powerArmIntake = 0.83;
-    public static double powerArmVeryLow = 0.83;
+    public static double powerArmLow = 0.68;
+    public static double powerArmRecycle = 0.68;
+    public static double powerArmIntake = 0.68;
+    public static double powerArmVeryLow = 0.68;
 
     public static double preciseShotDelay = 400;
     public static double beam3StopDelay = 300;
