@@ -27,7 +27,7 @@ public class Odometry {
         odo = hardwareMap.get(GoBildaPinpointDriver.class, BlobConstants.pinpointName);
         odo.setEncoderDirections(BlobConstants.xPodDirection, BlobConstants.yPodDirection);
         odo.setEncoderResolution(BlobConstants.podType);
-        odo.setOffsets(BlobConstants.xOffset, BlobConstants.yOffset, DistanceUnit.MM);
+        odo.setOffsets(BlobConstants.xOffset, BlobConstants.yOffset, DistanceUnit.INCH);
         odo.resetPosAndIMU();
     }
 
@@ -76,7 +76,7 @@ public class Odometry {
     public double xGlide, yGlide;
 
     private void updateGlide(){
-
+        zpam = BlobConstants.zpam;
         xRobotVelocity = xVelocity * Math.cos(-heading) - yVelocity * Math.sin(-heading);
         yRobotVelocity = xVelocity * Math.sin(-heading) + yVelocity * Math.cos(-heading);
 

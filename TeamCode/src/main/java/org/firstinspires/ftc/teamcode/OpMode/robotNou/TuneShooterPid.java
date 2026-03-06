@@ -63,6 +63,8 @@ public class TuneShooterPid extends LinearOpMode {
             telemetry.addData("intake state",robot.intakeTransfer.intakeState);
             telemetry.addData("launcher state",robot.outtake.launcher.launcherState);
             telemetry.addData("distance",robot.sensors.getDistanceToBackboard());
+            telemetry.addData("heading", robot.sensors.getHeading());
+            telemetry.addData("heading degrees", Math.toDegrees(robot.sensors.getHeading()));
             telemetry.update();
         }
     }

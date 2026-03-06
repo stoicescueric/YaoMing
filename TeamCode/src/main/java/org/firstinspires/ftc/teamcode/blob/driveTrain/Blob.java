@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 public class Blob {
 
 
-    CachingDcMotorEx leftFront, leftBack, rightFront, rightBack;
+    DcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
     public double targetHeading, rotation, realHeading, targetHeadingBlob;
@@ -62,10 +62,10 @@ public class Blob {
 
         odo = new Odometry(hardwareMap);
         vs = hardwareMap.voltageSensor.iterator().next();
-        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName), 0.01);
-        leftBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName), 0.01);
-        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName), 0.01);
-        rightBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName), 0.01);
+        leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
+        leftBack = hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName);
+        rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
+        rightBack = hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName);
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -75,9 +75,9 @@ public class Blob {
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftBack.setDirection(DcMotorEx.Direction.REVERSE);
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
-        rightBack.setDirection(DcMotorEx.Direction.REVERSE  );
+        rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
-        setTargetVector(0, 0, 0);
+        //setTargetVector(0, 0, 0);
     }
 
     public boolean inPosition(){
@@ -148,10 +148,10 @@ public class Blob {
         frontRightPower = ((y - x - rx) / denominator) * maxPower;
         backRightPower = ((y + x - rx) / denominator) * maxPower;
 
-        leftFront.setPower(frontLeftPower * BlobConstants.voltageConstant / voltage);
-        leftBack.setPower(backLeftPower * BlobConstants.voltageConstant / voltage);
-        rightFront.setPower(frontRightPower * BlobConstants.voltageConstant / voltage);
-        rightBack.setPower(backRightPower * BlobConstants.voltageConstant / voltage);
+        leftFront.setPower(frontLeftPower);
+        leftBack.setPower(backLeftPower);
+        rightFront.setPower(frontRightPower);
+        rightBack.setPower(backRightPower);
 
     }
 
@@ -159,7 +159,7 @@ public class Blob {
 
         this.targetX = targetX;
         this.targetY = targetY;
-        this.targetHeading = targetHeading;
+        this.targetHeading =targetHeading-Math.floor((targetHeading/ (Math.PI*2)))*Math.PI*2;
         useHeadingThreshold = false;
 
     }
@@ -215,25 +215,25 @@ public class Blob {
 
 
 
-        controllerX.kp = kP;
-        controllerY.kp = kP;
+        controllerX.kp = BlobConstants.kP;
+        controllerY.kp = BlobConstants.kP;
 
-        controllerX.ki = kI;
-        controllerY.ki = kI;
+        controllerX.ki = 0;
+        controllerY.ki = 0;
 
-        controllerX.kd = kD;
-        controllerY.kd = kD;
+        controllerX.kd = BlobConstants.kD;
+        controllerY.kd = BlobConstants.kD;;
 
-        controllerHeading.kp = hP;
-        controllerHeading.ki = hI;
-        controllerHeading.kd = hD;
+        controllerHeading.kp = BlobConstants.hP;
+        controllerHeading.ki = 0;
+        controllerHeading.kd = BlobConstants.hD;
 
         if(Double.isNaN(odo.x) || Double.isNaN(odo.y) || Double.isNaN(odo.heading)){
             return;
         }
 
-        x = controllerX.calculate(targetX, odo.predictedX);
-        y = -controllerY.calculate(targetY , odo.predictedY);
+        x = controllerX.calculate(targetX, odo.x);
+        y = -controllerY.calculate(targetY , odo.y);
 
         double heading = odo.getHeading();
         if(heading < 0) realHeading = Math.abs(heading);
@@ -246,15 +246,6 @@ public class Blob {
         totalDistance = Math.sqrt(Math.pow(targetX - prevX, 2) + Math.pow(targetY - prevY, 2));
         travelDistance = Math.sqrt(Math.pow(odo.getX() - prevX, 2) + Math.pow(odo.getY() - prevY, 2));
         progress = Math.min(Math.max(travelDistance / totalDistance, 0), 1);
-
-        if(useHeadingThreshold){
-            if(progress < headingThreshold){
-                targetHeading = prevH;
-            }
-            else{
-                targetHeading = targetHeadingBlob;
-            }
-        }
 
         setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading) , rotation);
 

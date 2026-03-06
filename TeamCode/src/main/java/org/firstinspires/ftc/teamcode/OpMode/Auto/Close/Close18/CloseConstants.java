@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close15Blob;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -12,13 +12,8 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 
-
-// DEPRICATED DO NOT USE
-
-
-
 @Config
-public class CloseBlobConstants {
+public class CloseConstants {
 
     //DEFAULT VALUES FOR RED
     public static double shootingTime = 1000;
@@ -41,7 +36,11 @@ public class CloseBlobConstants {
     public static double pickUp2X2 = 13.6,pickUp2Y2 = 53, pickUp2Heading2 = Math.toRadians(270);
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
-    public Pose pickUpPose2Intermediary;
+
+    public static double pickUp3X = 0,pickUp3Y = 0, pickUp3Heading = Math.toRadians(270);
+    public static double pickUp3X2 = 0,pickUp3Y2 = 0, pickUp3Heading2 = Math.toRadians(270);
+    public Pose pickUpPose3;
+    public Pose pickUpPose3_2;
     public static double parkThreeshold = 29000;
 
     //gate
@@ -76,6 +75,8 @@ public class CloseBlobConstants {
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2_2 = new Pose(pickUp2X2, pickUp2Y2 * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading2 * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPose3 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPose3_2 = new Pose(pickUp2X2, pickUp2Y2 * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading2 * (Info.alliance == Alliance.RED ? 1 : -1));
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
