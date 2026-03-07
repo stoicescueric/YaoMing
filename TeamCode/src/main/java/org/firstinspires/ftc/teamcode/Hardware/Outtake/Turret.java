@@ -104,8 +104,8 @@ public class Turret implements Module {
                 OuttakePositions.MIN_TURRET_POSITION,
                 OuttakePositions.MAX_TURRET_POSITION);
         return Range.clip(position,
-                OuttakePositions.MIN_TURRET_POSITION,
-                OuttakePositions.MAX_TURRET_POSITION);
+                OuttakePositions.MIN_TURRET_RANGE,
+                OuttakePositions.MAX_TURRET_RANGE);
     }
 // PSA pentru prostul care schimba astea in void. Nigga se strica daca il faci void asa ca ramane double si o sa dea return 0. Yee ass NIIIIGGGGAAAAA
     public double backlashEvet(){
