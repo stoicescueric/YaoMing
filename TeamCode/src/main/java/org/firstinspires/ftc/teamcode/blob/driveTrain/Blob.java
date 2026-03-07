@@ -91,6 +91,9 @@ public class Blob {
             error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
         }
 
+        Log.w("blob error","x " + (targetX - odo.getX()));
+        Log.w("blob error","y " + (targetY - odo.getY()));
+        Log.w("blob error","heading " + (Math.toDegrees(error)));
         return Math.abs(targetX - odo.getX()) < 0.98 &&
                 Math.abs(targetY - odo.getY()) < 0.98 &&
                 Math.abs(error) < 0.1;
@@ -148,10 +151,10 @@ public class Blob {
         frontRightPower = ((y - x - rx) / denominator) * maxPower;
         backRightPower = ((y + x - rx) / denominator) * maxPower;
 
-        leftFront.setPower(frontLeftPower);
-        leftBack.setPower(backLeftPower);
-        rightFront.setPower(frontRightPower);
-        rightBack.setPower(backRightPower);
+        leftFront.setPower(frontLeftPower * (12/voltage));
+        leftBack.setPower(backLeftPower * (12/voltage));
+        rightFront.setPower(frontRightPower * (12/voltage));
+        rightBack.setPower(backRightPower * (12/voltage)) ;
 
     }
 

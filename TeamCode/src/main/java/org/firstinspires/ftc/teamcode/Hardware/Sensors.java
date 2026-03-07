@@ -195,7 +195,7 @@ public class Sensors {
             currentY = currentY + (yVelocityRobot * timeLatency);
         }
 
-        calculateVelAndAcc();
+        //calculateVelAndAcc();
 
 
 

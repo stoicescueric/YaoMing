@@ -34,10 +34,10 @@ public  class Launcher implements Module {
 
 
     Servo tilt;
-    public static double[] Distances = {50, 60, 70, 80, 90, 100, 110,112,132,139,144,148,152.8,160};
+    public static double[] Distances = {1, 50, 60, 70, 80, 90, 100, 110,112,132,139,144,148,152.8,160};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1380, 1480,1550, 1600, 1700, 1800, 1860,1920,1960,2010,2040,2080,2120};
-    public static double[] hoodValues = {0.05, 0.13, 0.2, 0.25, 0.26, 0.26, 0.27, 0.44,0.44,0.44,0.44,0.44};
+    public static double[] velValues = {1350, 1350, 1380, 1480,1550, 1600, 1700, 1800, 1860,1920,1960,2010,2040,2080,2120};
+    public static double[] hoodValues = {0.05, 0.05, 0.13, 0.2, 0.25, 0.26, 0.26, 0.27, 0.44,0.44,0.44,0.44,0.44, 0.44,0.44};
             //
 
 
@@ -76,6 +76,7 @@ public  class Launcher implements Module {
         this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0);
         this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0);
         tilt = robot.hw.get(Servo.class,"tilt");
+        encoder = robot.hw.get(DcMotorEx.class,"fr");
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         addData();
@@ -95,8 +96,8 @@ public  class Launcher implements Module {
         launcherState = LauncherState.GO_TO_VEL_HOOD;
     }
     public void goToSpecificValues(Pose pose) {
-        target = idealVelocity.get(sensors.getDistanceFromPose(pose));
-        target_tilt = hoodRegression.getHoodAngle(sensors.getDistanceFromPose(pose),target);
+        target = velocity.get(sensors.getDistanceFromPose(pose));
+        target_tilt = hood.get(sensors.getDistanceFromPose(pose));
         launcherState = LauncherState.GO_TO_VEL_HOOD;
     }
     public void addData() {
@@ -145,7 +146,7 @@ public  class Launcher implements Module {
             rebuildTables = false;
         }
 
-        currentVel = -motor1.getVelocity();
+        currentVel = -encoder.getVelocity();
 
         double targetDistance = sensors.getShooterDistanceToBackboard();
 
