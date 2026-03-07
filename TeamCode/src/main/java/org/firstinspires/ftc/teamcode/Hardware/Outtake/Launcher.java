@@ -34,10 +34,10 @@ public  class Launcher implements Module {
 
 
     Servo tilt;
-    public static double[] Distances = {42.6, 52.8, 62.88, 72.9, 83.3, 93.5, 102,112,132,139,144,148,152.8,160};
+    public static double[] Distances = {50, 60, 70, 80, 90, 100, 110,112,132,139,144,148,152.8,160};
     // Corresponding Velocity values
-    public static double[] velValues = {1235, 1300, 1370,1460, 1520, 1600, 1750, 1860,1920,1960,2010,2040,2080,2120};
-    public static double[] hoodValues = {0, 0.09, 0.16, 0.20, 0.245, 0.28, 0.43, 0.44,0.44,0.44,0.44,0.44};
+    public static double[] velValues = {1350, 1380, 1480,1550, 1600, 1700, 1800, 1860,1920,1960,2010,2040,2080,2120};
+    public static double[] hoodValues = {0.05, 0.13, 0.2, 0.25, 0.26, 0.26, 0.27, 0.44,0.44,0.44,0.44,0.44};
             //
 
 

@@ -21,8 +21,6 @@ public class Turret implements Module {
 
     Sensors sensors;
 
-    public static double mechRatio = 0.83;
-
     public static boolean backlashYok = false;
     public static double offset = 0;
 

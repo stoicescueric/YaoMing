@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 @Config
 public class TeleOP extends LinearOpMode
 {
-    public static boolean turretTracking = true;
     public static boolean robotCentric = false;
     public static boolean flipFieldFrame = false;
     public boolean isReadyingFlywheel = false;
