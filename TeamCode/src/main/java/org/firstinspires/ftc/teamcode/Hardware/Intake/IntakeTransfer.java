@@ -46,6 +46,7 @@ public class IntakeTransfer implements Module {
 
         SLEEP,
         TRANSFER,
+        PRE_OFF_OPEN,
         HOLD,
         RECYCLE
     }
@@ -103,6 +104,7 @@ public class IntakeTransfer implements Module {
     private long blockerOpenTriggeredTime = 0;
 
     BinaryDeque deq = new BinaryDeque();
+    ElapsedTime pre_off_open = null;
 
     public IntakeTransfer(Robot robot, Sensors sensors) {
         this.robot = robot;
@@ -146,6 +148,19 @@ public class IntakeTransfer implements Module {
                     robot.sensors.setLedColor(Sensors.LightColor.OFF);
                 }
                 break;
+            case PRE_OFF_OPEN:
+                powerArmState = PowerArmState.INTAKE;
+                intake.setPower(0);
+                conveyorState = ConveyorState.OFF;
+                capacState = CapacState.BLEG;
+                if(pre_off_open == null) {
+                    pre_off_open = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+                }
+                if(pre_off_open.milliseconds() > 125) {
+                    intakeState = IntakeState.OFF_OPEN;
+                    pre_off_open = null;
+                }
+                break;
             case OFF_OPEN:
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                 powerArmState = PowerArmState.INTAKE;
@@ -171,7 +186,8 @@ public class IntakeTransfer implements Module {
                         && (robot.sensors.isBreakBeamPos2Low() && robot.sensors.getHowLongBeam2() > IntakeConstants.beamAllStopDelay)){
                     robot.op.gamepad1.rumble(250);
                     robot.sensors.setLedColor(Sensors.LightColor.GREEN);
-                    intakeState = IntakeState.OFF_OPEN;
+                    pre_off_open = null;
+                    intakeState = IntakeState.PRE_OFF_OPEN;
                 }
 
                 break;
@@ -182,13 +198,18 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case START_TRANSFER:
-                blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
 
                 intake.setPower(0);
                 powerArmState = PowerArmState.LOW;
                 conveyorState = ConveyorState.OFF;
                 Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
-                intakeState = IntakeState.TRANSFER;
+                if(previousState == IntakeState.OFF_OPEN) {
+                    intakeState = IntakeState.TRANSFER;
+                }else {
+                    blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                    sleep(180,IntakeState.TRANSFER);
+                }
+
                 capacState = CapacState.BLEG;
 
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);

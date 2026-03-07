@@ -49,6 +49,7 @@ public class StraightBackAndForthBlob extends LinearOpMode {
                         firstTime = false;
                     }
                     else if(blob.inPosition()) {
+                        sleep(300);
                         cs = STATES.BACKWARDS;
                         firstTime = true;
                     }
@@ -60,6 +61,7 @@ public class StraightBackAndForthBlob extends LinearOpMode {
                         firstTime = false;
                     }
                     else if(blob.inPosition()) {
+                        sleep(300);
                         cs = STATES.FORWARD;
                         firstTime = true;
                     }
@@ -77,6 +79,7 @@ public class StraightBackAndForthBlob extends LinearOpMode {
             telemetry.addData("rotation (power)", blob.rotation);
             telemetry.addData("error", blob.error);
             telemetry.addData("real Heading", blob.realHeading);
+            telemetry.addData("real heading degrees", Math.toDegrees(blob.realHeading));
 
             blob.update();
             telemetry.update();
