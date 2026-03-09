@@ -13,13 +13,14 @@ public class velocityController {
     public static double bbPower = 1.0;
     public static double bbPowerMin = -0.4;
 
-    public static boolean useVoltageComp = false;
+    public static boolean useVoltageComp = true;
 
     public static double maxPower = 1.0;
 
     public static double minPower = -1.0;
 
-    public static double bbThreeshold = 70;
+    public static double bbThreeshold = 100;
+    public static boolean useBB = false;
     public velocityController() {
     }
 
@@ -27,15 +28,20 @@ public class velocityController {
 
     public static double calculate(double targetVelocity, double currentVelocity,double voltage) {
         double error = targetVelocity - currentVelocity;
+        double pidPower = kP * error + kV * targetVelocity;
+        if(useVoltageComp) {
+            pidPower *= (12.0 / voltage);
+        }
 
+        if(!useBB) {
+            return pidPower;
+        }
         if(currentVelocity < targetVelocity - bbThreeshold) {
             return bbPower;
         }else {
             double pComp = kP * error;
             double pForward = kV * targetVelocity;
-
-            if(useVoltageComp) return (pForward + pComp) * (12.0 / voltage);
-            else return (pForward + pComp);
+            return pidPower;
         }
     }
 

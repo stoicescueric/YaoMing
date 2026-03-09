@@ -90,13 +90,15 @@ public class Blob {
         if(Math.abs(error) > Math.PI) {
             error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
         }
-
-        Log.w("blob error","x " + (targetX - odo.getX()));
-        Log.w("blob error","y " + (targetY - odo.getY()));
-        Log.w("blob error","heading " + (Math.toDegrees(error)));
-        return Math.abs(targetX - odo.getX()) < 0.98 &&
-                Math.abs(targetY - odo.getY()) < 0.98 &&
-                Math.abs(error) < 0.1;
+        if(Math.abs(targetX - odo.getX()) < BlobConstants.xDefTresh &&
+                Math.abs(targetY - odo.getY()) < BlobConstants.yDefTresh &&
+                Math.abs(error) < BlobConstants.hDefTresh){
+            Log.w("blob error","x " + (targetX - odo.getX()));
+            Log.w("blob error","y " + (targetY - odo.getY()));
+            Log.w("blob error","heading " + error);
+            return true;
+        }
+        return false;
     }
 
     public void turnToDegrees(double degrees){
@@ -151,10 +153,10 @@ public class Blob {
         frontRightPower = ((y - x - rx) / denominator) * maxPower;
         backRightPower = ((y + x - rx) / denominator) * maxPower;
 
-        leftFront.setPower(frontLeftPower * (12/voltage));
-        leftBack.setPower(backLeftPower * (12/voltage));
-        rightFront.setPower(frontRightPower * (12/voltage));
-        rightBack.setPower(backRightPower * (12/voltage)) ;
+        leftFront.setPower(frontLeftPower);
+        leftBack.setPower(backLeftPower );
+        rightFront.setPower(frontRightPower );
+        rightBack.setPower(backRightPower ) ;
 
     }
 
@@ -201,6 +203,13 @@ public class Blob {
         prevY = odo.getY();
         this.prevH = prevH;
 
+    }
+
+    public double getVelocityX() {
+        return odo.xVelocity;
+    }
+    public double getVelocityY() {
+        return odo.yVelocity;
     }
 
     public void update()

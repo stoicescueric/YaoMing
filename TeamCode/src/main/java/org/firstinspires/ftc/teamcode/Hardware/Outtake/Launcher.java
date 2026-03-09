@@ -34,10 +34,10 @@ public  class Launcher implements Module {
 
 
     Servo tilt;
-    public static double[] Distances = {1, 50, 60, 70, 80, 90, 100, 110,112,132,139,144,148,152.8,160};
+    public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,144,148,152.8,160};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1350, 1380, 1480,1550, 1600, 1700, 1800, 1860,1920,1960,2010,2040,2080,2120};
-    public static double[] hoodValues = {0.05, 0.05, 0.13, 0.2, 0.25, 0.26, 0.26, 0.27, 0.44,0.44,0.44,0.44,0.44, 0.44,0.44};
+    public static double[] velValues = {1300, 1300, 1310, 1370, 1450, 1500, 1530, 1630, 1700,1750,  1780,2010,2040,2080,2120};
+    public static double[] hoodValues = {0.04, 0.04, 0.12, 0.15,0.19, 0.225, 0.265, 0.297, 0.325, 0.35, 0.36,   0.34, 0.41, 0.41, 0.41, 0.41};
             //
 
 
@@ -165,13 +165,13 @@ public  class Launcher implements Module {
             case IDLE:
                 double speed;
                 try{
-                    speed = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                    target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
                     target_tilt = hood.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[hoodValues.length-1]));
                 } catch (Exception e) {
-                    speed = OuttakePositions.defaultVel;
+                    target = OuttakePositions.defaultVel;
                     target_tilt = 0.3;
                 }
-                power = velocityController.calculate(speed, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+                power = velocityController.calculate(target, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
                 motor1.setPower(power);
                 motor2.setPower(power);
 

@@ -57,8 +57,6 @@ public class Robot {
         this.hw = op.hardwareMap;
         if(Info.phase == Phase.AUTONOMOUS && Info.useBlob) {
             blob = new Blob(op.hardwareMap);
-
-
         }
         else {
             drive = Constants.createFollower(op.hardwareMap);

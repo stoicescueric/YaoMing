@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
+import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
@@ -132,7 +133,7 @@ public class Sensors {
         shotTime.add(82,0.670);
         shotTime.createLUT();
     }
-    public static boolean usePredictivePose = false;
+    public static boolean usePredictivePose = true;
     public static double timeLatency = 0.1; //sec
     private void initSensors() {
 
@@ -190,12 +191,16 @@ public class Sensors {
         currentY = pose.getY();
         currentHeading = pose.getHeading();
 
-        if(usePredictivePose) {
+        if(Info.phase == Phase.TELEOP) {
+            calculateVelAndAcc();
+        }
+
+
+        if(usePredictivePose && Info.phase == Phase.TELEOP) {
             currentX = currentX + (xVelocityRobot * timeLatency);
             currentY = currentY + (yVelocityRobot * timeLatency);
         }
 
-        //calculateVelAndAcc();
 
 
 
@@ -220,18 +225,18 @@ public class Sensors {
             }
         }
 
-        for(int i = 0;i<5;i++) {
-            virtualTargetX = targetX - shotTimeEstimate * (xVelocityRobot + latencyFactor * xAccRobot);
-            virtualTargetY = targetY - shotTimeEstimate * (yVelocityRobot + latencyFactor * yAccRobot);
-
-            double newShotTime = shotTime.get(getDistanceBetweenPoints(virtualTargetX,currentX,virtualTargetY,currentY));
-            if(Math.abs(newShotTime - shotTimeEstimate) <= threesholdTime) {
-                i = 4;
-            }
-            if(i != 4) {
-                shotTimeEstimate = newShotTime;
-            }
-        }
+//        for(int i = 0;i<5;i++) {
+//            virtualTargetX = targetX - shotTimeEstimate * (xVelocityRobot + latencyFactor * xAccRobot);
+//            virtualTargetY = targetY - shotTimeEstimate * (yVelocityRobot + latencyFactor * yAccRobot);
+//
+//            double newShotTime = shotTime.get(getDistanceBetweenPoints(virtualTargetX,currentX,virtualTargetY,currentY));
+//            if(Math.abs(newShotTime - shotTimeEstimate) <= threesholdTime) {
+//                i = 4;
+//            }
+//            if(i != 4) {
+//                shotTimeEstimate = newShotTime;
+//            }
+//        }
 
 
 

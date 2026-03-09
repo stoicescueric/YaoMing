@@ -71,6 +71,7 @@ public class IntakeTransfer implements Module {
         CONFIRMING
     }
     public enum ConveyorState {
+        REVERSE_LITTLE,
         OFF,
         ON,
         POWER_FOR_TIME,
@@ -142,7 +143,7 @@ public class IntakeTransfer implements Module {
             case OFF:
                 blockerState = BlockerState.CLOSE;
                 powerArmState = PowerArmState.INTAKE;
-                intake.setPower(0);
+                intake.setPower(IntakeConstants.IntakeLittle);
                 conveyorState = ConveyorState.OFF;
                 if(robot.sensors.lightColor == Sensors.LightColor.BLUE) {
                     robot.sensors.setLedColor(Sensors.LightColor.OFF);
@@ -150,8 +151,8 @@ public class IntakeTransfer implements Module {
                 break;
             case PRE_OFF_OPEN:
                 powerArmState = PowerArmState.INTAKE;
-                intake.setPower(0);
-                conveyorState = ConveyorState.OFF;
+                intake.setPower(IntakeConstants.IntakeLittle);
+                conveyorState = ConveyorState.REVERSE_LITTLE;
                 capacState = CapacState.BLEG;
                 if(pre_off_open == null) {
                     pre_off_open = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -165,7 +166,8 @@ public class IntakeTransfer implements Module {
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                 powerArmState = PowerArmState.INTAKE;
                 intake.setPower(0);
-                conveyorState = ConveyorState.OFF;
+                conveyorState = ConveyorState.REVERSE_LITTLE;
+
                 capacState = CapacState.BLEG;
                 break;
             case INTAKE:
@@ -202,17 +204,14 @@ public class IntakeTransfer implements Module {
                 intake.setPower(0);
                 powerArmState = PowerArmState.LOW;
                 conveyorState = ConveyorState.OFF;
-                Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
-                if(previousState == IntakeState.OFF_OPEN) {
-                    intakeState = IntakeState.TRANSFER;
-                }else {
-                    blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
-                    sleep(180,IntakeState.TRANSFER);
-                }
-
                 capacState = CapacState.BLEG;
 
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
+                blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                sleep(IntakeConstants.sleepTransfer,IntakeState.TRANSFER);
+
+                Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
+
                 break;
             case ReCycleStart:
                 robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
@@ -367,6 +366,9 @@ public class IntakeTransfer implements Module {
                 break;
         }
         switch (conveyorState) {
+            case REVERSE_LITTLE:
+                conveyor.setPower(IntakeConstants.ConveyerLittle);
+                break;
             case OFF:
                 conveyor.setPower(0);
                 break;

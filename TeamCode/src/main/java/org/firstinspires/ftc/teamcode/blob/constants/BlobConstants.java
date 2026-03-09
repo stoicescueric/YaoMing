@@ -15,9 +15,12 @@ public abstract class BlobConstants {
     public static String rightBackName = "br";
     public static String pinpointName = "pinpoint";
 
+    public static double hDefTresh = Math.toRadians(3);
+    public static double xDefTresh = 1;
+    public static double yDefTresh = 1;
     //PID
-    public static double kP = 0.045, kI = 0, kD = 0.006; //drive pid
-    public static double hP = 0.66, hI = 0, hD = 0.02;     //heading pid
+    public static double kP = 0.075, kI = 0, kD = 0.008; //drive pid
+    public static double hP = 1.9, hI = 0, hD = 0.11;     //heading pid
 
     //Deceleration
     public static double xDeceleration = 30.6366666667, yDeceleration = 57;

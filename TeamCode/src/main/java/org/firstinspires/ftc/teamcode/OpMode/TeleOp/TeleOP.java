@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
@@ -34,6 +35,7 @@ public class TeleOP extends LinearOpMode
 
     public static boolean enableDriveSlowMode = false;
     public static boolean enableHeadingSlowMode = false;
+    ElapsedTime motorTimer = new ElapsedTime();
 
 
     Pose startPose;
@@ -66,6 +68,7 @@ public class TeleOP extends LinearOpMode
          waitForStart();
          robot.drive.startTeleopDrive();
          robot.outtake.launcher.autoAimOn(true);
+         motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
          while(opModeIsActive())
          {
@@ -79,6 +82,7 @@ public class TeleOP extends LinearOpMode
               intakeUpdate();
               telemetry.addData("intake State",robot.intakeTransfer.intakeState);
               telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
+              telemetry.addData("timer", motorTimer.seconds());
               telemetry.update();
               robot.update();
           }
@@ -140,6 +144,7 @@ public class TeleOP extends LinearOpMode
         if (gg.dpadDown()) {
             if(gg.leftTrigger() && gg.rightTrigger()){
                 robot.drive.setPose(resetCenter);
+                robot.outtake.turret.resetOffset();
             }
         }
     }
@@ -162,7 +167,7 @@ public class TeleOP extends LinearOpMode
 
 
 
-
+    public static double incrementTurret = 0.01;
     public void outtakeUpdate() {
 
 //        if (gg.xOnce()) {
@@ -176,6 +181,11 @@ public class TeleOP extends LinearOpMode
         inZone = true;
 
         boolean isStill = true;
+        if(gg.dpadRightOnce()) {
+            robot.outtake.turret.addRemoveIncrementOffset(incrementTurret,1);
+        }else if(gg.dpadLeftOnce()) {
+            robot.outtake.turret.addRemoveIncrementOffset(incrementTurret,-1);
+        }
 
 
         if (gg.aOnce() || gg.leftBumperOnce() ) { //&& robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE

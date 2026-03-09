@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blob.localization;
 
+import static java.lang.Thread.sleep;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,6 +31,11 @@ public class Odometry {
         odo.setEncoderResolution(BlobConstants.podType);
         odo.setOffsets(BlobConstants.xOffset, BlobConstants.yOffset, DistanceUnit.INCH);
         odo.resetPosAndIMU();
+        try{
+            sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void calibrate(){
@@ -74,6 +81,7 @@ public class Odometry {
     public double xRobotVelocity, yRobotVelocity;
     public double forwardGlide, lateralGlide;
     public double xGlide, yGlide;
+    public double realHead;
 
     private void updateGlide(){
         zpam = BlobConstants.zpam;
@@ -98,6 +106,8 @@ public class Odometry {
         odo.update();
 
         heading = odo.getHeading(AngleUnit.RADIANS);
+        if(heading < 0) realHead = Math.abs(heading);
+        else realHead = 2 * Math.PI - heading;
 
         x = odo.getPosX(DistanceUnit.INCH);
 

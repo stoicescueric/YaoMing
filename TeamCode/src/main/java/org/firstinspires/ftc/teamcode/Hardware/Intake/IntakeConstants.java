@@ -17,6 +17,8 @@ public class IntakeConstants {
     public static double transferFirstPhase = 0.3;
     public static double transferSecondPhase = 0.5;
     public static double onPowerConveyer = 1;
+    public static double ConveyerLittle = -0.05;
+    public static double IntakeLittle = 0.05;
 
     public static double timerRecycleOne = 230;
     public static double timerRecycleTwo = 460;
@@ -53,6 +55,7 @@ public class IntakeConstants {
     public static double timerRecycleOpenBlocker = 200;
     public static double doneTransfer = 150;
     public static double timerIntakeEnd= 250;
+    public static double sleepTransfer = 100;
     public static double intakeStartTransfer = 100;
     public static double timerIntakeEnd2= 400;
     public static double intakePhase3 = 1;

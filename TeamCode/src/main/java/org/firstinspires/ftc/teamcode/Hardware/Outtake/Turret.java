@@ -43,6 +43,7 @@ public class Turret implements Module {
         servoLeft = rb.hw.get(Servo.class,"turretL");
         servoRight = rb.hw.get(Servo.class,"turretR");
         this.sensors = sensors;
+        resetOffset();
 
 
     }
@@ -94,6 +95,13 @@ public class Turret implements Module {
         centerPose = pos;
     }
 
+
+    public void addRemoveIncrementOffset(double increment,double sign) {
+        offset = offset + (sign * increment);
+    }
+    public void resetOffset() {
+        offset = 0;
+    }
 
     private double angleToTurretPosition(double angle) {
         double position = Range.scale(angle,

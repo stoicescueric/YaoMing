@@ -12,37 +12,39 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseConstants18Bob {
 
     //DEFAULT VALUES FOR RED
-    public static double shootingTime = 1000;
+    public static double turretTargetPos = 0.335;
+    public static double shootingTime = 550;
     public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 2500;
     public static double hoodPosition = 0.615;
     public static double launcherVelocity = 1000;
-    public static double startX = -62.69, startY = 37.41, headingStartRed = 0; //TODO
+    public static double startX = -60, startY = 35.7, headingStartRed = Math.toRadians(180); //TODO
     public Pose startPose;
     public static double shootingX = -4.1, shootingY = 14.5, shootingHeading = Math.toRadians(270);
+    public static double shootPreloadX = -14.5,shootPreloadY = 19,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -11.3, pickUp1Y = 53, pickUp1Heading = Math.toRadians(270);
+    public static double pickUp1X = -16, pickUp1Y = 51, pickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 13.38,pickUp2Y = 30, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 13.6,pickUp2Y2 = 53, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 12,pickUp2Y = 25,     pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 12,pickUp2Y2 = 57.5, pickUp2Heading2 = Math.toRadians(270);
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
-    public static double pickUp3X = 24.68+13.38,pickUp3Y = 29, pickUp3Heading = Math.toRadians(270);
-    public static double pickUp3X2 = 38,pickUp3Y2 = 53, pickUp3Heading2 = Math.toRadians(270);
+    public static double pickUp3X = 36,pickUp3Y = 26, pickUp3Heading = Math.toRadians(270);
+    public static double pickUp3X2 = 36,pickUp3Y2 = 57, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     public static double parkThreeshold = 29000;
 
     //gate
-    public static long failSafePickupTime = 2300;
+    public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 3;
-    public static double gatePickupX = 12.7, gatePickupY = 59.8, gatePickupHeading = Math.toRadians(240);
+    public static double gatePickupX = 12, gatePickupY = 58.3, gatePickupHeading = Math.toRadians(247);
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
@@ -58,7 +60,7 @@ public class CloseConstants18Bob {
     public Pose parkPose;
     public Pose clear;
 
-
+    public Pose preload;
 
     public void buildPaths(Follower follower) {
 
@@ -67,6 +69,7 @@ public class CloseConstants18Bob {
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         scorePoseGateInter = new Pose(shootingInterX, shootingInterY * (Info.alliance == Alliance.RED ? 1 : -1), shootingUnterHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
+        preload = new Pose(shootPreloadX, shootPreloadY * (Info.alliance == Alliance.RED ? 1 : -1), shootPreloadH * (Info.alliance == Alliance.RED ? 1 : -1));
 
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -103,6 +106,9 @@ public class CloseConstants18Bob {
     }
     public double getFailSafeDtTime() {
         return failSafeDtTime;
+    }
+    public double getTurretTargetPos() {
+        return turretTargetPos;
     }
     public double getFailSafePickupTime(){
         return failSafePickupTime;

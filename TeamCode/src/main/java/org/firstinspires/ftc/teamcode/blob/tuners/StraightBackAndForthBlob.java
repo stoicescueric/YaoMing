@@ -6,6 +6,9 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 
@@ -28,19 +31,22 @@ public class StraightBackAndForthBlob extends LinearOpMode {
     STATES cs =  STATES.IDLE;
 
     boolean firstTime;
+    Robot robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
         blob = new Blob(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        robot = new Robot(this);
         waitForStart();
 
         cs = STATES.FORWARD;
         firstTime = true;
 
         while (opModeIsActive()){
-
+            robot.update();
+            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+            robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
             switch (cs){
 
                 case FORWARD:
@@ -49,7 +55,6 @@ public class StraightBackAndForthBlob extends LinearOpMode {
                         firstTime = false;
                     }
                     else if(blob.inPosition()) {
-                        sleep(300);
                         cs = STATES.BACKWARDS;
                         firstTime = true;
                     }
@@ -61,7 +66,6 @@ public class StraightBackAndForthBlob extends LinearOpMode {
                         firstTime = false;
                     }
                     else if(blob.inPosition()) {
-                        sleep(300);
                         cs = STATES.FORWARD;
                         firstTime = true;
                     }
@@ -74,6 +78,9 @@ public class StraightBackAndForthBlob extends LinearOpMode {
 
             telemetry.addData("x", blob.odo.getX());
             telemetry.addData("y", blob.odo.getY());
+            telemetry.addData("error x",blob.targetX - blob.odo.x);
+            telemetry.addData("error y",blob.targetY - blob.odo.y);
+            telemetry.addData("error head",blob.error);
             telemetry.addData("heading", blob.odo.getHeading());
             telemetry.addData("target Heading", blob.targetHeading);
             telemetry.addData("rotation (power)", blob.rotation);
