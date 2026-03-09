@@ -58,7 +58,7 @@ public class Close18 extends OpMode {
 
 
         constants = new CloseConstants18Playoff();
-        constants.buildPaths(robot.drive);
+        constants.buildPaths();
 
 
         robot.outtake.turret.turretState = Turret.TurretState.TRACKING;

@@ -27,7 +27,7 @@ public class CloseConstants18Playoff {
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -16, pickUp1Y = 51, pickUp1Heading = Math.toRadians(264);
+    public static double pickUp1X = -16, pickUp1Y = 51, pickUp1Heading = Math.toRadians(260);
     public Pose pickUpPose;
     public static double max_power_pickUp = 1;
     public static double pickUp2X = 12,pickUp2Y = 25,     pickUp2Heading = Math.toRadians(270);
@@ -62,7 +62,7 @@ public class CloseConstants18Playoff {
 
     public Pose preload;
 
-    public void buildPaths(Follower follower) {
+    public void buildPaths() {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1),headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1) );
