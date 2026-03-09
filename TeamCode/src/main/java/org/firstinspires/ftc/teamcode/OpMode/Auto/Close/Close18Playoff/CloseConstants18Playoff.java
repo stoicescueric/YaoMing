@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18;
+package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18Playoff;
 
 
 import com.acmerobotics.dashboard.config.Config;
@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 
 @Config
-public class CloseConstants18Bob {
+public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.335;
@@ -21,7 +21,7 @@ public class CloseConstants18Bob {
     public static double launcherVelocity = 1000;
     public static double startX = -60, startY = 35.7, headingStartRed = Math.toRadians(180); //TODO
     public Pose startPose;
-    public static double shootingX = -1 , shootingY = 14.5, shootingHeading = Math.toRadians(270);
+    public static double shootingX = -1, shootingY = 14.5, shootingHeading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 19,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
@@ -43,7 +43,7 @@ public class CloseConstants18Bob {
 
     //gate
     public static long failSafePickupTime = 1900;
-    public static int gateCycleCount = 3;
+    public static int gateCycleCount = 4;
     public static double gatePickupX = 12.5, gatePickupY = 58.4, gatePickupHeading = Math.toRadians(245.8);
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -62,7 +62,7 @@ public class CloseConstants18Bob {
 
     public Pose preload;
 
-    public void buildPaths() {
+    public void buildPaths(Follower follower) {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1),headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1) );
