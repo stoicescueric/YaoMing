@@ -182,11 +182,8 @@ public class Sensors {
         double prevY = currentY;
 
         long prevUpdateTimeNs = lastUpdateTimeNs;
-        if(robot.drive == null) {
-            pose = robot.blob.odo.getPose();
-        }else {
-            pose = robot.drive.getPose();
-        }
+        pose = robot.blob.odo.getPose();
+
         currentX = pose.getX();
         currentY = pose.getY();
         currentHeading = pose.getHeading();
@@ -294,15 +291,15 @@ public class Sensors {
 
 
     public void calculateVelAndAcc() {
-        double speedXAcel = robot.drive.getAcceleration().getXComponent();
-        double speedYAcel = robot.drive.getAcceleration().getYComponent();
+        double speedXAcel = 0;
+        double speedYAcel = 0;
 //        xAccRobot = speedXAcel * Math.cos(-currentHeading) - speedYAcel * Math.sin(-currentHeading);
 //        yAccRobot = speedXAcel * Math.sin(-currentHeading) + speedYAcel * Math.cos(-currentHeading);
         xAccRobot = speedXAcel;
         yAccRobot = speedYAcel;
 
-        velX = xVelocityFilter.getValue(robot.drive.getVelocity().getXComponent());
-        velY  = yVelocityFilter.getValue(robot.drive.getVelocity().getYComponent());
+        velX = xVelocityFilter.getValue(robot.blob.getVelocityX());
+        velY  = yVelocityFilter.getValue(robot.blob.getVelocityY());
 //        xVelocityRobot = velX * Math.cos(-currentHeading) - velY * Math.sin(-currentHeading);
 //        yVelocityRobot = velX * Math.sin(-currentHeading) + velY * Math.cos(-currentHeading);
         xVelocityRobot = velX;
@@ -330,7 +327,7 @@ public class Sensors {
     }
 
     public double getAngularVelocity() {
-        return robot.drive.getAngularVelocity();
+        return robot.blob.odo.getAngularVelocity();
     }
 
     public double getY() {

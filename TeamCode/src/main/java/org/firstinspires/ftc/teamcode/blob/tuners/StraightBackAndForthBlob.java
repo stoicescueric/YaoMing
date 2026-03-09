@@ -35,7 +35,7 @@ public class StraightBackAndForthBlob extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        blob = new Blob(hardwareMap);
+        blob = new Blob(hardwareMap, Blob.State.PID);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new Robot(this);
         waitForStart();

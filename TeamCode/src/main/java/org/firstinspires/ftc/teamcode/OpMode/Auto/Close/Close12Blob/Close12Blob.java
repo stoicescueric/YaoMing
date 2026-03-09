@@ -47,7 +47,7 @@ public class Close12Blob extends OpMode {
         Info.useBlob = true;
         robot = new Robot(this);
         constants = new CloseConstants12Blob();
-        constants.buildPaths(robot.drive);
+        constants.buildPaths();
         robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
         robot.outtake.launcher.autoAimOn(true);
     }

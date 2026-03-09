@@ -59,7 +59,7 @@ public class CloseBlob extends OpMode {
 
 
         constants = new CloseBlobConstants();
-        constants.buildPaths(robot.drive);
+        constants.buildPaths();
 
         
         robot.outtake.turret.turretState = Turret.TurretState.TRACKING;

@@ -45,7 +45,7 @@ public class TuneShooterPid extends LinearOpMode {
             }
             if (gg.dpadDown()) {
                 if(gg.leftTrigger() && gg.rightTrigger()){
-                    robot.drive.setPose(resetCenter);
+                    robot.blob.odo.setPose(resetCenter);
                 }
             }
             if(gg.aOnce()) {
@@ -65,8 +65,8 @@ public class TuneShooterPid extends LinearOpMode {
             telemetry.addData("distance",robot.sensors.getDistanceToBackboard());
             telemetry.addData("heading", robot.sensors.getHeading());
             telemetry.addData("heading degrees", Math.toDegrees(robot.sensors.getHeading()));
-            telemetry.addData("x", robot.drive.getPose().getX());
-            telemetry.addData("y", robot.drive.getPose().getY());
+            telemetry.addData("x", robot.blob.odo.getPose().getX());
+            telemetry.addData("y", robot.blob.odo.getPose().getY());
             telemetry.update();
         }
     }

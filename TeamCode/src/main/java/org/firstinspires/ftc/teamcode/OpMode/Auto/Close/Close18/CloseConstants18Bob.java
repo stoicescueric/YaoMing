@@ -62,7 +62,7 @@ public class CloseConstants18Bob {
 
     public Pose preload;
 
-    public void buildPaths(Follower follower) {
+    public void buildPaths() {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1),headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1) );

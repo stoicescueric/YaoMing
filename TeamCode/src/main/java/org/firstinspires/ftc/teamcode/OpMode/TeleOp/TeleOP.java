@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
+import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 
 @Config
@@ -63,10 +64,10 @@ public class TeleOP extends LinearOpMode
         }
          gg = new GamePadController(gamepad1);
 
-         robot.drive.setStartingPose(startPose);
+         robot.blob.odo.setPose(startPose);
+         robot.blob.odo.update();
 
          waitForStart();
-         robot.drive.startTeleopDrive();
          robot.outtake.launcher.autoAimOn(true);
          motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
@@ -104,13 +105,6 @@ public class TeleOP extends LinearOpMode
         double strafe = -gg.left_stick_x;
         double rotate = -gg.right_stick_x;
 
-        double offsetRad = Math.toRadians(driverFrameOffsetDeg) + (flipFieldFrame ? Math.PI : 0.0);
-        if (offsetRad != 0.0) {
-            double f = forward * Math.cos(offsetRad) - strafe * Math.sin(offsetRad);
-            double s = forward * Math.sin(offsetRad) + strafe * Math.cos(offsetRad);
-            forward = f;
-            strafe = s;
-        }
 
         forward *= translationalNormal;
         strafe  *= rotateNormal;
@@ -131,19 +125,29 @@ public class TeleOP extends LinearOpMode
             rotate  *= headingSlowMultiplier;
         }
 
-        robot.drive.setTeleOpDrive(forward, strafe, rotate, robotCentric);
+        robot.blob.setMode(Blob.State.DRIVE);
+        double X=gamepad1.left_stick_x;
+        double Y=-gamepad1.left_stick_y;
+        double rotation=(gamepad1.right_trigger-gamepad1.left_trigger);
+
+        double heading =-robot.blob.odo.getHeading()+Math.PI/2;
+
+        double x=X*Math.cos(heading)-Y*Math.sin(heading);
+        double y=X* Math.sin(heading)+Y*Math.cos(heading);
+
+        robot.blob.setTargetVector( x , y , rotation );
 
         if (gg.rightStickButtonOnce()) {
             if (Info.alliance == Alliance.RED) {
-                robot.drive.setPose(resetPoseRed);
+                robot.blob.odo.setPose(resetPoseRed);
             }else {
-                robot.drive.setPose(resetPoseBlue);
+                robot.blob.odo.setPose(resetPoseBlue);
             }
 
         }
         if (gg.dpadDown()) {
             if(gg.leftTrigger() && gg.rightTrigger()){
-                robot.drive.setPose(resetCenter);
+                robot.blob.odo.setPose(resetCenter);
                 robot.outtake.turret.resetOffset();
             }
         }

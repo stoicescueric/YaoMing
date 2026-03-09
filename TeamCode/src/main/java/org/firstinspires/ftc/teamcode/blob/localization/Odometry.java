@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.blob.constants.BlobConstants;
 import org.firstinspires.ftc.teamcode.blob.math.LowPassFilter;
 
@@ -32,7 +33,7 @@ public class Odometry {
         odo.setOffsets(BlobConstants.xOffset, BlobConstants.yOffset, DistanceUnit.INCH);
         odo.resetPosAndIMU();
         try{
-            sleep(300);
+            sleep(650);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -59,6 +60,9 @@ public class Odometry {
     }
     public void setPose(Pose pose){
         odo.setPosition(new Pose2D(DistanceUnit.INCH, pose.getX(), pose.getY(), AngleUnit.RADIANS, pose.getHeading()));
+    }
+    public double getAngularVelocity(){
+        return odo.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES);
     }
 
     public double getVelX(){

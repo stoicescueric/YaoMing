@@ -35,7 +35,6 @@ public class Robot {
     public IntakeTransfer intakeTransfer;
     public Outtake outtake;
     public Sensors sensors;
-    public Follower drive = null;
     public Blob blob = null;
     public OpMode op;
     public static boolean showTelemetry = false;
@@ -55,12 +54,7 @@ public class Robot {
         cHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         this.op = op;
         this.hw = op.hardwareMap;
-        if(Info.phase == Phase.AUTONOMOUS && Info.useBlob) {
-            blob = new Blob(op.hardwareMap);
-        }
-        else {
-            drive = Constants.createFollower(op.hardwareMap);
-        }
+        blob = new Blob(op.hardwareMap, Blob.State.PID);
         sensors = new Sensors(this);
         intakeTransfer = new IntakeTransfer(this,sensors);
         outtake = new Outtake(this,sensors);
@@ -81,11 +75,7 @@ public class Robot {
 
     public void update() {
         cHub.clearBulkCache();
-        if(Info.phase == Phase.TELEOP || !Info.useBlob) drive.update();
-        else {
-            drive = null;
-            blob.update();
-        }
+        blob.update();
         sensors.update();
         //sensors.updateTargetForZone();
         intakeTransfer.update();

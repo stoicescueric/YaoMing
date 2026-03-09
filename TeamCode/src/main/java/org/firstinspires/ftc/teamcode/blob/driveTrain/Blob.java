@@ -57,9 +57,14 @@ public class Blob {
     public PIDControllerBlob controllerX = new PIDControllerBlob(kP, kI, kD);
     public PIDControllerBlob controllerY = new PIDControllerBlob(kP, kI, kD);
     public PIDControllerBlob controllerHeading = new PIDControllerBlob(hP, hI, hD);
+    public enum State{
+        DRIVE , PID;
+    }
+    State state;
 
-    public Blob(HardwareMap hardwareMap){
+    public Blob(HardwareMap hardwareMap,State initialState){
 
+        state=initialState;
         odo = new Odometry(hardwareMap);
         vs = hardwareMap.voltageSensor.iterator().next();
         leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
@@ -204,6 +209,10 @@ public class Blob {
         this.prevH = prevH;
 
     }
+    public void setMode(State state)
+    {
+        this.state=state;
+    }
 
     public double getVelocityX() {
         return odo.xVelocity;
@@ -224,7 +233,7 @@ public class Blob {
 
 
         odo.update();
-
+        if (state !=State.PID) {return;}
 
 
         controllerX.kp = BlobConstants.kP;
