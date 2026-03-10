@@ -13,16 +13,18 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.325;
-    public static double shootingTime = 625;
-    public static double turretPositionRed = 0.598;
+    public static double shootingTime = 850;
+    public static double turretPositionRed = 0.325;
     public static double turretPositionBlue = 0.39;
-    public static double failSafeDtTime = 2500;
+    public static double failSafeDtTime = 2000;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
-    public static double startX = -60, startY = 35.7, headingStartRed = Math.toRadians(180); //TODO
+    public static double waitBeforeClear = 500;
+    public static double clearTimeAfterCycle = 700;
+    public static double startX = -56.92, startY = 44.37, headingStartRed = -4.059268299733297; //TODO
     public Pose startPose;
-    public static double shootingX = -1, shootingY = 14.5, shootingHeading = Math.toRadians(270);
+    public static double shootingX = -1, shootingY = 12.5, shootingHeading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 19,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
@@ -33,8 +35,10 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 9.5,pickUp2Y = 25,     pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 9.5,pickUp2Y2 = 53, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 9.5,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 9.5,pickUp2Y2 = 52.5, pickUp2Heading2 = Math.toRadians(270);
+    public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
+    public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
@@ -47,7 +51,8 @@ public class CloseConstants18Playoff {
     //gate
     public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 4;
-    public static double gatePickupX = 13.5, gatePickupY = 58.6, gatePickupHeading = 4.310019301402063;
+    public static int gateClearCount = 3;
+    public static double gatePickupX = 13.7, gatePickupY = 58.6, gatePickupHeading = 4.280019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
@@ -73,7 +78,7 @@ public class CloseConstants18Playoff {
         scorePoseGateInter = new Pose(shootingInterX, shootingInterY * (Info.alliance == Alliance.RED ? 1 : -1), shootingUnterHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
         preload = new Pose(shootPreloadX, shootPreloadY * (Info.alliance == Alliance.RED ? 1 : -1), shootPreloadH * (Info.alliance == Alliance.RED ? 1 : -1));
-
+        clearGateAfterCycle = new Pose(clearGateX, clearGateY * (Info.alliance == Alliance.RED ? 1 : -1), clearGateHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose1_Inter = new Pose(InterpickUp1X, InterpickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), InterpickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -123,6 +128,8 @@ public class CloseConstants18Playoff {
     public double getPreloadProgress() {
         return preloadSotmPerc;
     }
-
+    public double getWaitBeforeClear() {return waitBeforeClear;}
+    public int getGateClearCount(){return gateClearCount;}
+    public double getClearTimeAfterCycle(){return clearTimeAfterCycle;}
 
 }

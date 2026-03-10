@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -242,7 +244,7 @@ public class Sensors {
 
 
 
-        if(System.currentTimeMillis() - readVoltageTime > 350) {
+        if(System.currentTimeMillis() - readVoltageTime > 150) {
             voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
         }
@@ -254,6 +256,8 @@ public class Sensors {
             breakBeamPos1High = !(breakBeamPos1.getState());
             if(breakBeamPos1High && !lastValueBreakBreamPos1) {
                 firstTrueBeam1 = System.currentTimeMillis();
+            }else if(!breakBeamPos1High && !lastValueBreakBreamPos1) {
+                firstTrueBeam1 = System.currentTimeMillis();
             }
         } else {
             breakBeamPos1High = false;
@@ -262,6 +266,8 @@ public class Sensors {
             lastValuebreamBeamPos2 = breakBeamPos2High;
             breakBeamPos2High = !(breakBeamPos2.getState());
             if(breakBeamPos2High && !lastValuebreamBeamPos2) {
+                firstTrueBeam2 = System.currentTimeMillis();
+            }else if(!breakBeamPos2High && !lastValuebreamBeamPos2) {
                 firstTrueBeam2 = System.currentTimeMillis();
             }
         } else {
@@ -273,10 +279,14 @@ public class Sensors {
 
             if(breakBeamPos3High && !lastValuebreamBeamPos3) {
                 firstTrueBeam3 = System.currentTimeMillis();
+            }else if(!breakBeamPos3High && !lastValuebreamBeamPos3) {
+                firstTrueBeam3 = System.currentTimeMillis();
             }
         } else {
             breakBeamPos3High = false;
         }
+        Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
+        Log.w("beam","beam braked 1: " + getHowLongBeam1() + "Beam braked 2: " + getHowLongBeam2() + "Beam braked 3 " + getHowLongBeam3());
 
         light.setPosition(lightColor.value);
     }
@@ -480,15 +490,15 @@ public class Sensors {
           return breakBeamPos3High;
      }
 
-     public long getHowLongBeam3() {
+     public double getHowLongBeam3() {
         return System.currentTimeMillis() - firstTrueBeam3;
      }
 
-    public long getHowLongBeam2() {
+    public double getHowLongBeam2() {
         return System.currentTimeMillis() - firstTrueBeam2;
     }
 
-    public long getHowLongBeam1() {
+    public double getHowLongBeam1() {
         return System.currentTimeMillis() - firstTrueBeam1;
     }
 
@@ -505,7 +515,7 @@ public class Sensors {
         usePredictivePose = use;
     }
 
-    public boolean areAllBeamsLowForTime(long msThreshold) {
-        return getHowLongBeam1() < msThreshold && getHowLongBeam2() < msThreshold && getHowLongBeam3() < msThreshold;
+    public boolean areAllBeamsLowForTime(double msThreshold) {
+        return getHowLongBeam1() > msThreshold + 20 && getHowLongBeam2() > msThreshold && getHowLongBeam3() > msThreshold;
     }
 }

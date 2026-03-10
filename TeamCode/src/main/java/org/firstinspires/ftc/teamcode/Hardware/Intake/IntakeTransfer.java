@@ -177,20 +177,21 @@ public class IntakeTransfer implements Module {
                 powerArmState = PowerArmState.INTAKE;
                 intake.setPower(IntakeConstants.intakePowerIntake);
                 if((robot.sensors.isBreakBeamPos3Low() && robot.sensors.getHowLongBeam3() > IntakeConstants.beam3StopDelay)  || beamChecked) {
+
+
                     conveyorState = ConveyorState.OFF;
                     beamChecked = true;
                 } else {
                     conveyorState = ConveyorState.ON;
                 }
-
-                if(robot.sensors.isBreakBeamPos1Low()
-                        && (robot.sensors.getHowLongBeam1()) > IntakeConstants.beamAllStopDelay
-                        && (robot.sensors.isBreakBeamPos2Low() && robot.sensors.getHowLongBeam2() > IntakeConstants.beamAllStopDelay)){
+                if(robot.sensors.areAllBeamsLowForTime((long)IntakeConstants.beamAllStopDelay) && beamChecked ){
                     robot.op.gamepad1.rumble(250);
                     robot.sensors.setLedColor(Sensors.LightColor.GREEN);
                     pre_off_open = null;
                     intakeState = IntakeState.PRE_OFF_OPEN;
                 }
+
+
 
                 break;
             case REVERSE:
@@ -211,7 +212,6 @@ public class IntakeTransfer implements Module {
                 sleep(IntakeConstants.sleepTransfer,IntakeState.TRANSFER);
 
                 Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
-
                 break;
             case ReCycleStart:
                 robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;

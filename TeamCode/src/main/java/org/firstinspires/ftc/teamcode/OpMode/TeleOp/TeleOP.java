@@ -42,7 +42,7 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(-3.5, 24.7, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(61.81, -63.18, -1.5439); //TODO
+    Pose resetPoseRed = new Pose(59.11, -64.24, 0); //TODO
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
     Pose resetCenter = new Pose(0, 0, Math.PI/2);
 
@@ -131,7 +131,8 @@ public class TeleOP extends LinearOpMode
         double Y=forward;
         double rotation=rotate;
 
-        double heading =-robot.blob.odo.getHeading()+Math.PI/2;
+        double allianceRotation = (Info.alliance == Alliance.BLUE) ? Math.PI : 0;
+        double heading = -robot.blob.odo.getHeading() + Math.PI/2 + allianceRotation;
 
         double x=X*Math.cos(heading)-Y*Math.sin(heading);
         double y=X* Math.sin(heading)+Y*Math.cos(heading);
