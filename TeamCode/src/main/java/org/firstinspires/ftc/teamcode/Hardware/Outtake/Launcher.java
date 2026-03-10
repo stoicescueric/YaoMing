@@ -42,9 +42,6 @@ public  class Launcher implements Module {
             //
 
 
-    MultipleRegression hoodRegression = new MultipleRegression();
-    InterpLUT idealVelocity = new InterpLUT();
-
     InterpLUT velocity = new InterpLUT();
     InterpLUT hood = new InterpLUT();
 
