@@ -69,6 +69,7 @@ public class TeleOP extends LinearOpMode
 
          waitForStart();
          robot.outtake.launcher.autoAimOn(true);
+         robot.sensors.setUsePredictivePose(true);
          motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
          while(opModeIsActive())
@@ -95,15 +96,15 @@ public class TeleOP extends LinearOpMode
 
     public static double translationalSlow = 1;
     public static double rotateSlow = 0.6;
-    public static double rotateNormal = 0.8;
+    public static double rotateNormal = 0.85;
     public static double translationalNormal = 1;
-    public static double driveSlowMultiplier = 0.8;
-    public static double headingSlowMultiplier = 0.6;
+    public static double driveSlowMultiplier = 0.9;
+    public static double headingSlowMultiplier = 0.9;
     public static boolean useSlowZone = false;
     public void updateDrive() {
         double forward = -gg.left_stick_y;
-        double strafe = -gg.left_stick_x;
-        double rotate = -gg.right_stick_x;
+        double strafe = gg.left_stick_x;
+        double rotate = gg.right_stick_x;
 
 
         forward *= translationalNormal;
@@ -126,9 +127,9 @@ public class TeleOP extends LinearOpMode
         }
 
         robot.blob.setMode(Blob.State.DRIVE);
-        double X=gamepad1.left_stick_x;
-        double Y=-gamepad1.left_stick_y;
-        double rotation=(gamepad1.right_trigger-gamepad1.left_trigger);
+        double X=strafe;
+        double Y=forward;
+        double rotation=rotate;
 
         double heading =-robot.blob.odo.getHeading()+Math.PI/2;
 

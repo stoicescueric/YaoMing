@@ -174,6 +174,9 @@ public class Sensors {
     public static double threesholdTime = 0.050;
 
     public static double latencyFactor = 0.03;
+    public boolean isFarZone() {
+        return currentX > switchTarget;
+    }
 
     public void update() {
         Pose prevPose = pose;
@@ -188,9 +191,9 @@ public class Sensors {
         currentY = pose.getY();
         currentHeading = pose.getHeading();
 
-        if(Info.phase == Phase.TELEOP) {
-            calculateVelAndAcc();
-        }
+
+        calculateVelAndAcc();
+
 
 
         if(usePredictivePose && Info.phase == Phase.TELEOP) {
@@ -204,7 +207,7 @@ public class Sensors {
         shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
         shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
         double shotTimeEstimate = shotTime.get(getShooterDistanceToBackboard());
-        if(shooterWorldX > switchTarget) {
+        if(isFarZone()) {
             if(Info.alliance == Alliance.RED) {
                 targetX = targetXRedFar;
                 targetY = targetYRedFar;
@@ -222,18 +225,18 @@ public class Sensors {
             }
         }
 
-//        for(int i = 0;i<5;i++) {
-//            virtualTargetX = targetX - shotTimeEstimate * (xVelocityRobot + latencyFactor * xAccRobot);
-//            virtualTargetY = targetY - shotTimeEstimate * (yVelocityRobot + latencyFactor * yAccRobot);
-//
-//            double newShotTime = shotTime.get(getDistanceBetweenPoints(virtualTargetX,currentX,virtualTargetY,currentY));
-//            if(Math.abs(newShotTime - shotTimeEstimate) <= threesholdTime) {
-//                i = 4;
-//            }
-//            if(i != 4) {
-//                shotTimeEstimate = newShotTime;
-//            }
-//        }
+        for(int i = 0;i<5;i++) {
+            virtualTargetX = targetX - shotTimeEstimate * (xVelocityRobot + latencyFactor * xAccRobot);
+            virtualTargetY = targetY - shotTimeEstimate * (yVelocityRobot + latencyFactor * yAccRobot);
+
+            double newShotTime = shotTime.get(getDistanceBetweenPoints(virtualTargetX,currentX,virtualTargetY,currentY));
+            if(Math.abs(newShotTime - shotTimeEstimate) <= threesholdTime) {
+                i = 4;
+            }
+            if(i != 4) {
+                shotTimeEstimate = newShotTime;
+            }
+        }
 
 
 
@@ -497,6 +500,9 @@ public class Sensors {
     }
     public double getShooterY() {
         return shooterWorldY;
+    }
+    public void setUsePredictivePose(boolean use) {
+        usePredictivePose = use;
     }
 
     public boolean areAllBeamsLowForTime(long msThreshold) {

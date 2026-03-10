@@ -12,12 +12,13 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
-    public static double turretTargetPos = 0.335;
-    public static double shootingTime = 550;
+    public static double turretTargetPos = 0.325;
+    public static double shootingTime = 625;
     public static double turretPositionRed = 0.598;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 2500;
     public static double hoodPosition = 0.615;
+    public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
     public static double startX = -60, startY = 35.7, headingStartRed = Math.toRadians(180); //TODO
     public Pose startPose;
@@ -27,11 +28,13 @@ public class CloseConstants18Playoff {
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -16, pickUp1Y = 51, pickUp1Heading = Math.toRadians(260);
+    public static double pickUp1X = -13, pickUp1Y = 52, pickUp1Heading = Math.toRadians(270);
+    public static double InterpickUp1X = -13, InterpickUp1Y = 25, InterpickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
+    public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 12,pickUp2Y = 25,     pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 12,pickUp2Y2 = 57.5, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 9.5,pickUp2Y = 25,     pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 9.5,pickUp2Y2 = 53, pickUp2Heading2 = Math.toRadians(270);
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
@@ -44,7 +47,7 @@ public class CloseConstants18Playoff {
     //gate
     public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 4;
-    public static double gatePickupX = 12.5, gatePickupY = 58.4, gatePickupHeading = Math.toRadians(245.8);
+    public static double gatePickupX = 13.5, gatePickupY = 58.6, gatePickupHeading = 4.310019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
@@ -72,6 +75,7 @@ public class CloseConstants18Playoff {
         preload = new Pose(shootPreloadX, shootPreloadY * (Info.alliance == Alliance.RED ? 1 : -1), shootPreloadH * (Info.alliance == Alliance.RED ? 1 : -1));
 
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPose1_Inter = new Pose(InterpickUp1X, InterpickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), InterpickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2_2 = new Pose(pickUp2X2, pickUp2Y2 * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading2 * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose3 = new Pose(pickUp3X, pickUp3Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp3Heading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -115,6 +119,9 @@ public class CloseConstants18Playoff {
     }
     public double getParkThreeshold() {
         return parkThreeshold;
+    }
+    public double getPreloadProgress() {
+        return preloadSotmPerc;
     }
 
 

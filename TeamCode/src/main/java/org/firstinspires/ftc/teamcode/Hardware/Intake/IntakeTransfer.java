@@ -223,7 +223,7 @@ public class IntakeTransfer implements Module {
                 intake.setPower(IntakeConstants.intakeFirstPhase);
                 conveyorState = ConveyorState.recycle1;
                 robot.outtake.launcher.autoAimOn(false);
-                robot.outtake.launcher.setTargetHood(1);
+                robot.outtake.launcher.setTargetHood(0.7);
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.OFF);
                 robot.outtake.flywheelSpin(OuttakePositions.recycleSpeed);
                 if(robot.outtake.launcher.isReady() && recycleStartTimer.milliseconds() > IntakeConstants.timerRecycleFirstPhase){
@@ -294,8 +294,12 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case TRANSFER:
-                conveyor.setPower(Utils.minMaxClip(IntakeConstants.transferPowerTransfer * (12 / robot.sensors.getVoltage()),-1,1));
-                intake.setPower(Utils.minMaxClip(IntakeConstants.transferPowerIntake * (12 / robot.sensors.getVoltage()),-1,1));
+
+                if(robot.sensors.isFarZone()) {
+                    intake.setPower(IntakeConstants.intakePowerIntakeFarZone);
+                } else {
+                    intake.setPower(IntakeConstants.transferPowerIntake);
+                }
                 powerArmState = PowerArmState.TRANSFER;
                 conveyorState = ConveyorState.TRANSFER;
                 capacState = CapacState.BLEG;
@@ -388,7 +392,11 @@ public class IntakeTransfer implements Module {
                 conveyor.setPower(power_time);
                 break;
             case TRANSFER:
-                conveyor.setPower(Utils.minMaxClip(IntakeConstants.transferPowerTransfer * (12 / robot.sensors.getVoltage()),-1,1));
+                if(robot.sensors.isFarZone()) {
+                    conveyor.setPower(IntakeConstants.transferPowerIntakeFarZone);
+                } else {
+                    conveyor.setPower(IntakeConstants.transferPowerTransfer);
+                }
                 break;
             case reverseTransfer:
                 conveyor.setPower(IntakeConstants.reverseConPhase3);

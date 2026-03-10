@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
+import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 @Config
 @TeleOp
@@ -27,6 +28,7 @@ public class TuneShooterPid extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
         robot.outtake.setOuttakeState(Outtake.OuttakeState.OFF);
+        robot.blob.setMode(Blob.State.DRIVE);
         while (opModeIsActive()) {
             gg.update();
             robot.update();
