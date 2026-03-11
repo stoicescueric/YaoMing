@@ -85,6 +85,7 @@ public  class Launcher implements Module {
         motor1.setDirection(DcMotorSimple.Direction.FORWARD);
         motor2.setDirection(DcMotorEx.Direction.REVERSE);
         this.sensors = sensors;
+        velocityController.reset();
     }
 
 

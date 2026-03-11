@@ -13,7 +13,7 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.325;
-    public static double shootingTime = 850;
+    public static double shootingTime = 500;
     public static double turretPositionRed = 0.325;
     public static double turretPositionBlue = 0.39;
     public static double failSafeDtTime = 2000;
@@ -46,12 +46,10 @@ public class CloseConstants18Playoff {
     public static double pickUp3X2 = 36,pickUp3Y2 = 57, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
-    public static double parkThreeshold = 3000;
-
     //gate
     public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 4;
-    public static int gateClearCount = 3;
+    public static int gateClearCount = 1;
     public static double gatePickupX = 13.7, gatePickupY = 58.6, gatePickupHeading = 4.280019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -65,8 +63,8 @@ public class CloseConstants18Playoff {
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
 
-    public static double timerFailsafeGateLastRun = 3000;
-    public static double parkFailSafe = 3000;
+    public static double timerFailsafeGateLastRun = 29500;
+    public static double parkFailSafe = 29500;
     public Pose parkPose;
     public Pose clear;
 
