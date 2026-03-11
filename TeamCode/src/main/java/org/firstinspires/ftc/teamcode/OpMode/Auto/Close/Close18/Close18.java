@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18Playoff.CloseConstants18Playoff;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
@@ -48,7 +49,7 @@ public class Close18 extends OpMode {
 
     public AutoStates autoStates = AutoStates.IDLE;
     public AutoStates prevAutoStates = AutoStates.IDLE;
-    CloseConstants18Bob constants;
+    CloseConstants18Playoff constants;
 
     @Override
     public void init() {
@@ -57,7 +58,7 @@ public class Close18 extends OpMode {
         robot = new Robot(this);
 
 
-        constants = new CloseConstants18Bob();
+        constants = new CloseConstants18Playoff();
         constants.buildPaths();
 
 
@@ -198,7 +199,7 @@ public class Close18 extends OpMode {
                 if (!robot.blob.inPosition(1.6,1.6,0.1) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 gateCycleCounter++;
-                if (gateCycleCounter < CloseConstants18Bob.gateCycleCount) {
+                if (gateCycleCounter < CloseConstants18Playoff.gateCycleCount) {
                     sleep(constants.getShootingTime(), AutoStates.GO_GATE_PICKUP);
                 } else {
                     sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1);
@@ -234,18 +235,29 @@ public class Close18 extends OpMode {
                 setPathState(AutoStates.GO_PICKUP3_2);
                 break;
             case GO_PICKUP3_2:
+                if(timerAuto.milliseconds() > constants.getFailSafePark()) {
+                    setPathState(AutoStates.GO_TO_PARK);
+                    break;
+                }
                 robot.blob.setTargetPosition(constants.pickUpPose3_2);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.GO_TO_SCORE3);
                 break;
             case GO_TO_SCORE3:
-
+                if(timerAuto.milliseconds() > constants.getFailSafePark()) {
+                    setPathState(AutoStates.GO_TO_PARK);
+                    break;
+                }
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 //robot.drive.followPath(constants.scorePickup2, true);
                 robot.blob.setTargetPosition(constants.scorePose);
                 setPathState(AutoStates.WAIT_SCORE3);
                 break;
             case WAIT_SCORE3:
+                if(timerAuto.milliseconds() > constants.getFailSafePark()) {
+                    setPathState(AutoStates.GO_TO_PARK);
+                    break;
+                }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 if (!robot.blob.inPosition(1.6,1.6,0.1) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());

@@ -142,8 +142,10 @@ public class TeleOP extends LinearOpMode
         if (gg.rightStickButtonOnce()) {
             if (Info.alliance == Alliance.RED) {
                 robot.blob.odo.setPose(resetPoseRed);
+                robot.outtake.turret.resetOffset();
             }else {
                 robot.blob.odo.setPose(resetPoseBlue);
+                robot.outtake.turret.resetOffset();
             }
 
         }

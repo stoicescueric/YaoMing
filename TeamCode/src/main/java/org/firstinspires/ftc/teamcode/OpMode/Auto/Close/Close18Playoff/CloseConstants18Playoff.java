@@ -46,7 +46,7 @@ public class CloseConstants18Playoff {
     public static double pickUp3X2 = 36,pickUp3Y2 = 57, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
-    public static double parkThreeshold = 29000;
+    public static double parkThreeshold = 3000;
 
     //gate
     public static long failSafePickupTime = 1900;
@@ -65,6 +65,8 @@ public class CloseConstants18Playoff {
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
 
+    public static double timerFailsafeGateLastRun = 3000;
+    public static double parkFailSafe = 3000;
     public Pose parkPose;
     public Pose clear;
 
@@ -88,6 +90,9 @@ public class CloseConstants18Playoff {
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
+        if(Info.alliance == Alliance.BLUE) {
+            turretTargetPos = 0.5 + (0.5 - turretTargetPos);
+        }
 
     }
 
@@ -122,11 +127,14 @@ public class CloseConstants18Playoff {
     public double getFailSafePickupTime(){
         return failSafePickupTime;
     }
-    public double getParkThreeshold() {
-        return parkThreeshold;
-    }
     public double getPreloadProgress() {
         return preloadSotmPerc;
+    }
+    public double getFailSafePark() {
+        return parkFailSafe;
+    }
+    public double getFailSafeLastRun() {
+        return timerFailsafeGateLastRun;
     }
     public double getWaitBeforeClear() {return waitBeforeClear;}
     public int getGateClearCount(){return gateClearCount;}
