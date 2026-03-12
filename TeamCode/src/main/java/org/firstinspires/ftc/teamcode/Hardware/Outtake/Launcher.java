@@ -136,6 +136,9 @@ public  class Launcher implements Module {
         return tunePidTarget;
     }
 
+    public static boolean useAdaptiveVel = true;
+    public static double idleVelocityClose = 1500;
+    public static double idleVelocityFar = 1950;
     public static double tunePidTarget = 0;
     @Override
     public void update() {
@@ -163,8 +166,17 @@ public  class Launcher implements Module {
                 break;
             case IDLE:
                 double speed;
+
                 try{
-                    target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                    if(useAdaptiveVel) {
+                        target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                    }else {
+                        if(sensors.isFarZone()) {
+                            target = idleVelocityFar;
+                        }else {
+                            target = idleVelocityClose;
+                        }
+                    }
                     target_tilt = hood.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[hoodValues.length-1]));
                 } catch (Exception e) {
                     target = OuttakePositions.defaultVel;

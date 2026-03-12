@@ -13,7 +13,7 @@ public class CachingVoltageSensor {
     /**
      * This is the voltage we want the robot to always try to operate at.
      */
-    public static double nominalVoltage = 13.2;
+    public static double nominalVoltage = 12;
     public static double cacheInvalidateSeconds = 0.5;
 
     private VoltageSensor voltageSensor;

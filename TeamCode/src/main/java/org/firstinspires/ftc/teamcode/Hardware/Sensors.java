@@ -243,9 +243,9 @@ public class Sensors {
 
 
 
+        voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
 
         if(System.currentTimeMillis() - readVoltageTime > 150) {
-            voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
             readVoltageTime = System.currentTimeMillis();
         }
 
