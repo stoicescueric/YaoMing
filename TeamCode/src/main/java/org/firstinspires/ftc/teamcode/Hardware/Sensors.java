@@ -136,7 +136,7 @@ public class Sensors {
         shotTime.createLUT();
     }
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.1; //sec
+    public static double timeLatency = 0.2; //sec
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
@@ -167,8 +167,6 @@ public class Sensors {
         }
         return targetY;
     }
-    public double getBackboardX() { return targetX; }
-    public double getBackboardY() { return targetY; }
 
     public double getDistanceBetweenPoints(double x1,double x2,double y1,double y2){
         return Math.sqrt((x1 - x2) * (x1-x2) + (y1 - y2) * (y1 - y2));

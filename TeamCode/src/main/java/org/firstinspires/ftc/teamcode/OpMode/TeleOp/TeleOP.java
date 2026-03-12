@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.pedropathing.geometry.Pose;
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 
@@ -45,13 +48,14 @@ public class TeleOP extends LinearOpMode
     Pose resetPoseRed = new Pose(59.11, -64.24, 0); //TODO
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
     Pose resetCenter = new Pose(0, 0, Math.PI/2);
+    private double loopTime = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-         Info.phase = Phase.TELEOP;
-         Info.useBlob = false;
-         robot = new Robot(this);
-         //60.48 58.22
+        Info.phase = Phase.TELEOP;
+        Info.useBlob = false;
+        robot = new Robot(this);
+        //60.48 58.22
 
         if (Info.hasLastPose) {
             startPose = new Pose(Info.lastPoseX, Info.lastPoseY, Info.lastPoseHeading);
@@ -62,34 +66,41 @@ public class TeleOP extends LinearOpMode
                 startPose = startPoseBlue;
             }
         }
-         gg = new GamePadController(gamepad1);
+        gg = new GamePadController(gamepad1);
 
-         robot.blob.odo.setPose(startPose);
-         robot.blob.odo.update();
+        robot.blob.odo.setPose(startPose);
+        robot.blob.odo.update();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-         waitForStart();
-         robot.outtake.launcher.autoAimOn(true);
-         robot.sensors.setUsePredictivePose(true);
-         motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        waitForStart();
+        robot.outtake.launcher.autoAimOn(true);
+        robot.sensors.setUsePredictivePose(true);
+        motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
-         while(opModeIsActive())
-         {
-              gg.update();
-              updateDrive();
+        while(opModeIsActive())
+        {
+            gg.update();
+            updateDrive();
 
 
-              robot.outtake.setShootingWhileMoving(shootWhileMoving);
+            robot.outtake.setShootingWhileMoving(shootWhileMoving);
 
-              outtakeUpdate();
-              intakeUpdate();
-              telemetry.addData("intake State",robot.intakeTransfer.intakeState);
-              telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
-              telemetry.addData("timer", motorTimer.seconds());
-              telemetry.update();
-              robot.update();
-          }
+            outtakeUpdate();
+            intakeUpdate();
+            telemetry.addData("intake State",robot.intakeTransfer.intakeState);
+            telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
+            telemetry.addData("timer", motorTimer.seconds());  double loop = System.nanoTime();
+            telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+            telemetry.addData("sotm",robot.sensors.sotm);
+            telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
+
+
+            loopTime = loop;
+            telemetry.update();
+            robot.update();
+        }
     }
-             //posibil sa trb sa mut robot.update inainte de stall check chestie
+    //posibil sa trb sa mut robot.update inainte de stall check chestie
 
 
 

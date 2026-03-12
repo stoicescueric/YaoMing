@@ -201,17 +201,15 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case START_TRANSFER:
-
                 intake.setPower(0);
                 powerArmState = PowerArmState.LOW;
                 conveyorState = ConveyorState.OFF;
                 capacState = CapacState.BLEG;
-
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                 sleep(IntakeConstants.sleepTransfer,IntakeState.TRANSFER);
 
-                Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
+                //Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
                 break;
             case ReCycleStart:
                 robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
@@ -305,8 +303,7 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 break;
             case SLEEP:
-                Log.w("Debug shoot precise", " " + (System.currentTimeMillis() - startSleep));
-
+                //Log.w("Debug shoot precise", " " + (System.currentTimeMillis() - startSleep));
                 if (System.currentTimeMillis() - startSleep > sleeptime) {
                     intakeState = nextState;
                 }
@@ -437,20 +434,17 @@ public class IntakeTransfer implements Module {
                     }
                     break;
                 case CONFIRMING:
-                    Log.w("IntakeTransfer", "intake sensor counter = " + intakeSensorCounter + " stalled=" + intakeStalled);
+                    //Log.w("IntakeTransfer", "intake sensor counter = " + intakeSensorCounter + " stalled=" + intakeStalled);
                     if (intakeState != IntakeState.INTAKE) {
                         stallCheck = StallCheck.IDLE;
                         break;
                     }
-
                     if (!ballPresent || !intakeStalled) {
                         stallCheck = StallCheck.DETECTED;
                         break;
                     }
-
                     if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
-                        Log.w("IntakeTransfer", "Stall detected, stopping intake");
-
+                        //Log.w("IntakeTransfer", "Stall detected, stopping intake");
                         robot.op.gamepad1.rumble(150);
                         stallTriggeredThisLoop = true;
                         setIntakeState(IntakeState.OFF);

@@ -32,7 +32,6 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 public  class Launcher implements Module {
     CachingDcMotorEx motor1,motor2;
 
-
     Servo tilt;
 
     public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160};

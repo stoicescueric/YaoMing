@@ -111,9 +111,8 @@ public class Close18 extends OpMode {
 
                 //robot.drive.followPath(constants.grabPickup2, constants.getMaxPower(), true);
                 if(!pickup2) {
-
                     robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
-                    robot.outtake.turret.setPosFixed(constants.getTurretPosition());
+                    robot.outtake.turret.setPosFixed(constants.getTurretTargetPos());
                     robot.blob.setTargetPosition(constants.pickUpPose2);
                     pickup2 = true;
                 }

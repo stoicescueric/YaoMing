@@ -18,6 +18,7 @@ public class Close18 extends OpMode {
 
     Timer pathTimer;
     int gateCycleCounter = 0;
+    int gateCycleCount = 3;
 
     ElapsedTime timerAuto = null;
     public enum AutoStates {
@@ -199,7 +200,7 @@ public class Close18 extends OpMode {
                 if (!robot.blob.inPosition(1.6,1.6,0.1) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 gateCycleCounter++;
-                if (gateCycleCounter < CloseConstants18Playoff.gateCycleCount) {
+                if (gateCycleCounter < gateCycleCount) {
                     sleep(constants.getShootingTime(), AutoStates.GO_GATE_PICKUP);
                 } else {
                     sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1);
