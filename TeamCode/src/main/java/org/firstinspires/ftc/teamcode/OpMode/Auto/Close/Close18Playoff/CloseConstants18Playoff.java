@@ -15,7 +15,7 @@ public class CloseConstants18Playoff {
     public static double turretTargetPos = 0.325;
     public static double shootingTime = 500;
     public static double turretPositionRed = 0.325;
-    public static double turretPositionBlue = 0.39;
+    public static double turretPositionBlue = 0.675;
     public static double failSafeDtTime = 2000;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
@@ -88,9 +88,9 @@ public class CloseConstants18Playoff {
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
-        if(Info.alliance == Alliance.BLUE) {
-            turretTargetPos = 0.5 + (0.5 - turretTargetPos);
-        }
+//        if(Info.alliance == Alliance.BLUE) {
+//            turretTargetPos = 0.5 + (0.5 - turretTargetPos);
+//        }
 
     }
 
@@ -120,7 +120,11 @@ public class CloseConstants18Playoff {
         return failSafeDtTime;
     }
     public double getTurretTargetPos() {
+        if(Info.alliance == Alliance.BLUE) {
+            return turretPositionBlue;
+        }else {
         return turretTargetPos;
+        }
     }
     public double getFailSafePickupTime(){
         return failSafePickupTime;
