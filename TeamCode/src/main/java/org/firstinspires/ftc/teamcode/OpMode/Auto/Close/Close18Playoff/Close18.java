@@ -118,7 +118,7 @@ public class Close18 extends OpMode {
                 }
 
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.inPosition(2,2,0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.3,1.3,0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.GO_PICKUP2_2);
                 break;
             case GO_PICKUP2_2:
@@ -220,7 +220,7 @@ public class Close18 extends OpMode {
             case GO_PICKUP1_0:
                 robot.blob.setTargetPosition(constants.pickUpPose1_Inter);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.inPosition(2,2,0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.3,1.3,0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.GO_PICKUP1);
             case GO_PICKUP1:
                 if(timerAuto.milliseconds() > constants.getFailSafePark()) {

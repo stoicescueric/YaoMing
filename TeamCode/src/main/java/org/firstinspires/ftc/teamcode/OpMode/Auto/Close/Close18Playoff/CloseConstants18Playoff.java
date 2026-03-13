@@ -30,27 +30,27 @@ public class CloseConstants18Playoff {
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -16, pickUp1Y = 50.9, pickUp1Heading = Math.toRadians(270);
-    public static double InterpickUp1X = -16.5, InterpickUp1Y = 22, InterpickUp1Heading = Math.toRadians(270);
+    public static double pickUp1X = -13.5, pickUp1Y = 50.9, pickUp1Heading = Math.toRadians(270);
+    public static double InterpickUp1X = -13.5, InterpickUp1Y = 22, InterpickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 9.5,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 9.5,pickUp2Y2 = 49.5, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 10,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 10,pickUp2Y2 = 48, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
-    public static double pickUp3X = 36,pickUp3Y = 26, pickUp3Heading = Math.toRadians(270);
-    public static double pickUp3X2 = 36,pickUp3Y2 = 54.5, pickUp3Heading2 = Math.toRadians(270);
+    public static double pickUp3X = 35,pickUp3Y = 22, pickUp3Heading = Math.toRadians(270);
+    public static double pickUp3X2 = 35,pickUp3Y2 = 52.5, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
     public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 4;
     public static int gateClearCount = 1;
-    public static double gatePickupX = 15.5, gatePickupY = 55, gatePickupHeading = 4.280019301402063;
+    public static double gatePickupX = 17.5, gatePickupY = 57.5, gatePickupHeading = 4.1346824;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
