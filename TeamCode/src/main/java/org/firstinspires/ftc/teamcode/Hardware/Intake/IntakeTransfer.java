@@ -255,8 +255,6 @@ public class IntakeTransfer implements Module {
             case ReCycleEnd:
                 if(recycleEndTimer == null){
                     recycleEndTimer = new ElapsedTime();
-
-
                 }
                 if(shooterStartRecycle) {
                     if(spinUpRecycleWant)
