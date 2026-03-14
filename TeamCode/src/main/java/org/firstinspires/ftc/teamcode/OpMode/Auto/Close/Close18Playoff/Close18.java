@@ -107,6 +107,7 @@ public class Close18 extends OpMode {
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP2);
                 break;
             case GO_PICKUP2:
+                robot.blob.maxPower = 0.75;
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
 
                 //robot.drive.followPath(constants.grabPickup2, constants.getMaxPower(), true);
@@ -147,7 +148,7 @@ public class Close18 extends OpMode {
                 setPathState(AutoStates.GO_TO_SCORE2);
                 break;
             case GO_TO_SCORE2:
-
+                robot.blob.maxPower = 0.9;
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 //robot.drive.followPath(constants.scorePickup2, true);
                 robot.blob.setTargetPosition(constants.scorePose);
