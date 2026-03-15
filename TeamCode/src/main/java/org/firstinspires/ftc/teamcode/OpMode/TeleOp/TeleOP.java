@@ -252,17 +252,6 @@ public class TeleOP extends LinearOpMode
             }
         }
 
-        if (gg.dpadDownOnce()) {
-            if(isAutoAimOff){
-            robot.outtake.launcher.autoAimOn(false);
-            robot.outtake.launcher.setTargetHood(0);
-            isAutoAimOff = true;
-            }
-            else{
-                robot.outtake.launcher.autoAimOn(true);
-                isAutoAimOff = false;
-            }
-        }
 
         if(gg.dpadUpOnce()){
             if(robot.outtake.turret.turretState == Turret.TurretState.TRACKING) {
