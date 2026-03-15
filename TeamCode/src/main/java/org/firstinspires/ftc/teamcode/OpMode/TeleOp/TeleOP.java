@@ -32,6 +32,8 @@ public class TeleOP extends LinearOpMode
     GamePadController gg;
     Robot robot;
 
+    public static boolean isAutoAimOff = false;
+
     public static boolean shootWhileMoving = false;
 
     public static double pidTargetClosezone = 1600;
@@ -247,6 +249,18 @@ public class TeleOP extends LinearOpMode
             }
             else{
                 robot.outtake.outtakeState = Outtake.OuttakeState.STOP;
+            }
+        }
+
+        if (gg.dpadDownOnce()) {
+            if(isAutoAimOff){
+            robot.outtake.launcher.autoAimOn(false);
+            robot.outtake.launcher.setTargetHood(0);
+            isAutoAimOff = true;
+            }
+            else{
+                robot.outtake.launcher.autoAimOn(true);
+                isAutoAimOff = false;
             }
         }
 

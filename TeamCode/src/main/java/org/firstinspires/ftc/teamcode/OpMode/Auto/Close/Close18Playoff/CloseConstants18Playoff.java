@@ -13,7 +13,7 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.345;
-    public static double shootingTime = 600;
+    public static double shootingTime = 550;
     public static double turretPositionRed = 0.325;
     public static double turretPositionBlue = 0.655;
     public static double failSafeDtTime = 2000;
@@ -49,6 +49,8 @@ public class CloseConstants18Playoff {
     //gate
     public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 4;
+    public static double turretPreloadRed = 0.525;
+    public static double turretPreloadBlue = 0.475;
     public static int gateClearCount = 1;
     public static double gatePickupX = 15.5, gatePickupY = 55.5, gatePickupHeading = 4.280019301402063;
     public Pose gatePickupPose;
@@ -134,6 +136,13 @@ public class CloseConstants18Playoff {
     }
     public double getFailSafePark() {
         return parkFailSafe;
+    }
+    public double getTurretPosPreload() {
+        if(Info.alliance == Alliance.BLUE) {
+            return turretPreloadBlue;
+        }else {
+            return turretPreloadRed;
+        }
     }
     public double getFailSafeLastRun() {
         return timerFailsafeGateLastRun;
