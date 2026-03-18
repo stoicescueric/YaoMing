@@ -86,20 +86,12 @@ public class Robot {
         Info.lastPoseHeading = sensors.getHeading();
         if (!Info.hasLastPose) Info.hasLastPose = true;
 
-        if(showTelemetry) updateTelemetry();
-        double loop = System.nanoTime();
-        TelemetryUtil.packet.put("hz ", 1000000000 / (loop - loopTime));
-        TelemetryUtil.packet.put("sotm",sensors.sotm);
-        TelemetryUtil.packet.put("distance to backboard", sensors.getDistanceToBackboard());
-//        TelemetryUtil.packet.put("pinpoint heading", Math.toDegrees(sensors.getHeading()));
-//        TelemetryUtil.packet.put("navx heading", sensors.getNavxHeading());
-
-//        double distShootIn = sensors.getDistanceToTarget(sensors.getTargetX(), sensors.getTargetY());
-//        TelemetryUtil.packet.put("Distance to Shooting Target (in)", distShootIn);
+        if(showTelemetry) {
+            updateTelemetry();
+            TelemetryUtil.sendTelemetry();
+        }
 
 
-        loopTime = loop;
-        TelemetryUtil.sendTelemetry();
 
 //        if (op != null && op.telemetry != null) {
 //            op.telemetry.addData("Distance to Shooting Target (in)", distShootIn);

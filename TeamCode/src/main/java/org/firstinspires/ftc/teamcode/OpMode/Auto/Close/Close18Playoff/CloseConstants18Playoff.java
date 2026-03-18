@@ -12,45 +12,47 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
-    public static double turretTargetPos = 0.325;
-    public static double shootingTime = 500;
+    public static double turretTargetPos = 0.348;
+    public static double shootingTime = 550;
     public static double turretPositionRed = 0.325;
-    public static double turretPositionBlue = 0.39;
+    public static double turretPositionBlue = 0.655;
     public static double failSafeDtTime = 2000;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
     public static double waitBeforeClear = 500;
     public static double clearTimeAfterCycle = 700;
-    public static double startX = -56.92, startY = 44.37, headingStartRed = -4.059268299733297; //TODO
+    public static double startX = -55.62, startY = 44.98, headingStartRed = -4.084268299733297; //TODO
     public Pose startPose;
-    public static double shootingX = -1, shootingY = 12.5, shootingHeading = Math.toRadians(270);
-    public static double shootPreloadX = -14.5,shootPreloadY = 19,shootPreloadH = Math.toRadians(220);
+    public static double shootingX = -2, shootingY = 8.7, shootingHeading = Math.toRadians(270);
+    public static double shootPreloadX = -14.5,shootPreloadY = 12,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -13, pickUp1Y = 52, pickUp1Heading = Math.toRadians(270);
-    public static double InterpickUp1X = -13, InterpickUp1Y = 25, InterpickUp1Heading = Math.toRadians(270);
+    public static double pickUp1X = -14, pickUp1Y = 50.3, pickUp1Heading = Math.toRadians(270);
+    public static double InterpickUp1X = -14, InterpickUp1Y = 22, InterpickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 9.5,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 9.5,pickUp2Y2 = 52.5, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 13,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 13,pickUp2Y2 = 49.5, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
     public static double pickUp3X = 36,pickUp3Y = 26, pickUp3Heading = Math.toRadians(270);
-    public static double pickUp3X2 = 36,pickUp3Y2 = 57, pickUp3Heading2 = Math.toRadians(270);
+    public static double pickUp3X2 = 36,pickUp3Y2 = 53, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
     public static long failSafePickupTime = 1900;
     public static int gateCycleCount = 4;
+    public static double turretPreloadRed = 0.525;
+    public static double turretPreloadBlue = 0.475;
     public static int gateClearCount = 1;
-    public static double gatePickupX = 13.7, gatePickupY = 58.6, gatePickupHeading = 4.280019301402063;
+    public static double gatePickupX = 15.5, gatePickupY = 55.5, gatePickupHeading = 4.280019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
@@ -88,9 +90,9 @@ public class CloseConstants18Playoff {
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
-        if(Info.alliance == Alliance.BLUE) {
-            turretTargetPos = 0.5 + (0.5 - turretTargetPos);
-        }
+//        if(Info.alliance == Alliance.BLUE) {
+//            turretTargetPos = 0.5 + (0.5 - turretTargetPos);
+//        }
 
     }
 
@@ -120,7 +122,11 @@ public class CloseConstants18Playoff {
         return failSafeDtTime;
     }
     public double getTurretTargetPos() {
-        return turretTargetPos;
+        if(Info.alliance == Alliance.BLUE) {
+            return turretPositionBlue;
+        }else {
+            return turretTargetPos;
+        }
     }
     public double getFailSafePickupTime(){
         return failSafePickupTime;
@@ -130,6 +136,13 @@ public class CloseConstants18Playoff {
     }
     public double getFailSafePark() {
         return parkFailSafe;
+    }
+    public double getTurretPosPreload() {
+        if(Info.alliance == Alliance.BLUE) {
+            return turretPreloadBlue;
+        }else {
+            return turretPreloadRed;
+        }
     }
     public double getFailSafeLastRun() {
         return timerFailsafeGateLastRun;

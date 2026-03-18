@@ -167,15 +167,13 @@ public class Sensors {
         }
         return targetY;
     }
-    public double getBackboardX() { return targetX; }
-    public double getBackboardY() { return targetY; }
 
     public double getDistanceBetweenPoints(double x1,double x2,double y1,double y2){
         return Math.sqrt((x1 - x2) * (x1-x2) + (y1 - y2) * (y1 - y2));
     }
     public static double threesholdTime = 0.050;
 
-    public static double latencyFactor = 0.03;
+    public static double latencyFactor = 0.05;
     public boolean isFarZone() {
         return currentX > switchTarget;
     }

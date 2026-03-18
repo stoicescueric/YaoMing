@@ -29,9 +29,6 @@ public class Blob {
     public double lateralMultiplier = BlobConstants.lateralMultiplier;
     public double error;
     public Odometry odo;
-    VoltageSensor vs;
-    double voltage;
-    int i = 10;
     public boolean isStuckFailsafe = false;
 
     double prevX, prevY, prevH;
@@ -66,7 +63,6 @@ public class Blob {
 
         state=initialState;
         odo = new Odometry(hardwareMap);
-        vs = hardwareMap.voltageSensor.iterator().next();
         leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
         leftBack = hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName);
         rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
@@ -98,9 +94,9 @@ public class Blob {
         if(Math.abs(targetX - odo.getX()) < BlobConstants.xDefTresh &&
                 Math.abs(targetY - odo.getY()) < BlobConstants.yDefTresh &&
                 Math.abs(error) < BlobConstants.hDefTresh){
-            Log.w("blob error","x " + (targetX - odo.getX()));
-            Log.w("blob error","y " + (targetY - odo.getY()));
-            Log.w("blob error","heading " + error);
+            //Log.w("blob error","x " + (targetX - odo.getX()));
+            //Log.w("blob error","y " + (targetY - odo.getY()));
+            //Log.w("blob error","heading " + error);
             return true;
         }
         return false;
@@ -150,7 +146,7 @@ public class Blob {
 
     public void setTargetVector(double x , double y , double rx){
 
-        Log.w("Blob Values","" + x +" " + y + " " + rx );
+        //Log.w("Blob Values","" + x +" " + y + " " + rx );
         x *= lateralMultiplier;
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx) , 1);
         frontLeftPower = ((y + x + rx) / denominator) * maxPower;
@@ -223,15 +219,6 @@ public class Blob {
 
     public void update()
     {
-
-
-        if(i == 10){
-            voltage = vs.getVoltage();
-            i = 0;
-        }
-
-
-
         odo.update();
         if (state !=State.PID) {return;}
 
@@ -269,10 +256,6 @@ public class Blob {
         progress = Math.min(Math.max(travelDistance / totalDistance, 0), 1);
 
         setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading) , rotation);
-
-
-
-        i++;
     }
 
 }

@@ -8,22 +8,22 @@ public class IntakeConstants {
     /*-----MOTOR POWERS---*/
     public static double intakePowerIntake = 1;
     public static double intakePowerIntakeFarZone = 0.6;
-    public static double transferPowerIntake = 0.85;
+    public static double transferPowerIntake = 1;
     public static double transferPowerIntakeFarZone = 0.6;
     public static double reversePower = 1;
     public static double intakePowerRecycle = 1;
 
-    public static double transferPowerTransfer = 0.85;
-    public static double intakeFirstPhase = 0.7;
+    public static double transferPowerTransfer = 1;
+    public static double intakeFirstPhase = 0;
     public static double intakeSecondPhase = 0.5;
-    public static double transferFirstPhase = 0.3;
+    public static double transferFirstPhase = 0;
     public static double transferSecondPhase = 0.5;
     public static double onPowerConveyer = 1;
     public static double ConveyerLittle = -0.05;
     public static double IntakeLittle = 0.05;
 
     public static double timerRecycleOne = 230;
-    public static double timerRecycleTwo = 460;
+    public static double timerRecycleTwo = 475;
     public static double powerArmRecycleUp = 100;
 
 
@@ -37,11 +37,11 @@ public class IntakeConstants {
 
     /*----- SERVO POSITIONS----*/
 
-    public static double capacBleg = 0.4;
-    public static double capacRecycle = 0.2;
+    public static double capacBleg = 0.52;
+    public static double capacRecycle = 0.37;
     public static double capacReleaseTransfer = 350;
 
-    public static double blockerOpen = 0.88;
+    public static double blockerOpen = 0.26;
     public static double blockerClose = 0.47;
 
     public static double powerArmLow = 0.26;
@@ -51,13 +51,12 @@ public class IntakeConstants {
 
     public static double preciseShotDelay = 400;
     public static double beam3StopDelay = 300;
-    public static double beamAllStopDelay = 100;
-
+    public static double beamAllStopDelay = 70;
     public static double timerRecycleFirstPhase = 150;
     public static double timerRecycleOpenBlocker = 200;
     public static double doneTransfer = 150;
     public static double timerIntakeEnd= 250;
-    public static double sleepTransfer = 0;
+    public static double sleepTransfer = 20;
     public static double intakeStartTransfer = 100;
     public static double timerIntakeEnd2= 400;
     public static double intakePhase3 = 1;

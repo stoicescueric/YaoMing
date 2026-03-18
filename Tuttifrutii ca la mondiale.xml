@@ -6,7 +6,8 @@
             <goBILDA5202SeriesMotor name="intake" port="1" />
             <goBILDA5202SeriesMotor name="shooter2" port="2" />
             <goBILDA5202SeriesMotor name="shooter1" port="3" />
-            <Servo name="capac" port="2" />
+            <Servo name="capac" port="1" />
+            <Servo name="blocker" port="5" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="fr" port="0" />
@@ -17,7 +18,6 @@
             <Servo name="powerArm" port="1" />
             <Servo name="turretL" port="2" />
             <Servo name="turretR" port="3" />
-            <Servo name="blocker" port="4" />
             <Servo name="tilt" port="5" />
             <DigitalDevice name="beamBrakePos2" port="0" />
             <DigitalDevice name="beamBrakePos1" port="1" />
