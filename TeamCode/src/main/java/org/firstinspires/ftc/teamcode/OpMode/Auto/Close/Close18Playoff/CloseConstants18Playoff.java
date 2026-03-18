@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
-    public static double turretTargetPos = 0.345;
+    public static double turretTargetPos = 0.348;
     public static double shootingTime = 550;
     public static double turretPositionRed = 0.325;
     public static double turretPositionBlue = 0.655;
@@ -30,20 +30,20 @@ public class CloseConstants18Playoff {
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -14, pickUp1Y = 50.9, pickUp1Heading = Math.toRadians(270);
+    public static double pickUp1X = -14, pickUp1Y = 50.3, pickUp1Heading = Math.toRadians(270);
     public static double InterpickUp1X = -14, InterpickUp1Y = 22, InterpickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 10.5,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 10.5,pickUp2Y2 = 49.5, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 13,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 13,pickUp2Y2 = 49.5, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
     public static double pickUp3X = 36,pickUp3Y = 26, pickUp3Heading = Math.toRadians(270);
-    public static double pickUp3X2 = 36,pickUp3Y2 = 54.5, pickUp3Heading2 = Math.toRadians(270);
+    public static double pickUp3X2 = 36,pickUp3Y2 = 53, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate

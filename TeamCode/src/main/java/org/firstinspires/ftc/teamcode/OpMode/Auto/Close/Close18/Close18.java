@@ -64,7 +64,8 @@ public class Close18 extends OpMode {
         constants.buildPaths();
 
 
-        robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+        robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
+        robot.outtake.turret.setPosFixed(constants.getTurretPosPreload());
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
 
@@ -102,7 +103,7 @@ public class Close18 extends OpMode {
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case WAIT_SCORE_PRELOAD:
-                if (!robot.blob.inPosition(1.3,1.3,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.3,1.3,0.1) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP2);
                 break;

@@ -136,7 +136,7 @@ public class Sensors {
         shotTime.createLUT();
     }
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.2; //sec
+    public static double timeLatency = 0.1; //sec
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
@@ -173,7 +173,7 @@ public class Sensors {
     }
     public static double threesholdTime = 0.050;
 
-    public static double latencyFactor = 0.03;
+    public static double latencyFactor = 0.05;
     public boolean isFarZone() {
         return currentX > switchTarget;
     }
