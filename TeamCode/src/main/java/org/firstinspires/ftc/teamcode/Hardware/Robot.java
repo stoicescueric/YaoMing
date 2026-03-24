@@ -39,7 +39,15 @@ public class Robot {
     public OpMode op;
     public static boolean showTelemetry = false;
     Telemetry telemetry;
-    private double loopTime = 0;
+
+    // --- Profiling Variables ---
+    private long lastLoopTime = 0;
+    private double loopTimeMs = 0;
+    private double blobTimeMs = 0;
+    private double sensorsTimeMs = 0;
+    private double intakeTimeMs = 0;
+    private double outtakeTimeMs = 0;
+
     private DcMotorEx flDriveMotor = null;
     private DcMotorEx blDriveMotor = null;
     private DcMotorEx frDriveMotor = null;
@@ -50,7 +58,6 @@ public class Robot {
     public Robot(OpMode op)
     {
         cHub = op.hardwareMap.get(LynxModule.class, "Control Hub");
-
         cHub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         this.op = op;
         this.hw = op.hardwareMap;
@@ -74,12 +81,36 @@ public class Robot {
     }
 
     public void update() {
+        // Measure total loop time
+        long currentLoopTime = System.nanoTime();
+        if (lastLoopTime != 0) {
+            loopTimeMs = (currentLoopTime - lastLoopTime) / 1_000_000.0;
+        }
+        lastLoopTime = currentLoopTime;
+
         cHub.clearBulkCache();
+
+        // Profile Blob
+        long t1 = System.nanoTime();
         blob.update();
+
+        // Profile Sensors
+        long t2 = System.nanoTime();
+        blobTimeMs = (t2 - t1) / 1_000_000.0;
         sensors.update();
-        //sensors.updateTargetForZone();
+
+        // Profile Intake
+        long t3 = System.nanoTime();
+        sensorsTimeMs = (t3 - t2) / 1_000_000.0;
         intakeTransfer.update();
+
+        // Profile Outtake
+        long t4 = System.nanoTime();
+        intakeTimeMs = (t4 - t3) / 1_000_000.0;
         outtake.update();
+
+        long t5 = System.nanoTime();
+        outtakeTimeMs = (t5 - t4) / 1_000_000.0;
 
         Info.lastPoseX = sensors.getX();
         Info.lastPoseY = sensors.getY();
@@ -90,23 +121,22 @@ public class Robot {
             updateTelemetry();
             TelemetryUtil.sendTelemetry();
         }
-
-
-
-//        if (op != null && op.telemetry != null) {
-//            op.telemetry.addData("Distance to Shooting Target (in)", distShootIn);
-//            op.telemetry.addData("Shooting While Moving", org.firstinspires.ftc.teamcode.OpMode.TeleOp.TeleOP.shootWhileMoving);
-//            op.telemetry.update();
-//        }
     }
 
+    // Returning loop time in milliseconds is generally more readable,
+    // but I kept the method signature the same just in case you use it elsewhere.
     public long getLoopTimeNs() {
-        return (long) loopTime;
+        return (long) (loopTimeMs * 1_000_000.0);
     }
 
     public void updateTelemetry() {
-        // Make sure FL motor reference is resolved if possible
-        ensureFlMotor();
+
+        TelemetryUtil.packet.addLine("--- Loop Profiling (ms) ---");
+        TelemetryUtil.packet.put("Total Loop Time", loopTimeMs);
+        TelemetryUtil.packet.put("Blob Update", blobTimeMs);
+        TelemetryUtil.packet.put("Sensors Update", sensorsTimeMs);
+        TelemetryUtil.packet.put("Intake Update", intakeTimeMs);
+        TelemetryUtil.packet.put("Outtake Update", outtakeTimeMs);
 
         TelemetryUtil.packet.addLine("--- Robot Telemetry ---");
         TelemetryUtil.packet.put("Intake State", intakeTransfer.intakeState);
@@ -119,14 +149,12 @@ public class Robot {
         TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
-        TelemetryUtil.packet.put("Intake2 amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
         if (flDriveMotor != null) {
             TelemetryUtil.packet.put("FL Motor amps", flDriveMotor.getCurrent(CurrentUnit.AMPS));
             TelemetryUtil.packet.put("BL Motor amps", blDriveMotor.getCurrent(CurrentUnit.AMPS));
             TelemetryUtil.packet.put("BR Motor amps", brriveMotor.getCurrent(CurrentUnit.AMPS));
             TelemetryUtil.packet.put("FR Motor amps", frDriveMotor.getCurrent(CurrentUnit.AMPS));
         }
-
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());
@@ -138,6 +166,7 @@ public class Robot {
         TelemetryUtil.packet.put("beam 3 first update",sensors.firstTrueBeam3);
         TelemetryUtil.packet.put("Sensor light",sensors.lightColor.toString());
         TelemetryUtil.packet.put("Hood Target", outtake.launcher.getHoodPosition());
+
         Canvas field = TelemetryUtil.getPacket().fieldOverlay();
         double rxIn = sensors.getX();
         double ryIn = sensors.getY();
@@ -161,14 +190,12 @@ public class Robot {
         field.strokeLine(rxIn, ryIn, shootTx, shootTy);
         field.setStroke("#27f576");
         field.strokeCircle(shooterX, shooterY, 2);
+        field.setStroke("#B33D29");
+        field.strokeCircle(sensors.projectedX, sensors.projectedY, 2);
         field.setStroke("#4ef542");
         field.strokeCircle(movingGoalX,movingGoalY,2);
 
-
-
-
         TelemetryUtil.packet.put("Robot velX", sensors.getVelX());
         TelemetryUtil.packet.put("Robot velY", sensors.getVelY());
-
     }
 }

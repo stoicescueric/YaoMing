@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Module;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
@@ -16,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 
 @Config
 public class Turret implements Module {
-    Servo servoLeft;
-    Servo servoRight;
+    CachingServo servoLeft;
+    CachingServo servoRight;
 
     Sensors sensors;
 
@@ -40,8 +41,8 @@ public class Turret implements Module {
 
     public Turret(Robot rb, Sensors sensors){
         this.robot = rb;
-        servoLeft = rb.hw.get(Servo.class,"turretL");
-        servoRight = rb.hw.get(Servo.class,"turretR");
+        servoLeft = new CachingServo(rb.hw.get(Servo.class,"turretL"));
+        servoRight = new CachingServo(rb.hw.get(Servo.class,"turretR"));
         this.sensors = sensors;
         resetOffset();
 
@@ -67,19 +68,16 @@ public class Turret implements Module {
 
                 break;
             case TRACKING:
-                double robotHeading = sensors.getHeading(); // radians
+                double robotHeading = robot.sensors.getHeading(); // radians
 
-                double backboardX = sensors.getTargetX();
-                double backboardY = sensors.getTargetY();
 
-                double directGlobalAngle = sensors.getShooterAngleToTarget(backboardX, backboardY);
+                double directGlobalAngle = robot.sensors.getShooterAngleToTarget();
 
                 if(useAngularComp) {
                     robotHeading = robotHeading + (sensors.getAngularVelocity() * turretLag);
                 }
-                double relativeAngle = Math.atan2(
-                        Math.sin(directGlobalAngle - robotHeading),
-                        Math.cos(directGlobalAngle - robotHeading));
+                double diff = directGlobalAngle - robotHeading;
+                double relativeAngle = AngleUnit.normalizeRadians(diff);
 
                 double pos = angleToTurretPosition(relativeAngle);
 //                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);

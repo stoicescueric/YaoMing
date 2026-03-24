@@ -9,7 +9,7 @@ public class OuttakePositions {
     public static double FAR_ZONE_X_THRESHOLD = 17;
 
     /*----Velocity ----*/
-    public static double errorVelThreeshold = 15;
+    public static double errorVelThreeshold = 10;
 
     public static double farLaunchVelocity = 2100;
 

@@ -33,7 +33,7 @@ public class CachingServo implements Servo {
 
     @Override
     public void setPosition(double position) {
-        if (position != cachedPosition) {
+        if (Math.abs(position - cachedPosition) > 0.0005) {
             delegate.setPosition(position);
             cachedPosition = position;
         }

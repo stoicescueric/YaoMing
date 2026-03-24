@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
 import org.firstinspires.ftc.teamcode.blob.math.LowPassFilter;
 
@@ -90,10 +91,11 @@ public class Sensors {
     public static double FARZONE_X2 = 44,  FARZONE_Y2 = 0;
     public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;
 
+    public double projectedX,projectedY;
 
     public boolean sotm = false;
 
-    public static double switchTarget = 40;
+    public static double switchTarget = 25;
     public static double SLOWZONE_X1 = 10, SLOWZONE_Y1 = 35;
     public static double SLOWZONE_X2 = 35, SLOWZONE_Y2 = 35;
     public static double SLOWZONE_X3 = 10, SLOWZONE_Y3 = 72;
@@ -140,16 +142,16 @@ public class Sensors {
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
-
+        voltageSensor = new CachingVoltageSensor(robot.hw);
         breakBeamPos1 = robot.hw.get(DigitalChannel.class, "beamBrakePos1");;
         breakBeamPos1.setMode(DigitalChannel.Mode.INPUT);
         lastValueBreakBreamPos1 = breakBeamPos1.getState();
         breakBeamPos2 = robot.hw.get(DigitalChannel.class, "beamBrakePos2");;
         breakBeamPos2.setMode(DigitalChannel.Mode.INPUT);
-        lastValuebreamBeamPos2= breakBeamPos1.getState();
+        lastValuebreamBeamPos2= breakBeamPos2.getState();
         breakBeamPos3 = robot.hw.get(DigitalChannel.class, "beamBrakePos3");;
         breakBeamPos3.setMode(DigitalChannel.Mode.INPUT);
-        lastValuebreamBeamPos3= breakBeamPos1.getState();
+        lastValuebreamBeamPos3= breakBeamPos3.getState();
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
@@ -167,6 +169,7 @@ public class Sensors {
         }
         return targetY;
     }
+    CachingVoltageSensor voltageSensor;
 
     public double getDistanceBetweenPoints(double x1,double x2,double y1,double y2){
         return Math.sqrt((x1 - x2) * (x1-x2) + (y1 - y2) * (y1 - y2));
@@ -174,6 +177,8 @@ public class Sensors {
     public static double threesholdTime = 0.050;
 
     public static double latencyFactor = 0.05;
+    public static double projectedXSign = 1;
+    public static double projectedYSign = 1;
     public boolean isFarZone() {
         return currentX > switchTarget;
     }
@@ -195,11 +200,14 @@ public class Sensors {
         calculateVelAndAcc();
 
 
+        projectedX = currentX + (xVelocityRobot * timeLatency * projectedXSign);
+        projectedY = currentY + (yVelocityRobot * timeLatency * projectedYSign);
 
         if(usePredictivePose && Info.phase == Phase.TELEOP) {
             currentX = currentX + (xVelocityRobot * timeLatency);
             currentY = currentY + (yVelocityRobot * timeLatency);
         }
+
 
 
 
@@ -241,11 +249,6 @@ public class Sensors {
 
 
 
-        voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
-
-        if(System.currentTimeMillis() - readVoltageTime > 150) {
-            readVoltageTime = System.currentTimeMillis();
-        }
 
 
 
@@ -283,14 +286,26 @@ public class Sensors {
         } else {
             breakBeamPos3High = false;
         }
-        Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
-        Log.w("beam","beam braked 1: " + getHowLongBeam1() + "Beam braked 2: " + getHowLongBeam2() + "Beam braked 3 " + getHowLongBeam3());
+        shooterAngle =  Math.atan2(targetY-shooterWorldY,targetX-shooterWorldX);
+        calculateDistance();
+       // Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
+        //Log.w("beam","beam braked 1: " + getHowLongBeam1() + "Beam braked 2: " + getHowLongBeam2() + "Beam braked 3 " + getHowLongBeam3());
 
         light.setPosition(lightColor.value);
     }
+    void calculateDistance() {
+        double dx = targetX - shooterWorldX;
+        double dy = targetY - shooterWorldY;
+        shooterDistanceBackboard =  Math.sqrt(dx * dx + dy * dy);
+
+         dx = targetX - currentX;
+         dy = targetY -currentY;
+        distanceToBackBoard =  Math.sqrt(dx * dx + dy * dy);
+    }
+
 
     public double getVoltage() {
-        return voltage;
+        return voltageSensor.getVoltage();
     }
 
     public Pose getPose() {
@@ -326,15 +341,18 @@ public class Sensors {
     public double getMoveGoalY() {
         return virtualTargetY;
     }
+    double distanceToBackBoard;
+    double shooterDistanceBackboard;
     public double getDistanceToBackboard() {
-        return Math.hypot(getTargetX() - currentX, getTargetY() - currentY);
+        return distanceToBackBoard;
     }
     public double getShooterDistanceToBackboard() {
-        return Math.hypot(getTargetX() - shooterWorldX, getTargetY() - shooterWorldY);
+        return shooterDistanceBackboard;
     }
+    double shooterAngle;
 
-    public double getShooterAngleToTarget(double targetX,double targetY) {
-        return Math.atan2(getTargetY()-shooterWorldY,getTargetX()-shooterWorldX);
+    public double getShooterAngleToTarget() {
+        return shooterAngle;
     }
 
     public double getAngularVelocity() {
@@ -501,7 +519,9 @@ public class Sensors {
     }
 
     public double getDistanceFromPose(Pose pose) {
-        return Math.hypot(targetY-pose.getY(),targetX-pose.getX());
+        double dx = targetX - pose.getX();
+        double dy = targetY - pose.getY();
+        return Math.sqrt(dx * dx + dy * dy);
     }
     public double getShooterX() {
         return shooterWorldX;

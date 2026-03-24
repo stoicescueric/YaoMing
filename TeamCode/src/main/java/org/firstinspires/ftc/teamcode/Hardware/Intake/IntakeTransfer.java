@@ -109,8 +109,8 @@ public class IntakeTransfer implements Module {
 
     public IntakeTransfer(Robot robot, Sensors sensors) {
         this.robot = robot;
-        intake = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "intake"), 0);
-        conveyor = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "transfer"), 0);
+        intake = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "intake"), 0.001);
+        conveyor = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "transfer"), 0.001);
 
         powerArm = new CachingServo(robot.hw.get(Servo.class, "powerArm"));
         blocker = new CachingServo(robot.hw.get(Servo.class, "blocker"));

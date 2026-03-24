@@ -77,7 +77,7 @@ public class TeleOP extends LinearOpMode
         waitForStart();
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.turret.setPosFixed(0.505);
-        robot.sensors.setUsePredictivePose(true);
+        robot.sensors.setUsePredictivePose(false);
         motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
         while(opModeIsActive())
@@ -90,6 +90,9 @@ public class TeleOP extends LinearOpMode
 
             outtakeUpdate();
             intakeUpdate();
+            telemetry.addData("velocity current",robot.outtake.launcher.currentVel);
+            telemetry.addData("velocity target",robot.outtake.launcher.target);
+            telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
             telemetry.addData("intake State",robot.intakeTransfer.intakeState);
             telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
             telemetry.addData("timer", motorTimer.seconds());  double loop = System.nanoTime();

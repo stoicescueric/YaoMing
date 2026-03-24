@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 public  class Launcher implements Module {
     CachingDcMotorEx motor1,motor2;
 
-    Servo tilt;
+    CachingServo tilt;
 
     public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160};
     // Corresponding Velocity values
@@ -70,9 +70,9 @@ public  class Launcher implements Module {
     Robot robot;
     public Launcher(Robot robot, Sensors sensors) {
         this.robot = robot;
-        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0);
-        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0);
-        tilt = robot.hw.get(Servo.class,"tilt");
+        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0.001);
+        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0.001);
+        tilt = new CachingServo(robot.hw.get(Servo.class,"tilt"));
         encoder = robot.hw.get(DcMotorEx.class,"fr");
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
@@ -135,8 +135,8 @@ public  class Launcher implements Module {
         return tunePidTarget;
     }
 
-    public static boolean useAdaptiveVel = true;
-    public static double idleVelocityClose = 1500;
+    public static boolean useAdaptiveVel = false;
+    public static double idleVelocityClose = 1530;
     public static double idleVelocityFar = 1950;
     public static double tunePidTarget = 0;
     @Override
@@ -149,7 +149,7 @@ public  class Launcher implements Module {
 
         currentVel = -encoder.getVelocity();
 
-        double targetDistance = sensors.getShooterDistanceToBackboard();
+        double targetDistance = robot.sensors.getShooterDistanceToBackboard();
 
         switch (launcherState){
             case OFF:
@@ -181,7 +181,7 @@ public  class Launcher implements Module {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.3;
                 }
-                power = velocityController.calculate(target, currentVel, sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+                power = velocityController.calculate(target, currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
                 motor1.setPower(power);
                 motor2.setPower(power);
 
@@ -233,16 +233,6 @@ public  class Launcher implements Module {
                 }
                 break;
             case LAUNCHING:
-                if(auto_aim) {
-                    try {
-                        target = velocity.get(targetDistance);
-                        target_tilt = hood.get(targetDistance);
-                    } catch (Exception e) {
-                        robot.op.gamepad1.rumble(250);
-                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                        break;
-                    }
-                }
                 power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
@@ -262,8 +252,10 @@ public  class Launcher implements Module {
         target += (delta * 50);
     }
     public void setTarget(double target,double hood_tilt) {
-        this.target = target;
-        target_tilt = hood_tilt;
+        if(!auto_aim){
+            this.target = target;
+            target_tilt = hood_tilt;
+        }
         launcherState = LauncherState.SHOOT_STARTED;
     }
 
@@ -290,6 +282,9 @@ public  class Launcher implements Module {
         auto_aim = on;
     }
 
+    public double getTarget_tilt(){
+        return target_tilt;
+    }
     public static double SHOOTER_TICKS_PER_REV = 28.0;
     public static double FLYWHEEL_RADIUS_IN = 69.2 / 25.4;
     public static double FLYWHEEL_GEAR_RATIO = 1.0;

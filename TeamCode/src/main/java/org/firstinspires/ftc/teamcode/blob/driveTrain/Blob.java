@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 public class Blob {
 
 
-    DcMotorEx leftFront, leftBack, rightFront, rightBack;
+    CachingDcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
     public double targetHeading, rotation, realHeading, targetHeadingBlob;
@@ -63,10 +63,11 @@ public class Blob {
 
         state=initialState;
         odo = new Odometry(hardwareMap);
-        leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
-        leftBack = hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName);
-        rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
-        rightBack = hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName);
+        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName),0.005);
+        leftBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName),0.005);
+        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName),0.005);
+        rightBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName),0.005);
+
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

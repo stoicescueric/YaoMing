@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,12 +13,17 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 
+@Config
 public class Outtake {
     Robot robot;
     public Launcher launcher;
     ElapsedTime shooterConsistency;
     public Turret turret;
+    int cntTransfer = 0;
+    public static double transferThreeshold = 2;
 
+    public static boolean updateTurret = true;
+    public static boolean updateLauncher = true;
     public boolean shootingWhileMoving = false;
 
     public enum OuttakeState {
@@ -43,11 +49,13 @@ public class Outtake {
     public void start_feed_rapid(double target,double hood) {
         launcher.setTarget(target,hood);
         outtakeState = OuttakeState.START_FEEDING_RAPID_FIRE;
+        cntTransfer = 0;
     }
 
     public void start_feed_precise(double target,double hood) {
         launcher.setTarget(target,hood);
         outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
+        cntTransfer = 0;
     }
 
     public void update() {
@@ -57,10 +65,14 @@ public class Outtake {
             case IDLE:
                 //launcher.launcherState = Launcher.LauncherState.OFF;
                 launcher.launcherState = Launcher.LauncherState.IDLE;
+                cntTransfer = 0;
 
                 break;
             case START_FEEDING_RAPID_FIRE:
-                if(launcher.isReady()) {
+                if(launcher.isReady() && launcher.launcherState == Launcher.LauncherState.SPIN_UP) {
+                    cntTransfer++;
+                }
+                if(cntTransfer > transferThreeshold) {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
                     outtakeState = OuttakeState.RAPID_FIRE;
                 }
@@ -103,8 +115,8 @@ public class Outtake {
 
         }
 
-        launcher.update();
-        turret.update();
+        if(updateLauncher) launcher.update();
+        if(updateTurret) turret.update();
     }
 
     public void specificValues(double vel,double hood) {
