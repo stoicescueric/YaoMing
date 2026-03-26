@@ -135,7 +135,7 @@ public  class Launcher implements Module {
         return tunePidTarget;
     }
 
-    public static boolean useAdaptiveVel = false;
+    public static boolean useAdaptiveVel = true;
     public static double idleVelocityClose = 1530;
     public static double idleVelocityFar = 1950;
     public static double tunePidTarget = 0;

@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
-    public static double turretTargetPos = 0.348;
-    public static double shootingTime = 550;
+    public static double turretTargetPos = 0.375;
+    public static double shootingTime = 650;
     public static double turretPositionRed = 0.325;
-    public static double turretPositionBlue = 0.655;
+    public static double turretPositionBlue = 0.6379;
     public static double failSafeDtTime = 2000;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
