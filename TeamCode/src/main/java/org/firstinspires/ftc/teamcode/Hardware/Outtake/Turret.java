@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 
 @Config
 public class Turret implements Module {
-    CachingServo servoLeft;
-    CachingServo servoRight;
+    Servo servoLeft;
+    Servo servoRight;
 
     Sensors sensors;
 
@@ -33,7 +33,7 @@ public class Turret implements Module {
         TRACKING
     }
 
-    public static double centerPose = 0.505;
+    public static double centerPose = 0.495;
     public TurretState turretState = TurretState.TRACKING;
     Robot robot;
 
@@ -41,8 +41,8 @@ public class Turret implements Module {
 
     public Turret(Robot rb, Sensors sensors){
         this.robot = rb;
-        servoLeft = new CachingServo(rb.hw.get(Servo.class,"turretL"));
-        servoRight = new CachingServo(rb.hw.get(Servo.class,"turretR"));
+        servoLeft = rb.hw.get(Servo.class,"turretL");
+        servoRight = rb.hw.get(Servo.class,"turretR");
         this.sensors = sensors;
         resetOffset();
 
@@ -68,16 +68,17 @@ public class Turret implements Module {
 
                 break;
             case TRACKING:
-                double robotHeading = robot.sensors.getHeading(); // radians
+                double robotHeading = sensors.getHeading(); // radians
 
 
-                double directGlobalAngle = robot.sensors.getShooterAngleToTarget();
+                double directGlobalAngle = sensors.getShooterAngleToTarget();
 
                 if(useAngularComp) {
                     robotHeading = robotHeading + (sensors.getAngularVelocity() * turretLag);
                 }
-                double diff = directGlobalAngle - robotHeading;
-                double relativeAngle = AngleUnit.normalizeRadians(diff);
+                double relativeAngle = Math.atan2(
+                        Math.sin(directGlobalAngle - robotHeading),
+                        Math.cos(directGlobalAngle - robotHeading));
 
                 double pos = angleToTurretPosition(relativeAngle);
 //                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);

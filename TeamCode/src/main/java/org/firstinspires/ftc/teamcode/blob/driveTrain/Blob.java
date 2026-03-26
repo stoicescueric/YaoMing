@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 public class Blob {
 
 
-    CachingDcMotorEx leftFront, leftBack, rightFront, rightBack;
+    DcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
     public double targetHeading, rotation, realHeading, targetHeadingBlob;
@@ -63,10 +63,11 @@ public class Blob {
 
         state=initialState;
         odo = new Odometry(hardwareMap);
-        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName),0.005);
-        leftBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName),0.005);
-        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName),0.005);
-        rightBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName),0.005);
+        leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
+        leftBack = hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName);
+        rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
+        rightBack = hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName);
+
 
 
         leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -79,8 +80,18 @@ public class Blob {
         rightFront.setDirection(DcMotorEx.Direction.FORWARD);
         rightBack.setDirection(DcMotorEx.Direction.FORWARD);
 
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //setTargetVector(0, 0, 0);
     }
+
+    public double returnFrVelocity() {
+        return rightFront.getVelocity();
+    }
+
 
     public boolean inPosition(){
 

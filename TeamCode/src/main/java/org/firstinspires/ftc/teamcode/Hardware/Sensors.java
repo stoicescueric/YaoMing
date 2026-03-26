@@ -176,7 +176,7 @@ public class Sensors {
     }
     public static double threesholdTime = 0.050;
 
-    public static double latencyFactor = 0.05;
+    public static double latencyFactor = 0.07;
     public static double projectedXSign = 1;
     public static double projectedYSign = 1;
     public boolean isFarZone() {

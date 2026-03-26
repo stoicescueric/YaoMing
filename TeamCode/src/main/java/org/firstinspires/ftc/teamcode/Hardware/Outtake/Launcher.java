@@ -73,7 +73,6 @@ public  class Launcher implements Module {
         this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0.001);
         this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0.001);
         tilt = new CachingServo(robot.hw.get(Servo.class,"tilt"));
-        encoder = robot.hw.get(DcMotorEx.class,"fr");
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         addData();
@@ -147,7 +146,7 @@ public  class Launcher implements Module {
             rebuildTables = false;
         }
 
-        currentVel = -encoder.getVelocity();
+        currentVel = -robot.blob.returnFrVelocity();
 
         double targetDistance = robot.sensors.getShooterDistanceToBackboard();
 

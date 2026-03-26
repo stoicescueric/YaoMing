@@ -14,6 +14,7 @@ public class velocityController {
     public static double minPower = -1.0;
     public static double maxPowerChange = 0.17;
 
+    public static double nominalVoltage = 12.7;
     public static boolean useVoltageComp = true;
     public static boolean useBB = false;
     public static double bbPower = 1.0;
@@ -37,7 +38,7 @@ public class velocityController {
         double targetPower = feedforward + feedback;
 
         if (useVoltageComp) {
-            targetPower *= (12.0 / voltage);
+            targetPower *= (nominalVoltage / voltage);
         }
 
         if (useBB && (currentVelocity < targetVelocity - bbThreeshold)) {
