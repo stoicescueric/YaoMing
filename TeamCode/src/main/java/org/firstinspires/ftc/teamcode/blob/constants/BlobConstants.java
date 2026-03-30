@@ -19,7 +19,7 @@ public abstract class BlobConstants {
     public static double xDefTresh = 1;
     public static double yDefTresh = 1;
     //PID
-    public static double kP = 0.065, kI = 0, kD = 0.008; //drive pid
+    public static double kP = 0.07, kI = 0, kD = 0.0079; //drive pid
     public static double hP = 1.9, hI = 0, hD = 0.11;     //heading pid
 
     //Deceleration

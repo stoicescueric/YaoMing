@@ -536,4 +536,8 @@ public class Sensors {
     public boolean areAllBeamsLowForTime(double msThreshold) {
         return getHowLongBeam1() > msThreshold + 20 && getHowLongBeam2() > msThreshold && getHowLongBeam3() > msThreshold;
     }
+    public void setTimeLatency(double secconds){
+        timeLatency=secconds;
+    }
+
 }

@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
-    public static double turretTargetPos = 0.365;
-    public static double shootingTime = 600;
+    public static double turretTargetPos = 0.364;
+    public static double shootingTime = 700;
     public static double turretPositionRed = 0.315;
     public static double turretPositionBlue = 0.6379;
     public static double failSafeDtTime = 2000;
@@ -24,19 +24,19 @@ public class CloseConstants18Playoff {
     public static double clearTimeAfterCycle = 700;
     public static double startX = -55.62, startY = 44.98, headingStartRed = -4.084268299733297; //TODO
     public Pose startPose;
-    public static double shootingX = -2, shootingY = 8.7, shootingHeading = Math.toRadians(270);
+    public static double shootingX = -1, shootingY = 7.7, shootingHeading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 12,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
     public Pose scorePoseGateInter;
 
-    public static double pickUp1X = -14, pickUp1Y = 50.3, pickUp1Heading = Math.toRadians(270);
-    public static double InterpickUp1X = -14, InterpickUp1Y = 22, InterpickUp1Heading = Math.toRadians(270);
+    public static double pickUp1X = -13, pickUp1Y = 50.3, pickUp1Heading = Math.toRadians(270);
+    public static double InterpickUp1X = -13, InterpickUp1Y = 22, InterpickUp1Heading = Math.toRadians(270);
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 13,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 13,pickUp2Y2 = 49.5, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 12.7,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 12.7,pickUp2Y2 = 51.3, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
@@ -66,7 +66,7 @@ public class CloseConstants18Playoff {
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
 
     public static double timerFailsafeGateLastRun = 29500;
-    public static double parkFailSafe = 29500;
+    public static double parkFailSafe = 30000;
     public Pose parkPose;
     public Pose clear;
 
