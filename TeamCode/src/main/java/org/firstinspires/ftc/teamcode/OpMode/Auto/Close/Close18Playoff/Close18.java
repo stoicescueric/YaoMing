@@ -169,7 +169,7 @@ public class Close18 extends OpMode {
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 //robot.drive.followPath(constants.grabGatePickup, constants.getMaxPower(), true);
-                robot.blob.setTargetPosition(constants.gatePickupPose);
+                robot.blob.setTargetPosition(constants.gatePickupPose, 50);
                 setPathState(AutoStates.GATE_PATH_DONE);
                 break;
             case GATE_PATH_DONE:

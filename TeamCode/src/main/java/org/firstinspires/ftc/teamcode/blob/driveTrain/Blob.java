@@ -217,6 +217,20 @@ public class Blob {
         this.prevH = prevH;
 
     }
+
+    public void setTargetPosition(Pose pose, double headingThresholdPercent){
+
+        targetX = pose.getX();
+        targetY = pose.getY();
+        targetHeadingBlob = pose.getHeading();
+        this.headingThreshold = headingThresholdPercent / 100.0;
+        useHeadingThreshold = true;
+        prevX = odo.getX();
+        prevY = odo.getY();
+        this.prevH = targetHeading;
+
+    }
+
     public void setMode(State state)
     {
         this.state=state;
@@ -255,6 +269,18 @@ public class Blob {
         x = controllerX.calculate(targetX, odo.x);
         y = -controllerY.calculate(targetY , odo.y);
 
+        totalDistance = Math.sqrt(Math.pow(targetX - prevX, 2) + Math.pow(targetY - prevY, 2));
+        travelDistance = Math.sqrt(Math.pow(odo.getX() - prevX, 2) + Math.pow(odo.getY() - prevY, 2));
+        progress = totalDistance > 0 ? Math.min(Math.max(travelDistance / totalDistance, 0), 1) : 1;
+
+        if (useHeadingThreshold) {
+            if (progress >= headingThreshold) {
+                targetHeading = targetHeadingBlob;
+            } else {
+                targetHeading = prevH;
+            }
+        }
+
         double heading = odo.getHeading();
         if(heading < 0) realHeading = Math.abs(heading);
         else realHeading = 2 * Math.PI - heading;
@@ -263,9 +289,6 @@ public class Blob {
         if(Math.abs(error) > Math.PI) error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
         rotation = controllerHeading.calculate(error , 0);
 
-        totalDistance = Math.sqrt(Math.pow(targetX - prevX, 2) + Math.pow(targetY - prevY, 2));
-        travelDistance = Math.sqrt(Math.pow(odo.getX() - prevX, 2) + Math.pow(odo.getY() - prevY, 2));
-        progress = Math.min(Math.max(travelDistance / totalDistance, 0), 1);
 
         setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading) , rotation);
     }
