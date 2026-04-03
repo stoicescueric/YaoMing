@@ -188,7 +188,7 @@ public class IntakeTransfer implements Module {
                     robot.op.gamepad1.rumble(250);
                     robot.sensors.setLedColor(Sensors.LightColor.GREEN);
                     pre_off_open = null;
-                    intakeState = IntakeState.PRE_OFF_OPEN;
+                    intakeState = IntakeState.OFF;
                 }
 
 
@@ -325,6 +325,7 @@ public class IntakeTransfer implements Module {
                 }
                 break;
             case BLOCKER_ACTUALLY_OPEN:
+                blockerOpenTriggeredTime = 0;
                 blocker.setPosition(IntakeConstants.blockerOpen);
                 break;
             case CLOSE:

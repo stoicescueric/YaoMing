@@ -13,7 +13,7 @@ public class IntakeConstants {
     public static double reversePower = 1;
     public static double intakePowerRecycle = 1;
 
-    public static double transferPowerTransfer = 1;
+    public static double transferPowerTransfer = 0.93;
     public static double intakeFirstPhase = 0;
     public static double intakeSecondPhase = 0.5;
     public static double transferFirstPhase = 0;
@@ -29,6 +29,8 @@ public class IntakeConstants {
 
 
     public static double preciseShotPower = 1;
+
+
 
 
     public static double intakeAmpsThreshold = 2.7;
@@ -56,7 +58,7 @@ public class IntakeConstants {
     public static double timerRecycleOpenBlocker = 200;
     public static double doneTransfer = 150;
     public static double timerIntakeEnd= 250;
-    public static double sleepTransfer = 20;
+    public static double sleepTransfer = 0;
     public static double intakeStartTransfer = 100;
     public static double timerIntakeEnd2= 400;
     public static double intakePhase3 = 1;
