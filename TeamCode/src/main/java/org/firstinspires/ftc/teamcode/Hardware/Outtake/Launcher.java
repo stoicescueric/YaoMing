@@ -232,6 +232,16 @@ public  class Launcher implements Module {
                 }
                 break;
             case LAUNCHING:
+                if(auto_aim){
+                    try {
+                        target = velocity.get(targetDistance);
+                        target_tilt = hood.get(targetDistance);
+                    } catch (Exception e) {
+                        robot.op.gamepad1.rumble(250);
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                        break;
+                    }
+                }
                 power = velocityController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);

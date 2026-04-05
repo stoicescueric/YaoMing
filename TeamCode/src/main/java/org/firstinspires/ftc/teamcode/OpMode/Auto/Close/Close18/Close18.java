@@ -81,7 +81,7 @@ public class Close18 extends OpMode {
         setPathState(AutoStates.GO_TO_SCORE_FROM_START);
         timerAuto = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         timerAuto.startTime();
-        robot.sensors.setTimeLatency(0.11);
+
     }
 
     boolean pickup2 = false,go_pickup2 = false,go_clear_intake = false;

@@ -47,7 +47,7 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(-3.5, 24.7, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(-8.34, 51.3, Math.PI/2); //TODO
+    Pose resetPoseRed = new Pose(-6.38586089367003, 52.38892082154282, Math.PI/2); //TODO
     Pose resetPoseBlue = new Pose(resetPoseRed.getX(),resetPoseRed.getY() *-1 , - resetPoseRed.getHeading());
     Pose resetCenter = new Pose(0, 0, Math.PI/2);
     private double loopTime = 0;
@@ -73,12 +73,11 @@ public class TeleOP extends LinearOpMode
         robot.blob.odo.setPose(startPose);
         robot.blob.odo.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        robot.sensors.setTimeLatency(0.07);
 
         waitForStart();
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.turret.setPosFixed(0.485);
-        robot.sensors.setUsePredictivePose(false);
+        robot.sensors.setUsePredictivePose(true);
         motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
         while(opModeIsActive())
@@ -96,6 +95,8 @@ public class TeleOP extends LinearOpMode
             telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
             telemetry.addData("intake State",robot.intakeTransfer.intakeState);
             telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
+            telemetry.addData("velocity x",robot.sensors.getVelX());
+            telemetry.addData("velocity y",robot.sensors.getVelY());
             telemetry.addData("timer", motorTimer.seconds());  double loop = System.nanoTime();
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addData("sotm",robot.sensors.sotm);
@@ -112,12 +113,10 @@ public class TeleOP extends LinearOpMode
 
 
 
-    public static double translationalSlow = 1;
-    public static double rotateSlow = 0.6;
-    public static double rotateNormal = 0.85;
+    public static double rotateNormal = 1;
     public static double translationalNormal = 1;
-    public static double driveSlowMultiplier = 0.9;
-    public static double headingSlowMultiplier = 0.9;
+    public static double driveSlowMultiplier = 1;
+    public static double headingSlowMultiplier = 1;
     public static boolean useSlowZone = false;
     public void updateDrive() {
         double forward = -gg.left_stick_y;

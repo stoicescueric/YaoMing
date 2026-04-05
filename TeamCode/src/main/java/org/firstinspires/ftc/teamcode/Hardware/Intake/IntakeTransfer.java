@@ -207,7 +207,7 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
-                sleep(IntakeConstants.sleepTransfer,IntakeState.TRANSFER);
+                intakeState = IntakeState.TRANSFER;
 
                 //Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
                 break;

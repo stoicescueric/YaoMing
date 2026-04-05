@@ -20,7 +20,7 @@ public class Outtake {
     ElapsedTime shooterConsistency;
     public Turret turret;
     int cntTransfer = 0;
-    public static double transferThreeshold = 2;
+    public static double transferThreeshold = 1;
 
     public static boolean updateTurret = true;
     public static boolean updateLauncher = true;

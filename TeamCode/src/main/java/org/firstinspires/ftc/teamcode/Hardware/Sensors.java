@@ -138,7 +138,7 @@ public class Sensors {
         shotTime.createLUT();
     }
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.1; //sec
+    public static double timeLatency = 0.3; //sec
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
@@ -286,7 +286,7 @@ public class Sensors {
         } else {
             breakBeamPos3High = false;
         }
-        shooterAngle =  Math.atan2(targetY-shooterWorldY,targetX-shooterWorldX);
+        shooterAngle =  Math.atan2(targetY-shooterWorldY, targetX-shooterWorldX);
         calculateDistance();
        // Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
         //Log.w("beam","beam braked 1: " + getHowLongBeam1() + "Beam braked 2: " + getHowLongBeam2() + "Beam braked 3 " + getHowLongBeam3());
@@ -535,9 +535,6 @@ public class Sensors {
 
     public boolean areAllBeamsLowForTime(double msThreshold) {
         return getHowLongBeam1() > msThreshold + 20 && getHowLongBeam2() > msThreshold && getHowLongBeam3() > msThreshold;
-    }
-    public void setTimeLatency(double secconds){
-        timeLatency=secconds;
     }
 
 }
