@@ -105,7 +105,7 @@ public class Sensors {
     private double velY = 0.0;
     public double xVelocityRobot, yVelocityRobot;
     public double xAccRobot, yAccRobot;
-    public static double filterParameter = 0.6;
+    public static double filterParameter = 0.85;
     private  final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
     private final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameter, 0);
 
