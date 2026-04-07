@@ -138,7 +138,7 @@ public class Sensors {
         shotTime.createLUT();
     }
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.32; //sec
+    public static double timeLatency = 0.35; //sec
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));

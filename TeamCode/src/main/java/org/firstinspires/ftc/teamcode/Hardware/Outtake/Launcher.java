@@ -37,8 +37,8 @@ public  class Launcher implements Module {
     public static double offsetPower = 0;
     public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160,200};
     // Corresponding Velocity values
-    public static double[] velValues = {1300, 1300, 1310, 1350, 1430, 1450, 1510, 1560, 1700,1750,  1850,1850,1900,1950,2000,2040,2040,2040};
-    public static double[] hoodValues = {0.04, 0.04, 0.12, 0.15,0.19, 0.21, 0.23, 0.25, 0.3, 0.36, 0.37,   0.37, 0.38, 0.41, 0.42, 0.44,0.45,0.45,0.45};
+    public static double[] velValues = {1350, 1350, 1360, 1400, 1480, 1500, 1560, 1610, 1750,1800,  1900,1900,1950,2020,2080,2130,2130,2130};
+    public static double[] hoodValues = {0.02, 0.02, 0.10, 0.13,0.17, 0.19, 0.21, 0.23, 0.28, 0.34, 0.35,   0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
             //
 
 
