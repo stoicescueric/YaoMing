@@ -20,7 +20,7 @@ public class Outtake {
     ElapsedTime shooterConsistency;
     public Turret turret;
     int cntTransfer = 0;
-    public static double transferThreeshold = 1;
+    public static double transferThreeshold = 0;
 
     public static boolean updateTurret = true;
     public static boolean updateLauncher = true;
@@ -69,7 +69,7 @@ public class Outtake {
 
                 break;
             case START_FEEDING_RAPID_FIRE:
-                if(launcher.isReady() && launcher.launcherState == Launcher.LauncherState.SPIN_UP) {
+                if(launcher.isReady() && launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED) {
                     cntTransfer++;
                 }
                 if(cntTransfer > transferThreeshold) {

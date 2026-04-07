@@ -34,6 +34,7 @@ public  class Launcher implements Module {
 
     CachingServo tilt;
 
+    public static double offsetPower = 0;
     public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160,200};
     // Corresponding Velocity values
     public static double[] velValues = {1300, 1300, 1310, 1350, 1430, 1450, 1510, 1560, 1700,1750,  1850,1850,1900,1950,2000,2040,2040,2040};
@@ -120,6 +121,7 @@ public  class Launcher implements Module {
     }
     public static double target_tilt = 0.5;
     public double power;
+    public static double hood_offset = 0;
 
     public double getHoodPosition() {
         return target_tilt;
@@ -159,7 +161,7 @@ public  class Launcher implements Module {
                 break;
             case TUNE_PID:
                 power = velocityController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
-                motor1.setPower(power);
+                motor1.setPower(power );
                 motor2.setPower(power);
                 break;
             case IDLE:
@@ -188,16 +190,13 @@ public  class Launcher implements Module {
             case SHOOT_STARTED:
                 //robot.outtake.turret.backlashYok();
                 if(auto_aim){
-                    try {
                         target = velocity.get(targetDistance);
+                        target+=offsetPower;
                         target_tilt = hood.get(targetDistance);
-                    } catch (Exception e) {
-                        robot.op.gamepad1.rumble(250);
-                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                        break;
-                    }
                 }
-                launcherState = LauncherState.SPIN_UP;
+                power = velocityController.calculate(target,currentVel,sensors.getVoltage());
+                motor1.setPower(power);
+                motor2.setPower(power);
                 break;
             case GO_TO_VEL_HOOD:
                 power = velocityController.calculate(target,currentVel,sensors.getVoltage());
@@ -208,6 +207,7 @@ public  class Launcher implements Module {
                 try {
                     if (auto_aim) {
                         target = velocity.get(targetDistance);
+                        target+=offsetPower;
                         target_tilt = hood.get(targetDistance);
                     }
                 } catch (Exception e) {
@@ -235,6 +235,7 @@ public  class Launcher implements Module {
                 if(auto_aim){
                     try {
                         target = velocity.get(targetDistance);
+                        target+=offsetPower;
                         target_tilt = hood.get(targetDistance);
                     } catch (Exception e) {
                         robot.op.gamepad1.rumble(250);
@@ -254,7 +255,7 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 break;
         }
-        tilt.setPosition(target_tilt);
+        tilt.setPosition(target_tilt + hood_offset);
     }
 
     public void increaseDecreaseTarget(double delta) {
@@ -284,7 +285,7 @@ public  class Launcher implements Module {
         auto_aim = state;
     }
 
-    public boolean  isReady(){
+    public boolean isReady(){
         return Math.abs(currentVel - target) < OuttakePositions.errorVelThreeshold;
     }
     public void autoAimOn(boolean on){

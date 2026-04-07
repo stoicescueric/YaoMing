@@ -105,7 +105,7 @@ public class Sensors {
     private double velY = 0.0;
     public double xVelocityRobot, yVelocityRobot;
     public double xAccRobot, yAccRobot;
-    public static double filterParameter = 0.85;
+    public static double filterParameter = 0.65;
     private  final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
     private final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameter, 0);
 
@@ -138,7 +138,7 @@ public class Sensors {
         shotTime.createLUT();
     }
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.3; //sec
+    public static double timeLatency = 0.32; //sec
     private void initSensors() {
 
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
