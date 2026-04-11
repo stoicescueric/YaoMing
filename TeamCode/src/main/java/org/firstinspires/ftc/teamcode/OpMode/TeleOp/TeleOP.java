@@ -101,6 +101,7 @@ public class TeleOP extends LinearOpMode
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addData("sotm",robot.sensors.sotm);
             telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
+            telemetry.addData("shooter Amps",robot.outtake.launcher.getTotalAmps());
 
 
             loopTime = loop;

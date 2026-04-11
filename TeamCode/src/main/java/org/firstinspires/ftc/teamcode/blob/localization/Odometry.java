@@ -46,6 +46,9 @@ public class Odometry {
     public double getHeading(){
         return heading;
     }
+    public double getRealHeading(){
+        return realHead;
+    }
 
     public double getX(){
         return x;
@@ -110,6 +113,7 @@ public class Odometry {
         odo.update();
 
         heading = odo.getHeading(AngleUnit.RADIANS);
+
         if(heading < 0) realHead = Math.abs(heading);
         else realHead = 2 * Math.PI - heading;
 
