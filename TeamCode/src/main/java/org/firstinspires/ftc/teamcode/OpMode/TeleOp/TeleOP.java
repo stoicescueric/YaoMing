@@ -120,9 +120,9 @@ public class TeleOP extends LinearOpMode
     public static double headingSlowMultiplier = 1;
     public static boolean useSlowZone = false;
     public void updateDrive() {
-        double forward = -gg.left_stick_y;
-        double strafe = gg.left_stick_x;
-        double rotate = gg.right_stick_x;
+        double forward = -gg.right_stick_y;
+        double strafe = gg.right_stick_x;
+        double rotate = gg.left_stick_x;
 
 
         forward *= translationalNormal;
@@ -149,11 +149,15 @@ public class TeleOP extends LinearOpMode
         double Y=forward;
         double rotation=rotate;
 
-        double allianceRotation = (Info.alliance == Alliance.BLUE) ? Math.PI : 0;
-        double heading = -robot.blob.odo.getHeading() + Math.PI/2 + allianceRotation;
+        double x = X;
+        double y = Y;
+        if (!robotCentric) {
+            double allianceRotation = (Info.alliance == Alliance.BLUE) ? Math.PI : 0;
+            double heading = -robot.blob.odo.getHeading() + Math.PI/2 + allianceRotation;
 
-        double x=X*Math.cos(heading)-Y*Math.sin(heading);
-        double y=X* Math.sin(heading)+Y*Math.cos(heading);
+            x = X * Math.cos(heading) - Y * Math.sin(heading);
+            y = X * Math.sin(heading) + Y * Math.cos(heading);
+        }
 
         robot.blob.setTargetVector( x , y , rotation );
 
