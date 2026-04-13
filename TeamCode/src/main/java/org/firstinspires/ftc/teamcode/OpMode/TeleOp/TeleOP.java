@@ -101,7 +101,6 @@ public class TeleOP extends LinearOpMode
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addData("sotm",robot.sensors.sotm);
             telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
-            telemetry.addData("shooter Amps",robot.outtake.launcher.getTotalAmps());
 
 
             loopTime = loop;
@@ -120,9 +119,9 @@ public class TeleOP extends LinearOpMode
     public static double headingSlowMultiplier = 1;
     public static boolean useSlowZone = false;
     public void updateDrive() {
-        double forward = -gg.right_stick_y;
-        double strafe = gg.right_stick_x;
-        double rotate = gg.left_stick_x;
+        double forward = -gg.left_stick_y;
+        double strafe = gg.left_stick_x;
+        double rotate = gg.right_stick_x;
 
 
         forward *= translationalNormal;

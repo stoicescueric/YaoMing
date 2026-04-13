@@ -114,7 +114,6 @@ public class Sensors {
     private DigitalChannel breakBeamPos1, breakBeamPos2, breakBeamPos3;
     public boolean lastValueBreakBreamPos1,lastValuebreamBeamPos2,lastValuebreamBeamPos3;
 
-    public static double signHeading = 1;
     public long firstTrueBeam1,firstTrueBeam2,firstTrueBeam3;
     public Sensors(Robot robot) {
         this.robot = robot;
@@ -193,9 +192,9 @@ public class Sensors {
         long prevUpdateTimeNs = lastUpdateTimeNs;
         pose = robot.blob.odo.getPose();
 
-        currentX = robot.blob.odo.getX();
-        currentY = robot.blob.odo.getY();
-        currentHeading = robot.blob.odo.getRealHeading();
+        currentX = pose.getX();
+        currentY = pose.getY();
+        currentHeading = pose.getHeading();
 
 
         calculateVelAndAcc();
@@ -212,11 +211,9 @@ public class Sensors {
 
 
 
-//
-//        shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
-//        shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
-        shooterWorldX = currentX;
-        shooterWorldY = currentY;
+
+        shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
+        shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
         double shotTimeEstimate = shotTime.get(getShooterDistanceToBackboard());
         if(isFarZone()) {
             if(Info.alliance == Alliance.RED) {
@@ -289,12 +286,11 @@ public class Sensors {
         } else {
             breakBeamPos3High = false;
         }
-        shooterAngle = Math.atan2(targetY - shooterWorldY, targetX-shooterWorldX)+currentHeading;
+        shooterAngle =  Math.atan2(targetY-shooterWorldY, targetX-shooterWorldX);
         calculateDistance();
-       // Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
+        // Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
         //Log.w("beam","beam braked 1: " + getHowLongBeam1() + "Beam braked 2: " + getHowLongBeam2() + "Beam braked 3 " + getHowLongBeam3());
-        Log.w("current heading", "" + Math.toDegrees(currentHeading));
-        Log.w("atan", "" + Math.toDegrees(Math.atan2(targetY - shooterWorldY, targetX-shooterWorldX)));
+
         light.setPosition(lightColor.value);
     }
     void calculateDistance() {
@@ -302,8 +298,8 @@ public class Sensors {
         double dy = targetY - shooterWorldY;
         shooterDistanceBackboard =  Math.sqrt(dx * dx + dy * dy);
 
-         dx = targetX - currentX;
-         dy = targetY -currentY;
+        dx = targetX - currentX;
+        dy = targetY -currentY;
         distanceToBackBoard =  Math.sqrt(dx * dx + dy * dy);
     }
 
@@ -467,13 +463,13 @@ public class Sensors {
 
     /**
      * Returns true if the robot is currently inside the slow zone
-    **/
+     **/
     public boolean isInSlowZone() {
         double[] xs = { SLOWZONE_X1, SLOWZONE_X2, SLOWZONE_X3, SLOWZONE_X4 };
         double[] ys;
 
         if (Info.alliance == Alliance.BLUE) {
-             ys = new double[]{ -SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4 };
+            ys = new double[]{ -SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4 };
         } else {
             ys = new double[]{ SLOWZONE_Y1, SLOWZONE_Y2, SLOWZONE_Y3, SLOWZONE_Y4 };
         }
@@ -500,19 +496,19 @@ public class Sensors {
         return inside;
     }
 
-   public boolean isBreakBeamPos1Low(){
+    public boolean isBreakBeamPos1Low(){
         return breakBeamPos1High;
     }
     public boolean isBreakBeamPos2Low(){
-          return breakBeamPos2High;
-     }
+        return breakBeamPos2High;
+    }
     public boolean isBreakBeamPos3Low(){
-          return breakBeamPos3High;
-     }
+        return breakBeamPos3High;
+    }
 
-     public double getHowLongBeam3() {
+    public double getHowLongBeam3() {
         return System.currentTimeMillis() - firstTrueBeam3;
-     }
+    }
 
     public double getHowLongBeam2() {
         return System.currentTimeMillis() - firstTrueBeam2;

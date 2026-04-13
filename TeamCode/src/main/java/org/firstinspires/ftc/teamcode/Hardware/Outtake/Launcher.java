@@ -35,11 +35,11 @@ public  class Launcher implements Module {
     CachingServo tilt;
 
     public static double offsetPower = 0;
-        public static double[] Distances = {1, 60, 70, 76,82, 96, 98,106,114,  130,135,140,145,150,155,160,200};
+    public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160,200};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1400, 1450, 1550, 1590, 1640, 1700,1800,  1900,1900,1950,2020,2080,2130,2130,2130};
-    public static double[] hoodValues = {0.02, 0.18, 0.23, 0.285,0.33, 0.37, 0.28, 0.34, 0.35,   0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
-            //
+    public static double[] velValues = {1350, 1350, 1360, 1400, 1480, 1500, 1560, 1610, 1750,1800,  1900,1900,1950,2020,2080,2130,2130,2130};
+    public static double[] hoodValues = {0.02, 0.02, 0.10, 0.13,0.17, 0.19, 0.21, 0.23, 0.28, 0.34, 0.35,   0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
+    //
 
 
     InterpLUT velocity = new InterpLUT();
@@ -137,8 +137,8 @@ public  class Launcher implements Module {
     }
 
     public static boolean useAdaptiveVel = true;
-    public static double idleVelocityClose = 0.5;
-    public static double idleVelocityFar = 0.8;
+    public static double idleVelocityClose = 1530;
+    public static double idleVelocityFar = 1950;
     public static double tunePidTarget = 0;
     @Override
     public void update() {
@@ -170,32 +170,29 @@ public  class Launcher implements Module {
                 try{
                     if(useAdaptiveVel) {
                         target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
-                        power = velocityController.calculate(target, currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
-                        motor1.setPower(power);
-                        motor2.setPower(power);
                     }else {
                         if(sensors.isFarZone()) {
                             target = idleVelocityFar;
                         }else {
                             target = idleVelocityClose;
                         }
-                        motor1.setPower(target);
-                        motor2.setPower(target);
                     }
                     target_tilt = hood.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[hoodValues.length-1]));
                 } catch (Exception e) {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.3;
                 }
-
+                power = velocityController.calculate(target, currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+                motor1.setPower(power);
+                motor2.setPower(power);
 
                 break;
             case SHOOT_STARTED:
                 //robot.outtake.turret.backlashYok();
                 if(auto_aim){
-                        target = velocity.get(targetDistance);
-                        target+=offsetPower;
-                        target_tilt = hood.get(targetDistance);
+                    target = velocity.get(targetDistance);
+                    target+=offsetPower;
+                    target_tilt = hood.get(targetDistance);
                 }
                 power = velocityController.calculate(target,currentVel,sensors.getVoltage());
                 motor1.setPower(power);
@@ -303,9 +300,6 @@ public  class Launcher implements Module {
     public static double FLYWHEEL_GEAR_RATIO = 1.0;
     public static double PROJECTILE_TRANSFER_COEFF = 0.7; // tune in dashboard
 
-    public double getTotalAmps() {
-        return motor1.getCurrent(CurrentUnit.AMPS) + motor2.getCurrent(CurrentUnit.AMPS);
-    }
 
     public double getProjectileSpeedEstimate() {
         double tps = target;

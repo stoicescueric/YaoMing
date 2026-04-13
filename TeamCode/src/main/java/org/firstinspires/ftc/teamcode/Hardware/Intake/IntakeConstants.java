@@ -58,7 +58,7 @@ public class IntakeConstants {
     public static double timerRecycleOpenBlocker = 200;
     public static double doneTransfer = 150;
     public static double timerIntakeEnd= 250;
-    public static double openBlockerDelay = 80;
+    public static double sleepTransfer = 0;
     public static double intakeStartTransfer = 100;
     public static double timerIntakeEnd2= 400;
     public static double intakePhase3 = 1;
