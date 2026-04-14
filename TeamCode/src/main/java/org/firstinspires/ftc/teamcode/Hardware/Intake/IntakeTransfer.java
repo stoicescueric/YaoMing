@@ -48,8 +48,10 @@ public class IntakeTransfer implements Module {
         TRANSFER,
         PRE_OFF_OPEN,
         HOLD,
-        RECYCLE
-    }
+        RECYCLE,
+        INTERMEDIARY_TRANSFER;
+
+        }
 
     public enum BlockerState {
         CLOSE,
@@ -207,6 +209,7 @@ public class IntakeTransfer implements Module {
                 capacState = CapacState.BLEG;
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                sleep(IntakeConstants.openBlockerEarlyDelay, IntakeState.INTERMEDIARY_TRANSFER);
                 intakeState = IntakeState.TRANSFER;
 
                 //Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
@@ -312,6 +315,9 @@ public class IntakeTransfer implements Module {
                 intake.setPower(IntakeConstants.intakePowerRecycle);
                 conveyorState = ConveyorState.ON;
                 blockerState = BlockerState.OPEN;
+                break;
+
+            case INTERMEDIARY_TRANSFER:
                 break;
         }
 

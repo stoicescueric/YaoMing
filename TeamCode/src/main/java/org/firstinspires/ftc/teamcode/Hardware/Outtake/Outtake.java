@@ -49,6 +49,7 @@ public class Outtake {
     public void start_feed_rapid(double target,double hood) {
         launcher.setTarget(target,hood);
         outtakeState = OuttakeState.START_FEEDING_RAPID_FIRE;
+        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
         cntTransfer = 0;
     }
 
@@ -69,12 +70,10 @@ public class Outtake {
 
                 break;
             case START_FEEDING_RAPID_FIRE:
-                if(launcher.isReady() && launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED) {
-                    cntTransfer++;
-                }
-                if(cntTransfer > transferThreeshold) {
-                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
+                if(launcher.isReady() && launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) {
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.TRANSFER);
                     outtakeState = OuttakeState.RAPID_FIRE;
+                    launcher.launcherState = Launcher.LauncherState.LAUNCHING;
                 }
                 break;
             case RAPID_FIRE:

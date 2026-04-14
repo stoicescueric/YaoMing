@@ -25,6 +25,7 @@ public class IntakeConstants {
     public static double timerRecycleOne = 230;
     public static double timerRecycleTwo = 475;
     public static double powerArmRecycleUp = 100;
+    public static double openBlockerEarlyDelay = 50;
 
 
 
