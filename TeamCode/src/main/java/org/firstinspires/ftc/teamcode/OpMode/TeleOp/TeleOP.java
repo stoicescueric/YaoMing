@@ -17,8 +17,6 @@ import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
-import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
-import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
 import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 
@@ -216,6 +214,13 @@ public class TeleOP extends LinearOpMode
             robot.outtake.turret.addRemoveIncrementOffset(incrementTurret,-1);
         }
 
+        if (gg.dpadUpOnce()) {
+            robot.outtake.launcher.addOffsetTicks(50);
+        }
+        if (gg.dpadDownOnce()) {
+            robot.outtake.launcher.addOffsetTicks(-50);
+        }
+
 
         if (gg.aOnce() || gg.leftBumperOnce() ) { //&& robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE
             if(robot.intakeTransfer.isRecycle()) {
@@ -234,7 +239,7 @@ public class TeleOP extends LinearOpMode
                 }
             }
         }
-        if(gg.startOnce()) {
+        if(gg.guideOnce()) {
             robot.sensors.toggleSOTM();
         }
 
@@ -260,7 +265,7 @@ public class TeleOP extends LinearOpMode
         }
 
 
-        if(gg.dpadUpOnce()){
+        if(gg.startOnce()) {
             if(robot.outtake.turret.turretState == Turret.TurretState.TRACKING) {
                 robot.outtake.turret.turretState = Turret.TurretState.FIXED_ANGLE;
             }else {

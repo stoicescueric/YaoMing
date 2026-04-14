@@ -179,6 +179,9 @@ public class Sensors {
     public static double latencyFactor = 0.07;
     public static double projectedXSign = 1;
     public static double projectedYSign = 1;
+    public static double MOTION_LEAD_GAIN = 1.0;
+    public static double MIN_LEAD_SPEED = 1.0;
+    public static double PHYSICS_SHOT_TIME_EPS = 0.01;
     public boolean isFarZone() {
         return currentX > switchTarget;
     }
@@ -214,7 +217,6 @@ public class Sensors {
 
         shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
         shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
-        double shotTimeEstimate = shotTime.get(getShooterDistanceToBackboard());
         if(isFarZone()) {
             if(Info.alliance == Alliance.RED) {
                 targetX = targetXRedFar;
@@ -233,18 +235,48 @@ public class Sensors {
             }
         }
 
-        for(int i = 0;i<5;i++) {
-            virtualTargetX = targetX - shotTimeEstimate * (xVelocityRobot + latencyFactor * xAccRobot);
-            virtualTargetY = targetY - shotTimeEstimate * (yVelocityRobot + latencyFactor * yAccRobot);
+        double moveGoalX = targetX;
+        double moveGoalY = targetY;
 
-            double newShotTime = shotTime.get(getDistanceBetweenPoints(virtualTargetX,currentX,virtualTargetY,currentY));
-            if(Math.abs(newShotTime - shotTimeEstimate) <= threesholdTime) {
-                i = 4;
-            }
-            if(i != 4) {
-                shotTimeEstimate = newShotTime;
+        if (robot.outtake != null
+                && robot.outtake.isShootingWhileMoving()
+                && MOTION_LEAD_GAIN != 0.0) {
+            double rx = shooterWorldX;
+            double ry = shooterWorldY;
+            double vx = xVelocityRobot;
+            double vy = yVelocityRobot;
+
+            double robotSpeed = Math.hypot(vx, vy);
+            if (robotSpeed > MIN_LEAD_SPEED && robot.outtake.launcher != null) {
+                double projSpeed = robot.outtake.launcher.getProjectileSpeedEstimate();
+                if (projSpeed > 1e-3) {
+                    double baseDistance = Math.hypot(targetX - rx, targetY - ry);
+                    double shotTime = baseDistance / projSpeed;
+
+                    for (int i = 0; i < 5; i++) {
+                        double virtualGoalX = targetX - shotTime * (vx * MOTION_LEAD_GAIN);
+                        double virtualGoalY = targetY - shotTime * (vy * MOTION_LEAD_GAIN);
+
+                        double dx = virtualGoalX - rx;
+                        double dy = virtualGoalY - ry;
+                        double distToVirtual = Math.hypot(dx, dy);
+                        double newShotTime = distToVirtual / projSpeed;
+
+                        moveGoalX = virtualGoalX;
+                        moveGoalY = virtualGoalY;
+
+                        if (Math.abs(newShotTime - shotTime) <= PHYSICS_SHOT_TIME_EPS) {
+                            break;
+                        }
+
+                        shotTime = newShotTime;
+                    }
+                }
             }
         }
+
+        virtualTargetX = moveGoalX;
+        virtualTargetY = moveGoalY;
 
 
 
@@ -286,7 +318,7 @@ public class Sensors {
         } else {
             breakBeamPos3High = false;
         }
-        shooterAngle =  Math.atan2(targetY-shooterWorldY, targetX-shooterWorldX);
+        shooterAngle = Math.atan2(moveGoalY - shooterWorldY, moveGoalX - shooterWorldX);
         calculateDistance();
         // Log.w("beam ","Beam braked 1 : " + breakBeamPos1High + "Beam braked 2 : " + breakBeamPos2High + "Beam braked 3 : " + breakBeamPos3High);
         //Log.w("beam","beam braked 1: " + getHowLongBeam1() + "Beam braked 2: " + getHowLongBeam2() + "Beam braked 3 " + getHowLongBeam3());

@@ -15,7 +15,7 @@ public class velocityController {
     public static double maxPowerChange = 0.17;
 
     public static double nominalVoltage = 12.0;
-    public static boolean useVoltageComp = true;
+    public static boolean useVoltageComp = false;
     public static boolean useBB = false;
     public static double bbPower = 1.0;
     public static double bbThreeshold = 100;
