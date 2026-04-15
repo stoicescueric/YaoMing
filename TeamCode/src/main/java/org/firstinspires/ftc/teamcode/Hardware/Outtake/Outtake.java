@@ -62,14 +62,16 @@ public class Outtake {
     public void update() {
         switch (outtakeState) {
             case OFF:
+                turret.forceUpdate = false;
                 break;
             case IDLE:
                 //launcher.launcherState = Launcher.LauncherState.OFF;
                 launcher.launcherState = Launcher.LauncherState.IDLE;
                 cntTransfer = 0;
-
+                turret.forceUpdate = false;
                 break;
             case START_FEEDING_RAPID_FIRE:
+                turret.forceUpdate = true;
                 if(launcher.isReady() && launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.TRANSFER);
                     outtakeState = OuttakeState.RAPID_FIRE;

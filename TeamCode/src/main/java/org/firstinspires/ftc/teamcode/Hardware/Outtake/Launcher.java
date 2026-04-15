@@ -132,6 +132,7 @@ public  class Launcher implements Module {
     public static double idleVelocityClose = 1530;
     public static double idleVelocityFar = 1950;
     public static double tunePidTarget = 0;
+    private double shootingVoltage;
 
     private double getTargetWithOffset() {
         return target + offsetTicks;
@@ -248,7 +249,7 @@ public  class Launcher implements Module {
 //                        break;
 //                    }
 //                }
-                power = velocityController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = velocityController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -263,6 +264,9 @@ public  class Launcher implements Module {
         tilt.setPosition(target_tilt + hood_offset);
     }
 
+    public void snapshotVoltage() {
+        shootingVoltage = sensors.getVoltage();
+    }
     public void increaseDecreaseTarget(double delta) {
         target += (delta * 50);
     }

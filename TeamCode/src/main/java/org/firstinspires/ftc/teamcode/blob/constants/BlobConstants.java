@@ -32,7 +32,7 @@ public abstract class BlobConstants {
 
     //Localization
     public static double xOffset = -3.4842519685;
-    public static double yOffset = 4.3031496063;
+    public static double yOffset = 7.3971;
     public static GoBildaPinpointDriver.EncoderDirection xPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.EncoderDirection yPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.GoBildaOdometryPods podType = GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD;

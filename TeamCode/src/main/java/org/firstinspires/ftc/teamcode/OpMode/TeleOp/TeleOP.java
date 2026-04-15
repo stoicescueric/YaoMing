@@ -72,6 +72,7 @@ public class TeleOP extends LinearOpMode
         robot.blob.odo.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        telemetry.setMsTransmissionInterval(75);
         waitForStart();
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.turret.setPosFixed(0.485);
@@ -88,6 +89,10 @@ public class TeleOP extends LinearOpMode
 
             outtakeUpdate();
             intakeUpdate();
+            telemetry.addData("voltage",robot.sensors.getVoltage());
+            telemetry.addData("heading",robot.blob.odo.getHeading());
+            telemetry.addData("x",robot.blob.odo.getX());
+            telemetry.addData("x",robot.blob.odo.getY());
             telemetry.addData("velocity current",robot.outtake.launcher.currentVel);
             telemetry.addData("velocity target",robot.outtake.launcher.target);
             telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
@@ -194,7 +199,7 @@ public class TeleOP extends LinearOpMode
 
 
 
-    public static double incrementTurret = 0.01;
+    public static double incrementTurret = 2;
     public void outtakeUpdate() {
 
 //        if (gg.xOnce()) {

@@ -149,7 +149,7 @@ public class IntakeTransfer implements Module {
             case OFF:
                 blockerState = BlockerState.CLOSE;
                 powerArmState = PowerArmState.INTAKE;
-                setNormalizedIntakePower(IntakeConstants.IntakeLittle);
+                intake.setPower(0);
                 conveyorState = ConveyorState.OFF;
                 if(robot.sensors.lightColor == Sensors.LightColor.BLUE) {
                     robot.sensors.setLedColor(Sensors.LightColor.OFF);
@@ -157,7 +157,7 @@ public class IntakeTransfer implements Module {
                 break;
             case PRE_OFF_OPEN:
                 powerArmState = PowerArmState.INTAKE;
-                setNormalizedIntakePower(IntakeConstants.IntakeLittle);
+                intake.setPower(0);
                 conveyorState = ConveyorState.REVERSE_LITTLE;
                 capacState = CapacState.BLEG;
                 if(pre_off_open == null) {
@@ -171,7 +171,7 @@ public class IntakeTransfer implements Module {
             case OFF_OPEN:
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                 powerArmState = PowerArmState.INTAKE;
-                setNormalizedIntakePower(0);
+                intake.setPower(0);
                 conveyorState = ConveyorState.REVERSE_LITTLE;
 
                 capacState = CapacState.BLEG;
@@ -181,7 +181,7 @@ public class IntakeTransfer implements Module {
                 blockerState = BlockerState.CLOSE;
                 capacState = CapacState.BLEG;
                 powerArmState = PowerArmState.INTAKE;
-                setNormalizedIntakePower(IntakeConstants.intakePowerIntake);
+                intake.setPower(IntakeConstants.intakePowerIntake);
                 if((robot.sensors.isBreakBeamPos3Low() && robot.sensors.getHowLongBeam3() > IntakeConstants.beam3StopDelay)  || beamChecked) {
 
 
@@ -202,17 +202,18 @@ public class IntakeTransfer implements Module {
                 break;
             case REVERSE:
                 blockerState = BlockerState.CLOSE;
-                setNormalizedIntakePower(-IntakeConstants.reversePower);
+                intake.setPower(-IntakeConstants.reversePower);
                 conveyorState = ConveyorState.REVERSE;
                 capacState = CapacState.BLEG;
                 break;
             case START_TRANSFER:
-                setNormalizedIntakePower(0);
+                intake.setPower(0);
                 powerArmState = PowerArmState.LOW;
                 conveyorState = ConveyorState.OFF;
                 capacState = CapacState.BLEG;
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                robot.outtake.launcher.snapshotVoltage();
                 sleep(IntakeConstants.openBlockerEarlyDelay, IntakeState.INTERMEDIARY_TRANSFER);
 
                 //Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
@@ -224,7 +225,7 @@ public class IntakeTransfer implements Module {
                 }
                 capacState = CapacState.RECYCLE;
                 powerArmState = PowerArmState.INTAKE;
-                setNormalizedIntakePower(IntakeConstants.intakeFirstPhase);
+                intake.setPower(IntakeConstants.intakeFirstPhase);
                 conveyorState = ConveyorState.recycle1;
                 robot.outtake.launcher.autoAimOn(false);
                 robot.outtake.launcher.setTargetHood(0.7);
@@ -244,7 +245,7 @@ public class IntakeTransfer implements Module {
                 if(recycleMidTimer.milliseconds() > IntakeConstants.timerRecycleOpenBlocker) {
                     blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                     conveyorState = ConveyorState.recycle2;
-                    setNormalizedIntakePower(IntakeConstants.intakeSecondPhase);
+                    intake.setPower(IntakeConstants.intakeSecondPhase);
                 }
                 if(recycleMidTimer.milliseconds() > IntakeConstants.timerRecycleOpenBlocker + IntakeConstants.powerArmRecycleUp) {
                     powerArmState = PowerArmState.RECYCLE;
@@ -269,10 +270,10 @@ public class IntakeTransfer implements Module {
                         robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                 }
                 blockerState = BlockerState.CLOSE;
-                setNormalizedIntakePower(IntakeConstants.intakePhase3);
+                intake.setPower(IntakeConstants.intakePhase3);
                 conveyorState = ConveyorState.reverseTransfer;
                 if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd){
-                    setNormalizedIntakePower(IntakeConstants.intakePhase3);
+                    intake.setPower(IntakeConstants.intakePhase3);
                     conveyorState = ConveyorState.recycle3;
                 }
                 if(recycleEndTimer.milliseconds() > IntakeConstants.timerIntakeEnd + IntakeConstants.timerIntakeEnd2) {
@@ -290,7 +291,7 @@ public class IntakeTransfer implements Module {
                 break;
             case POWER_FOR_TIME:
                 powerArmState = PowerArmState.LOW;
-                setNormalizedIntakePower(power_time);
+                intake.setPower(power_time);
                 conveyorState = ConveyorState.POWER_FOR_TIME;
                 sleep(time_power, IntakeState.OFF_OPEN);
                 capacState = CapacState.BLEG;
@@ -298,9 +299,9 @@ public class IntakeTransfer implements Module {
             case TRANSFER:
 
                 if(robot.sensors.isFarZone()) {
-                    setNormalizedIntakePower(IntakeConstants.intakePowerIntakeFarZone);
+                    intake.setPower(IntakeConstants.intakePowerIntakeFarZone);
                 } else {
-                    setNormalizedIntakePower(IntakeConstants.transferPowerIntake);
+                    intake.setPower(IntakeConstants.transferPowerIntake);
                 }
                 powerArmState = PowerArmState.TRANSFER;
                 conveyorState = ConveyorState.TRANSFER;
@@ -315,7 +316,7 @@ public class IntakeTransfer implements Module {
             case RECYCLE:
                 capacState = CapacState.RECYCLE;
                 powerArmState = PowerArmState.RECYCLE;
-                setNormalizedIntakePower(IntakeConstants.intakePowerRecycle);
+                intake.setPower(IntakeConstants.intakePowerRecycle);
                 conveyorState = ConveyorState.ON;
                 blockerState = BlockerState.OPEN;
                 break;
@@ -410,58 +411,6 @@ public class IntakeTransfer implements Module {
                 setNormalizedTransferPower(-IntakeConstants.reversePower);
                 break;
         }
-
-        //useStall este depricated si nu trebuie folosit sub nici un fel!!!
-        if (useStall) {
-            boolean ballPresent = robot.sensors != null && robot.sensors.isBreakBeamPos1Low();
-            boolean intakeStalled = intake.isOverCurrent();
-
-            switch (stallCheck) {
-                case IDLE:
-                    intakeSensorCounter = 0;
-                    if (intakeState == IntakeState.INTAKE && ballPresent) {
-                        intakeSensorCounter = 1;
-                        stallCheck = StallCheck.DETECTED;
-                    }
-                    break;
-                case DETECTED:
-                    if (intakeState != IntakeState.INTAKE) {
-                        stallCheck = StallCheck.IDLE;
-                        intakeSensorCounter = 0;
-                        break;
-                    }
-                    if (ballPresent) {
-                        intakeSensorCounter++;
-                    } else {
-                        intakeSensorCounter = 0;
-                    }
-
-                    if (intakeSensorCounter >= IntakeConstants.intakeSensorThreshold && intakeStalled) {
-                        startStallCheckTime = System.currentTimeMillis();
-                        stallCheck = StallCheck.CONFIRMING;
-                    }
-                    break;
-                case CONFIRMING:
-                    //Log.w("IntakeTransfer", "intake sensor counter = " + intakeSensorCounter + " stalled=" + intakeStalled);
-                    if (intakeState != IntakeState.INTAKE) {
-                        stallCheck = StallCheck.IDLE;
-                        break;
-                    }
-                    if (!ballPresent || !intakeStalled) {
-                        stallCheck = StallCheck.DETECTED;
-                        break;
-                    }
-                    if (System.currentTimeMillis() - startStallCheckTime > stalCheckDuration) {
-                        //Log.w("IntakeTransfer", "Stall detected, stopping intake");
-                        robot.op.gamepad1.rumble(150);
-                        stallTriggeredThisLoop = true;
-                        setIntakeState(IntakeState.OFF);
-                        stallCheck = StallCheck.IDLE;
-                    }
-                    break;
-
-            }
-        }
         previousState = intakeState;
 
 
@@ -514,6 +463,10 @@ public class IntakeTransfer implements Module {
 
     private void setNormalizedTransferPower(double basePower) {
 
+        if(!normalizetransfer) {
+            conveyor.setPower(basePower);
+            return;
+        }
         double voltage = TRANSFER_NOMINAL_VOLTAGE;
         if (robot != null && robot.sensors != null) {
             voltage = robot.sensors.getVoltage();

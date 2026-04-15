@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -88,11 +89,19 @@ public class Blob {
         //setTargetVector(0, 0, 0);
     }
 
+    public static double shooterSign = -1;
     public double returnFrVelocity() {
-        return rightFront.getVelocity();
+        return leftFront.getVelocity() * shooterSign;
     }
 
 
+    public boolean inPositionVelocity(double velocityThreshold,double translationalThreshold){
+        double xError = Math.abs(targetX - odo.getX());
+        double yError = Math.abs(targetY - odo.getY());
+        double posError = new Vector2d(xError, yError).magnitude();
+
+        return posError < translationalThreshold && odo.getSpeedTranslational() < velocityThreshold;
+    }
     public boolean inPosition(){
 
         double heading = odo.getHeading();
@@ -155,6 +164,8 @@ public class Blob {
                 Math.abs(error) < 0.1;
 
     }
+
+
 
     public void setTargetVector(double x , double y , double rx){
 

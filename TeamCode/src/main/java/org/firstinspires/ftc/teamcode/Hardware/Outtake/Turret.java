@@ -23,7 +23,7 @@ public class Turret implements Module {
     Sensors sensors;
 
     public static boolean backlashYok = false;
-    public static double offset = 0;
+    public static double offsetAngle = 0;
 
 
 
@@ -50,6 +50,9 @@ public class Turret implements Module {
     }
     public static boolean useAngularComp = false;
     public static double turretLag = 0.1;
+    public static double cachingFix = 0.0005;
+    public double lastPos = 0;
+    public boolean forceUpdate = false;
     @Override
     public void update() {
         switch (turretState){
@@ -58,13 +61,10 @@ public class Turret implements Module {
                 servoRight.setPosition(0);
                 break;
             case FIXED_ANGLE:
-                if(backlashYok) {
-                    servoLeft.setPosition(centerPose + offset);
-                    servoRight.setPosition(centerPose - offset);
-                }else {
-                    servoLeft.setPosition(centerPose);
-                    servoRight.setPosition(centerPose);
-                }
+
+                servoLeft.setPosition(centerPose);
+                servoRight.setPosition(centerPose );
+
 
                 break;
             case TRACKING:
@@ -80,12 +80,21 @@ public class Turret implements Module {
                         Math.sin(directGlobalAngle - robotHeading),
                         Math.cos(directGlobalAngle - robotHeading));
 
-                double pos = angleToTurretPosition(relativeAngle);
+                double pos = angleToTurretPosition(relativeAngle - Math.toRadians(offsetAngle));
 //                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);
 //                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY + " turret pos " + pos);
 
-                servoLeft.setPosition(pos + offset);
-                servoRight.setPosition(pos + offset);
+                if(!forceUpdate) {
+                    if(Math.abs(pos - lastPos) > cachingFix) {
+                        servoLeft.setPosition(pos);
+                        servoRight.setPosition(pos);
+                    }
+                }else {
+                    servoLeft.setPosition(pos);
+                    servoRight.setPosition(pos);
+                }
+
+                lastPos = pos;
                 break;
         }
     }
@@ -96,10 +105,10 @@ public class Turret implements Module {
 
 
     public void addRemoveIncrementOffset(double increment,double sign) {
-        offset = offset + (sign * increment);
+        offsetAngle = offsetAngle + (sign * increment);
     }
     public void resetOffset() {
-        offset = 0;
+        offsetAngle = 0;
     }
 
     private double angleToTurretPosition(double angle) {

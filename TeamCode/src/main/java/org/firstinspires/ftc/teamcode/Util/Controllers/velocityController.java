@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class velocityController {
-    public static double kP = 0.004;
+    public static double kP = 0.0014;
     public static double kI = 0;
     public static double kD = 0.0001;
     public static double kV = 0.00035;
@@ -47,9 +47,9 @@ public class velocityController {
 
         double constrainedPower = Math.max(minPower, Math.min(maxPower, targetPower));
 
-        if (Math.abs(constrainedPower - lastPower) > maxPowerChange) {
-            constrainedPower = lastPower + (Math.signum(constrainedPower - lastPower) * maxPowerChange);
-        }
+//        if (Math.abs(constrainedPower - lastPower) > maxPowerChange) {
+//            constrainedPower = lastPower + (Math.signum(constrainedPower - lastPower) * maxPowerChange);
+//        }
 
         lastPower = constrainedPower;
         return constrainedPower;
