@@ -16,11 +16,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
+import org.firstinspires.ftc.teamcode.Util.Math.Debouncer;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
 import org.firstinspires.ftc.teamcode.blob.math.LowPassFilter;
@@ -115,6 +117,7 @@ public class Sensors {
     public static double DEFAULT_PROJECTILE_SPEED = 300.0; // inches per second, rough guess
 
     private DigitalChannel breakBeamPos1, breakBeamPos2, breakBeamPos3;
+    private Debouncer bb1,bb2,bb3;
     public boolean lastValueBreakBreamPos1,lastValuebreamBeamPos2,lastValuebreamBeamPos3;
 
     public long firstTrueBeam1,firstTrueBeam2,firstTrueBeam3;
@@ -141,9 +144,13 @@ public class Sensors {
         shotTime.createLUT();
     }
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.215; //sec
+    public static double timeLatency = 0.235; //sec
+    public static double debouncerTime = 50;
     private void initSensors() {
 
+        bb1 = new Debouncer(debouncerTime, Debouncer.DebounceType.kBoth);
+        bb2 = new Debouncer(debouncerTime, Debouncer.DebounceType.kBoth);
+        bb3 = new Debouncer(debouncerTime, Debouncer.DebounceType.kBoth);
         light = new CachingServo(robot.hw.get(Servo.class,"led"));
         voltageSensor = new CachingVoltageSensor(robot.hw);
         breakBeamPos1 = robot.hw.get(DigitalChannel.class, "beamBrakePos1");;
@@ -281,7 +288,7 @@ public class Sensors {
 
         if (breakBeamPos1 != null) {
             lastValueBreakBreamPos1 = breakBeamPos1High;
-            breakBeamPos1High = !(breakBeamPos1.getState());
+            breakBeamPos1High = bb1.calculate(!(breakBeamPos1.getState()));
             if(breakBeamPos1High && !lastValueBreakBreamPos1) {
                 firstTrueBeam1 = System.currentTimeMillis();
             }else if(!breakBeamPos1High && !lastValueBreakBreamPos1) {
@@ -292,7 +299,7 @@ public class Sensors {
         }
         if (breakBeamPos2 != null) {
             lastValuebreamBeamPos2 = breakBeamPos2High;
-            breakBeamPos2High = !(breakBeamPos2.getState());
+            breakBeamPos2High = bb2.calculate(!(breakBeamPos2.getState()));
             if(breakBeamPos2High && !lastValuebreamBeamPos2) {
                 firstTrueBeam2 = System.currentTimeMillis();
             }else if(!breakBeamPos2High && !lastValuebreamBeamPos2) {
@@ -303,7 +310,7 @@ public class Sensors {
         }
         if (breakBeamPos3 != null) {
             lastValuebreamBeamPos3 = breakBeamPos3High;
-            breakBeamPos3High = !(breakBeamPos3.getState());
+            breakBeamPos3High = bb3.calculate(!(breakBeamPos3.getState()));
 
             if(breakBeamPos3High && !lastValuebreamBeamPos3) {
                 firstTrueBeam3 = System.currentTimeMillis();
@@ -560,8 +567,8 @@ public class Sensors {
         usePredictivePose = use;
     }
 
-    public boolean areAllBeamsLowForTime(double msThreshold) {
-        return getHowLongBeam1() > msThreshold  && getHowLongBeam2() > msThreshold && getHowLongBeam3() > msThreshold;
+    public boolean areAllBeamsLowForTime() {
+        return getHowLongBeam1() > IntakeConstants.beam1stopDelay && getHowLongBeam2() > IntakeConstants.beam2stopDelay && getHowLongBeam3() > IntakeConstants.beam3StopDelay;
     }
 
 }

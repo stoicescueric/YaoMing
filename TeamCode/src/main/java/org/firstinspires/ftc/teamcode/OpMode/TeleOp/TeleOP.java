@@ -100,6 +100,7 @@ public class TeleOP extends LinearOpMode
             telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
             telemetry.addData("velocity x",robot.sensors.getVelX());
             telemetry.addData("velocity y",robot.sensors.getVelY());
+            telemetry.addData("power shooter",robot.outtake.launcher.getPower());
             telemetry.addData("timer", motorTimer.seconds());  double loop = System.nanoTime();
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addData("sotm",robot.sensors.sotm);
@@ -183,6 +184,7 @@ public class TeleOP extends LinearOpMode
 
     public void intakeUpdate() {
         if(gg.rightBumper()) {
+
             if(gg.rightBumperOnce()){
                 switch (robot.intakeTransfer.intakeState){
                     case INTAKE:
@@ -194,6 +196,12 @@ public class TeleOP extends LinearOpMode
                         break;
                 }
             }
+            if(gg.rightBumperLong()) {
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.REVERSE);
+            }
+        }
+        if(!gg.rightBumper() && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.REVERSE) {
+            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
         }
     }
 

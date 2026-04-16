@@ -11,6 +11,7 @@ public class ConstantsFar {
 
     public static double stacX_1 = 0,stackY_1 = 0,stackHeading_1 = Math.toRadians(0);
     public static double stackX_2 = 0,stackY_2 = 0,stackHeading_2 = Math.toRadians(0);
+    public static double parkX = 0,parkY = 0,parkHeading = Math.toRadians(0);
 
 
     Pose startPose;
@@ -21,6 +22,7 @@ public class ConstantsFar {
     public static double dtFailsafe = 2000;
     Pose stackPose1;
     Pose stackPose2;
+    Pose park;
 
     public void buildPath() {
             startPose = new Pose(startX,startY,startHeading);
@@ -28,6 +30,7 @@ public class ConstantsFar {
             preload = new Pose(preloadX,preloadY,preloadHeading);
             stackPose1 = new Pose(stacX_1,stackY_1,stackHeading_1);
             stackPose2 = new Pose(stackX_2,stackY_2,stackHeading_2);
+            park = new Pose(parkX,parkY,parkHeading);
     }
 
     public double getDtFailsafe() {
@@ -35,6 +38,9 @@ public class ConstantsFar {
     }
     public double getShootingTime() {
         return shootingTime;
+    }
+    public double getCycles() {
+        return hp_runs;
     }
 
 }

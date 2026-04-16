@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
@@ -21,10 +22,12 @@ public class Far extends OpMode {
         SHOOT_PRELOAD,
         GO_TO_HP,
         GO_TO_SCORE_HP,
+        SCORE_HP,
         GO_TO_INTER_STACK,
         PICKUP_STACK,
         GO_TO_SCORE_STACK,
         TAKE_CYLE_HP,
+        PARK,
         SCORE_CYCLE_HP,
         SLEEP
     }
@@ -55,6 +58,8 @@ public class Far extends OpMode {
         pathTimer = new Timer();
         setPathState(AutoStates.GO_TO_PRELOAD);
     }
+    int cntCycle = 0;
+    boolean newState = false;
     @Override
     public void loop() {
         switch (autoStates) {
@@ -64,17 +69,24 @@ public class Far extends OpMode {
                 robot.blob.setTargetPosition(constants.shootingPose);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getDtFailsafe()) break;
                 robot.outtake.start_feed_rapid(1000, 0.2);
-                sleep(constants.getShootingTime(), AutoStates.GO_TO_HP);
+                autoStates = AutoStates.SHOOT_PRELOAD;
                 break;
             case SHOOT_PRELOAD:
+                if(robot.outtake.launcher.launcherState == Launcher.LauncherState.LAUNCHING) {
+
+                    sleep(constants.getShootingTime(), AutoStates.GO_TO_HP);
+                }
                 break;
             case GO_TO_HP:
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+
                 robot.blob.setTargetPosition(constants.preload);
 
-                if(robot.blob.progress > 0.6) robot.blob.maxPower = 0.8;
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getDtFailsafe()) break;
+                if(robot.blob.progress > 0.6){
+                    robot.blob.maxPower = 0.8;
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                }
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getDtFailsafe() && robot.blob.isStuck()) break;
 
                 setPathState(AutoStates.GO_TO_SCORE_HP);
                 break;
@@ -82,18 +94,24 @@ public class Far extends OpMode {
                 robot.blob.setTargetPosition(constants.shootingPose);
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getDtFailsafe()) break;
                 robot.outtake.start_feed_rapid(1000, 0.2);
-                sleep(constants.getShootingTime(), AutoStates.GO_TO_INTER_STACK);
+                autoStates= AutoStates.SCORE_HP;
                 break;
-            case GO_TO_INTER_STACK:
-
+            case SCORE_HP:
+                if(robot.outtake.launcher.launcherState == Launcher.LauncherState.LAUNCHING) {
+                    ++cntCycle;
+                    if(cntCycle == constants.getCycles()) {
+                        sleep(constants.getShootingTime(), AutoStates.PARK);
+                    }else {
+                        sleep(constants.getShootingTime(), AutoStates.GO_TO_HP);
+                    }
+                }
                 break;
-            case PICKUP_STACK:
-                break;
-            case GO_TO_SCORE_STACK:
-                break;
-            case TAKE_CYLE_HP:
-                break;
-            case SCORE_CYCLE_HP:
+            case PARK:
+                robot.blob.setTargetPosition(constants.park);
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getDtFailsafe()) {
+                    break;
+                }
+                requestOpModeStop();
                 break;
             case SLEEP:
                 if (System.currentTimeMillis() - startSleep > sleeptime) {
@@ -103,6 +121,7 @@ public class Far extends OpMode {
         }
     }
     public void setPathState(AutoStates pState) {
+        newState = true;
         autoStates = pState;
         pathTimer.resetTimer();
     }

@@ -112,6 +112,7 @@ public  class Launcher implements Module {
     }
     public static double target_tilt = 0.5;
     public double power;
+
     public static double hood_offset = 0;
     public static double offsetTicks = 0;
 
@@ -129,8 +130,8 @@ public  class Launcher implements Module {
     }
 
     public static boolean useAdaptiveVel = true;
-    public static double idleVelocityClose = 1530;
-    public static double idleVelocityFar = 1950;
+    public static double idleVelocityClose = 0.64;
+    public static double idleVelocityFar = 0.75;
     public static double tunePidTarget = 0;
     private double shootingVoltage;
 
@@ -176,11 +177,12 @@ public  class Launcher implements Module {
                 try{
                     if(useAdaptiveVel) {
                         target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                        power = velocityController.calculate(getTargetWithOffset(), currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
                     }else {
                         if(sensors.isFarZone()) {
-                            target = idleVelocityFar;
+                            power = idleVelocityFar;
                         }else {
-                            target = idleVelocityClose;
+                            power = idleVelocityClose;
                         }
                     }
                     target_tilt = hood.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[hoodValues.length-1]));
@@ -188,7 +190,6 @@ public  class Launcher implements Module {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.3;
                 }
-                power = velocityController.calculate(getTargetWithOffset(), currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
                 motor1.setPower(power);
                 motor2.setPower(power);
 
@@ -308,6 +309,7 @@ public  class Launcher implements Module {
     public static double FLYWHEEL_RADIUS_IN = 69.2 / 25.4;
     public static double FLYWHEEL_GEAR_RATIO = 1.0;
     public static double PROJECTILE_TRANSFER_COEFF = 0.7; // tune in dashboard
+
 
 
     public double getProjectileSpeedEstimate() {

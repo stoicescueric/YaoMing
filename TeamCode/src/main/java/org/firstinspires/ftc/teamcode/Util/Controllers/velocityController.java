@@ -4,11 +4,11 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class velocityController {
-    public static double kP = 0.0014;
+    public static double kP = 0.013;
     public static double kI = 0;
-    public static double kD = 0.0001;
-    public static double kV = 0.00035;
-    public static double kS = 0.06;
+    public static double kD = 0.0001;//0.00012
+    public static double kV = 0; ///0.000335
+    public static double kS = 0.04;
 
     public static double maxPower = 1.0;
     public static double minPower = -1.0;

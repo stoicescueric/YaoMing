@@ -190,7 +190,7 @@ public class IntakeTransfer implements Module {
                 } else {
                     conveyorState = ConveyorState.ON;
                 }
-                if(robot.sensors.areAllBeamsLowForTime((long)IntakeConstants.beamAllStopDelay) && beamChecked ){
+                if(robot.sensors.areAllBeamsLowForTime() && beamChecked ){
                     robot.op.gamepad1.rumble(250);
                     robot.sensors.setLedColor(Sensors.LightColor.GREEN);
                     pre_off_open = null;
