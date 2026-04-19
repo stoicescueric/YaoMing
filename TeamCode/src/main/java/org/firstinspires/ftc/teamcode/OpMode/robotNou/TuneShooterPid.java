@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake.OuttakePositions;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
@@ -50,13 +51,23 @@ public class TuneShooterPid extends LinearOpMode {
                     robot.blob.odo.setPose(resetCenter);
                 }
             }
-            if(gg.aOnce()) {
-                if(robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.TRANSFER){
-                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                }else {
-                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.START_TRANSFER);
-                }
+            Outtake.OuttakeState state = robot.outtake.outtakeState;
 
+            if (gg.aOnce() || gg.leftBumperOnce() ) { //&& robot.intakeTransfer.intakeState != IntakeTransfer.IntakeState.INTAKE
+                if(robot.intakeTransfer.isRecycle()) {
+                    robot.intakeTransfer.spinUpRecycle();
+                }else {
+                    if(state == Outtake.OuttakeState.IDLE || state == Outtake.OuttakeState.OFF){
+
+                    robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+
+                    }else {
+                        // Any other non-IDLE state: STOP
+
+                        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.OFF);
+                    }
+                }
             }
             robot.outtake.launcher.launcherState = Launcher.LauncherState.TUNE_PID;
             telemetry.addData("Target Velocity", robot.outtake.launcher.getTunePidTarget());

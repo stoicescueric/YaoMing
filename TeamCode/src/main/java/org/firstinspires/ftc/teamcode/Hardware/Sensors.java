@@ -123,8 +123,8 @@ public class Sensors {
     public long firstTrueBeam1,firstTrueBeam2,firstTrueBeam3;
 
     // --- SOTM / TURRET PREDICTION VARIABLES ---
-    public static double ACCEL_COMP_FACTOR = 1.0;     // Multiplier for the 0.5*a*t^2 term
-    public static double SOTM_GAIN = 1.15;            // Multiplier for physical momentum loss
+    public static double ACCEL_COMP_FACTOR = 0.05;     // Multiplier for the 0.5*a*t^2 term
+    public static double SOTM_GAIN = 0.9;            // Multiplier for physical momentum loss
     public static double SHOOTER_FEEDER_DELAY = 0.05; // Sec: Delay from 'fire' to ball exit
     public static double TURRET_MECH_LOOKAHEAD_S = 0.1; // Sec: Delay for Turret slew lag
     public static double VELO_THRESHOLD = 4.0;        // Rad/s: Deadband for lookahead
@@ -149,11 +149,9 @@ public class Sensors {
     }
 
     void createShotTime() {
-        shotTime.add(42,0.695);
-        shotTime.add(52,0.516);
-        shotTime.add(62,0.704);
-        shotTime.add(72,0.608);
-        shotTime.add(82,0.670);
+        shotTime.add(76,0.6);
+        shotTime.add(85,0.7);
+        shotTime.add(95,0.8);
         shotTime.createLUT();
     }
 
@@ -205,6 +203,8 @@ public class Sensors {
     public static double threesholdTime = 0.050;
     public static double latencyFactor = 0.07;
     public static double projectedXSign = 1;
+    public static boolean useFixedTof = true;
+    public static double fixedTOF = 0.6;
     public static double projectedYSign = 1;
     public static double convergenceLoopCnt = 5;
 
@@ -256,6 +256,7 @@ public class Sensors {
             double deltaY = targetY - getY();
             virtualDistance = Math.hypot(deltaX,deltaY);
             interpolatedTOF = shotTime.get(virtualDistance);
+            if(useFixedTof) interpolatedTOF = fixedTOF;
 
             for(int i = 0;i<convergenceLoopCnt;i++) {
                 double t = SHOOTER_FEEDER_DELAY + interpolatedTOF;
@@ -268,6 +269,8 @@ public class Sensors {
                 virtualTargetY = targetY - displaceY;
                 double newVirtualDistance = Math.hypot(virtualTargetX - getX(), virtualTargetY - getY());
                 double newTOF = shotTime.get(newVirtualDistance);
+                if(useFixedTof) newTOF = fixedTOF;
+
 
                 if (Math.abs(newTOF - interpolatedTOF) < PHYSICS_SHOT_TIME_EPS) break;
 
@@ -316,9 +319,9 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
-        // REMOVED `lastTurretAngle = shooterAngle;` from here to fix velocity logic
-        shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
-        shooterAngle = updateTurretPrediction(shooterAngle, 0);
+        if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + velY * timeLatency), getTargetX() - (shooterWorldX + velX * timeLatency));
+        else shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
+//        shooterAngle = updateTurretPrediction(shooterAngle, 0);
 
         light.setPosition(lightColor.value);
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
@@ -338,7 +341,6 @@ public class Sensors {
         if (taDt > 0.001) {
             double deltaAngle = turretAngle - lastTurretAngle;
 
-            // INJECTED ANGLE WRAP LOGIC: Prevents massive velocity spikes when crossing 180/-180 degrees
             while (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
             while (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
 

@@ -26,10 +26,10 @@ public  class Launcher implements Module {
     CachingServo tilt;
 
     public static double offsetPower = 0;
-    public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160,200};
+    public static double[] Distances = {1, 50, 58, 60, 66, 76.5, 85.5, 95};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1350, 1360, 1400, 1480, 1500, 1560, 1610, 1750,1800,  1900,1900,1950,2020,2080,2130,2130,2130};
-    public static double[] hoodValues = {0.02, 0.02, 0.10, 0.13,0.17, 0.19, 0.21, 0.23, 0.28, 0.34, 0.35,   0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
+    public static double[] velValues = {1350, 1350, 1360, 1420, 1520, 1590, 1670, 1750};
+    public static double[] hoodValues = {0.02, 0.02, 0.10, 0.13, 0.27, 0.32, 0.39, 0.43};
     //
 
 
@@ -72,8 +72,8 @@ public  class Launcher implements Module {
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        motor2.setDirection(DcMotorEx.Direction.REVERSE);
+        motor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor2.setDirection(DcMotorEx.Direction.FORWARD);
         this.sensors = sensors;
         velocityController.reset();
     }
@@ -167,6 +167,7 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 break;
             case TUNE_PID:
+                target = tunePidTarget;
                 power = velocityController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
                 motor1.setPower(power );
                 motor2.setPower(power);
@@ -272,11 +273,7 @@ public  class Launcher implements Module {
         target += (delta * 50);
     }
     public void setTarget(double target,double hood_tilt) {
-        if(!auto_aim){
-            this.target = target;
-            target_tilt = hood_tilt;
-        }
-        launcherState = LauncherState.SHOOT_STARTED;
+        if(launcherState!=LauncherState.TUNE_PID) launcherState = LauncherState.SHOOT_STARTED;
     }
 
     public void setFlywheel(double target) {

@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 public class TeleOP extends LinearOpMode
 {
     public static boolean robotCentric = false;
+    public static boolean ediControlls = false;
     public static boolean flipFieldFrame = false;
     public boolean isReadyingFlywheel = false;
     public static double driverFrameOffsetDeg = -90;
@@ -123,9 +124,19 @@ public class TeleOP extends LinearOpMode
     public static double headingSlowMultiplier = 1;
     public static boolean useSlowZone = false;
     public void updateDrive() {
-        double forward = -gg.left_stick_y;
-        double strafe = gg.left_stick_x;
-        double rotate = gg.right_stick_x;
+        double forward;
+        double strafe;
+        double rotate;
+        if(ediControlls) {
+            forward = -gg.right_stick_y;
+            strafe = gg.right_stick_x;
+            rotate = gg.left_stick_x;
+        }
+        else{
+            forward = -gg.left_stick_y;
+            strafe = gg.left_stick_x;
+            rotate = gg.right_stick_x;
+        }
 
 
         forward *= translationalNormal;
