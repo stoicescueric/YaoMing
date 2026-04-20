@@ -123,7 +123,7 @@ public class Sensors {
     public long firstTrueBeam1,firstTrueBeam2,firstTrueBeam3;
 
     // --- SOTM / TURRET PREDICTION VARIABLES ---
-    public static double ACCEL_COMP_FACTOR = 0.05;     // Multiplier for the 0.5*a*t^2 term
+    public static double ACCEL_COMP_FACTOR = 0;     // Multiplier for the 0.5*a*t^2 term
     public static double SOTM_GAIN = 0.9;            // Multiplier for physical momentum loss
     public static double SHOOTER_FEEDER_DELAY = 0.05; // Sec: Delay from 'fire' to ball exit
     public static double TURRET_MECH_LOOKAHEAD_S = 0.1; // Sec: Delay for Turret slew lag
@@ -265,8 +265,8 @@ public class Sensors {
                 double displaceX = ((xVelocityRobot * t) + (0.5 * xAccRobot * t2 * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
                 double displaceY = ((yVelocityRobot * t) + (0.5 * yAccRobot * t2 * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
 
-                virtualTargetX = targetX - displaceX;
-                virtualTargetY = targetY - displaceY;
+                virtualTargetX = targetX + (displaceX * sotmDirX);
+                virtualTargetY = targetY + (displaceY * sotmDirY);
                 double newVirtualDistance = Math.hypot(virtualTargetX - getX(), virtualTargetY - getY());
                 double newTOF = shotTime.get(newVirtualDistance);
                 if(useFixedTof) newTOF = fixedTOF;
@@ -388,6 +388,8 @@ public class Sensors {
 
     double distanceToBackBoard;
     double shooterDistanceBackboard;
+    public static double sotmDirY = -1;
+    public static double sotmDirX = -1;
     public double getDistanceToBackboard() { return distanceToBackBoard; }
     public double getShooterDistanceToBackboard() { return shooterDistanceBackboard; }
 

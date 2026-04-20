@@ -26,12 +26,13 @@ public  class Launcher implements Module {
     CachingServo tilt;
 
     public static double offsetPower = 0;
-    public static double[] Distances = {1, 50, 58, 60, 66, 76.5, 85.5, 95};
+    public static double[] Distances = {1, 50, 58, 60, 66, 76.5, 85.5, 95, 100,110,120,        130,135,140,145,150,155,160,200};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1350, 1360, 1420, 1520, 1590, 1670, 1750};
-    public static double[] hoodValues = {0.02, 0.02, 0.10, 0.13, 0.27, 0.32, 0.39, 0.43};
+    public static double[] velValues = {1350, 1350, 1350, 1370, 1400, 1460, 1530, 1600,1700,1700,1700,        1900,1900,1950,2020,2080,2130,2130,2130};
+    public static double[] hoodValues = {0.02, 0.02, 0.12, 0.13, 0.23, 0.25, 0.28, 0.33,0.34,0.34,0.34, 0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
     //
 
+    velocityController velController;
 
     InterpLUT velocity = new InterpLUT();
     InterpLUT hood = new InterpLUT();
@@ -74,6 +75,7 @@ public  class Launcher implements Module {
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2.setDirection(DcMotorEx.Direction.FORWARD);
+        velController = new velocityController();
         this.sensors = sensors;
         velocityController.reset();
     }
@@ -149,6 +151,11 @@ public  class Launcher implements Module {
 
     @Override
     public void update() {
+        if(launcherState!=LauncherState.LAUNCHING) {
+            velController.shooting = false;
+        }else {
+            velController.shooting = true;
+        }
         if(rebuildTables) {
             rebuildLutVelFromDashboard();
             rebuildLutHoodFromDashboard();
@@ -162,13 +169,13 @@ public  class Launcher implements Module {
         switch (launcherState){
             case OFF:
                 target = 0;
-                power = velocityController.calculate(target, currentVel, sensors.getVoltage());
+                power = velController.calculate(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case TUNE_PID:
                 target = tunePidTarget;
-                power = velocityController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
+                power = velController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
                 motor1.setPower(power );
                 motor2.setPower(power);
                 break;
@@ -178,7 +185,7 @@ public  class Launcher implements Module {
                 try{
                     if(useAdaptiveVel) {
                         target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
-                        power = velocityController.calculate(getTargetWithOffset(), currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
+                        power = velController.calculate(getTargetWithOffset(), currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
                     }else {
                         if(sensors.isFarZone()) {
                             power = idleVelocityFar;
@@ -202,12 +209,12 @@ public  class Launcher implements Module {
                     target+=offsetPower;
                     target_tilt = hood.get(targetDistance);
                 }
-                power = velocityController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
+                power = velController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case GO_TO_VEL_HOOD:
-                power = velocityController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
+                power = velController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -223,12 +230,12 @@ public  class Launcher implements Module {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.5;
                 }
-                power = velocityController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case SPIN_UP:
-                power = velocityController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 if(auto_aim) {
@@ -240,25 +247,27 @@ public  class Launcher implements Module {
                 }
                 break;
             case LAUNCHING:
-//                if(auto_aim){
-//                    try {
-//                        target = velocity.get(targetDistance);
-//                        target+=offsetPower;
-//                        target_tilt = hood.get(targetDistance);
-//                    } catch (Exception e) {
-//                        robot.op.gamepad1.rumble(250);
-//                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-//                        break;
-//                    }
-//                }
-                power = velocityController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
+
+                if(robot.sensors.sotm){
+                    try {
+                        target = velocity.get(targetDistance);
+                        target+=offsetPower;
+                        target_tilt = hood.get(targetDistance);
+                    } catch (Exception e) {
+                        robot.op.gamepad1.rumble(250);
+                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                        break;
+                    }
+                }
+
+                power = velController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case RECYCLE:
                 target = recycleVelocity;
                 target_tilt = recycleTilt;
-                power = velocityController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;

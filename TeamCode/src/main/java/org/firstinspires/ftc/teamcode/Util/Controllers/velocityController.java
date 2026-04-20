@@ -4,12 +4,15 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class velocityController {
-    public static double kP = 0.015;
+    public static double kP = 0.002; //0.007
+    public static double kPShooting = 0.007; //0.007
     public static double kI = 0;
-    public static double kD = 0.0002;//0.00012
-    public static double kV = 0; ///0.000335
-    public static double kS = 0.031;
+    public  boolean shooting = true;
+    public static double kD = 0;//0.00012
+    public static double kV = 0.00033; ///0
+    public static double kS = 0.08;
 
+    PID pid;
     public static double maxPower = 1.0;
     public static double minPower = -1.0;
     public static double maxPowerChange = 0.17;
@@ -24,28 +27,29 @@ public class velocityController {
     private static double lastPower = 0;
 
     public velocityController() {
+        pid = new PID(kP,kI,kD);
+
     }
 
-    public static double calculate(double targetVelocity, double currentVelocity, double voltage) {
-        double error = targetVelocity - currentVelocity;
+    public double calculate(double targetVelocity, double currentVelocity, double voltage) {
+        pid.p = kP;
+        if(shooting) pid.p = kPShooting;
+        pid.i = kI;
+        pid.d = kD;
 
-        double derivative = error - lastError;
-        lastError = error;
 
         double feedforward = (kV * targetVelocity) + (Math.signum(targetVelocity) * kS);
-        double feedback = (kP * error) + (kD * derivative);
+        pid.setTargetValue(targetVelocity);
+        double power = pid.update(currentVelocity) + feedforward;
 
 
 
         if (useVoltageComp) {
-            feedforward *= (nominalVoltage / voltage);
-        }
-        double targetPower = feedforward + feedback;
-        if (useBB && (currentVelocity < targetVelocity - bbThreeshold)) {
-            targetPower = bbPower;
+            power *= (nominalVoltage / voltage);
         }
 
-        double constrainedPower = Math.max(minPower, Math.min(maxPower, targetPower));
+
+        double constrainedPower = Math.max(minPower, Math.min(maxPower, power));
 
 //        if (Math.abs(constrainedPower - lastPower) > maxPowerChange) {
 //            constrainedPower = lastPower + (Math.signum(constrainedPower - lastPower) * maxPowerChange);

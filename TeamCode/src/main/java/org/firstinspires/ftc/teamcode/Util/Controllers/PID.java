@@ -10,7 +10,7 @@ public class PID {
     // Alpha is the extinction coefficient.  It must be between (0.0, 1.0]
     //   * 0 means that new values are ignored
     //   * 1 means that the previous values don't matter at all (no averaging).
-    public double alpha = 0         ;
+    public double alpha = 0.6;
 
     // These follow the standard definitions
     public double p;
