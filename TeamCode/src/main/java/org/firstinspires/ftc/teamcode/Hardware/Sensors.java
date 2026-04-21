@@ -149,6 +149,8 @@ public class Sensors {
     }
 
     void createShotTime() {
+        shotTime.add(50,0.5);
+        shotTime.add(60,0.54);
         shotTime.add(76,0.6);
         shotTime.add(85,0.7);
         shotTime.add(95,0.8);
@@ -156,7 +158,7 @@ public class Sensors {
     }
 
     public static boolean usePredictivePose = true;
-    public static double timeLatency = 0.235; //sec
+    public static double timeLatencyTurret = 0.315; //sec
     public static double debouncerTime = 50;
 
     private void initSensors() {
@@ -203,7 +205,7 @@ public class Sensors {
     public static double threesholdTime = 0.050;
     public static double latencyFactor = 0.07;
     public static double projectedXSign = 1;
-    public static boolean useFixedTof = true;
+    public static boolean useFixedTof = false;
     public static double fixedTOF = 0.6;
     public static double projectedYSign = 1;
     public static double convergenceLoopCnt = 5;
@@ -319,7 +321,7 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
-        if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + velY * timeLatency), getTargetX() - (shooterWorldX + velX * timeLatency));
+        if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + velY * timeLatencyTurret), getTargetX() - (shooterWorldX + velX * timeLatencyTurret));
         else shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
 //        shooterAngle = updateTurretPrediction(shooterAngle, 0);
 
@@ -327,7 +329,7 @@ public class Sensors {
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
-    public static double rpmTimeLatency = 0.0;
+    public static double rpmTimeLatency = 0.1;
 
     /**
      * Calculates the predicted turret angle based on current velocity
@@ -357,6 +359,7 @@ public class Sensors {
         return turretAngle;
     }
 
+
     void calculateDistance() {
         double dx = getTargetX() - (shooterWorldX + velX * rpmTimeLatency);
         double dy = getTargetY() - (shooterWorldY + velY * rpmTimeLatency);
@@ -382,7 +385,7 @@ public class Sensors {
         yVelocityRobot = velY;
     }
 
-    public void toggleSOTM() { sotm = !sotm; }
+    public void toggleSOTM(boolean val) { sotm = val; }
     public double getMoveGoalX() { return virtualTargetX; }
     public double getMoveGoalY() { return virtualTargetY; }
 

@@ -85,10 +85,8 @@ public class Turret implements Module {
 //                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY + " turret pos " + pos);
 
                 if(!forceUpdate) {
-                    if(Math.abs(pos - lastPos) > cachingFix) {
-                        servoLeft.setPosition(pos);
-                        servoRight.setPosition(pos);
-                    }
+                    servoLeft.setPosition(pos);
+                    servoRight.setPosition(pos);
                 }else {
                     servoLeft.setPosition(pos);
                     servoRight.setPosition(pos);

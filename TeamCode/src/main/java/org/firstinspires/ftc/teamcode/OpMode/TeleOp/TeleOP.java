@@ -105,6 +105,7 @@ public class TeleOP extends LinearOpMode
             telemetry.addData("timer", motorTimer.seconds());  double loop = System.nanoTime();
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addData("sotm",robot.sensors.sotm);
+            telemetry.addData("zone",robot.outtake.launcher.closeMode);
             telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
 
 
@@ -263,10 +264,11 @@ public class TeleOP extends LinearOpMode
                 }
             }
         }
-        if(gg.guideOnce()) {
-            robot.sensors.toggleSOTM();
-        }
+        robot.sensors.toggleSOTM(gg.left_trigger > 0.1);
 
+        if(gg.leftStickButtonOnce()) {
+            robot.outtake.launcher.toggleZone();
+        }
         if(gg.yOnce()) {
             robot.intakeTransfer.startRecycle(false);
         }

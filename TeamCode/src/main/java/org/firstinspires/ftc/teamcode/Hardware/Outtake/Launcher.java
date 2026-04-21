@@ -26,10 +26,10 @@ public  class Launcher implements Module {
     CachingServo tilt;
 
     public static double offsetPower = 0;
-    public static double[] Distances = {1, 50, 58, 60, 66, 76.5, 85.5, 95, 100,110,120,        130,135,140,145,150,155,160,200};
+    public static double[] Distances = {1, 50, 55.2, 58, 60, 63 , 66, 69, 76.5, 85.5, 90.3, 95, 100,110,120,        130,135,140,145,150,155,160,200};
     // Corresponding Velocity values
-    public static double[] velValues = {1350, 1350, 1350, 1370, 1400, 1460, 1530, 1600,1700,1700,1700,        1900,1900,1950,2020,2080,2130,2130,2130};
-    public static double[] hoodValues = {0.02, 0.02, 0.12, 0.13, 0.23, 0.25, 0.28, 0.33,0.34,0.34,0.34, 0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
+    public static double[] velValues = {1320, 1320, 1330, 1360,   1370, 1395  , 1400, 1420,1460, 1550, 1570, 1600,1700,1700,1700,        1900,1900,1950,2020,2080,2130,2130,2130};
+    public static double[] hoodValues = {0.08, 0.08,0.1, 0.1, 0.13,  0.16  , 0.19, 0.20, 0.23, 0.27, 0.27, 0.33,0.34,0.34,0.34, 0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
     //
 
     velocityController velController;
@@ -143,14 +143,20 @@ public  class Launcher implements Module {
 
     public void addOffsetTicks(double ticks) {
         offsetTicks += ticks;
-    }
+    }public static double maxCloseZone = 1600;
+    public static double minCloseZone = 1200;
+
+    public static double maxFarZone = 2100;
+    public static double minFarZone = 1950;
 
     public double getOffsetTicks() {
         return offsetTicks;
     }
+    public boolean closeMode = true;
 
     @Override
     public void update() {
+
         if(launcherState!=LauncherState.LAUNCHING) {
             velController.shooting = false;
         }else {
@@ -184,7 +190,13 @@ public  class Launcher implements Module {
 
                 try{
                     if(useAdaptiveVel) {
-                        target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                        if(closeMode) {
+                            target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                            target = Utils.minMaxClip(target,minCloseZone,maxCloseZone);
+                        }else {
+                            target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                            target = Utils.minMaxClip(target,minFarZone,maxFarZone);
+                        }
                         power = velController.calculate(getTargetWithOffset(), currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
                     }else {
                         if(sensors.isFarZone()) {
@@ -205,8 +217,13 @@ public  class Launcher implements Module {
             case SHOOT_STARTED:
                 //robot.outtake.turret.backlashYok();
                 if(auto_aim){
-                    target = velocity.get(targetDistance);
-                    target+=offsetPower;
+                    if(closeMode) {
+                        target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                        target = Utils.minMaxClip(target,minCloseZone,maxCloseZone);
+                    }else {
+                        target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
+                        target = Utils.minMaxClip(target,minFarZone,maxFarZone);
+                    }
                     target_tilt = hood.get(targetDistance);
                 }
                 power = velController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
@@ -290,6 +307,9 @@ public  class Launcher implements Module {
         launcherState = LauncherState.SPIN_UP;
     }
 
+    public void toggleZone() {
+        closeMode = !closeMode;
+    }
     public void setTargetTPS(double targetTPS){
         this.target=targetTPS;
 

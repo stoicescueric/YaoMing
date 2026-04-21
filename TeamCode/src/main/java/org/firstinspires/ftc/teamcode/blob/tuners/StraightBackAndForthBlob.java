@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 
@@ -16,11 +17,13 @@ import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 @Autonomous
 public class StraightBackAndForthBlob extends LinearOpMode {
 
-    Blob blob;
+
 
     public static double fx = 39.37, fy = 0, fh = 0;
     public static double bx = 0, by = 0, bh = 0;
     public static double rx = 0, ry = -20, rh = Math.toRadians(270);
+    public static double transError = 2,velocityError = 4;
+    public static boolean useVelocity = false;
 
     enum STATES{
         FORWARD,
@@ -33,10 +36,13 @@ public class StraightBackAndForthBlob extends LinearOpMode {
     boolean firstTime;
     Robot robot;
 
+    GamePadController gg;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        blob = new Blob(hardwareMap, Blob.State.PID);
+        gg = new GamePadController(gamepad1);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         robot = new Robot(this);
         waitForStart();
 
@@ -44,29 +50,35 @@ public class StraightBackAndForthBlob extends LinearOpMode {
         firstTime = true;
 
         while (opModeIsActive()){
+            gg.update();
             robot.update();
-            robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
             robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
+            if(gg.aOnce()) {
+                cs = STATES.FORWARD;
+            }else if(gg.bOnce()) {
+                cs = STATES.BACKWARDS;
+            }
             switch (cs){
+
 
                 case FORWARD:
                     if(firstTime) {
-                        blob.setTargetPosition(fx, fy, Math.toRadians(fh));
+                        robot.blob.setTargetPosition(fx, fy, Math.toRadians(fh));
                         firstTime = false;
                     }
-                    else if(blob.inPosition()) {
-                        cs = STATES.BACKWARDS;
+                    else if((robot.blob.inPosition() && !useVelocity) || (robot.blob.inPositionVelocity(velocityError,transError) && useVelocity)) {
+                        cs = STATES.IDLE;
                         firstTime = true;
                     }
                     break;
 
                 case BACKWARDS:
                     if(firstTime) {
-                        blob.setTargetPosition(bx, by, bh);
+                        robot.blob.setTargetPosition(bx, by, bh);
                         firstTime = false;
                     }
-                    else if(blob.inPosition()) {
-                        cs = STATES.FORWARD;
+                    else if((robot.blob.inPosition() && !useVelocity) || (robot.blob.inPositionVelocity(velocityError,transError) && useVelocity)) {
+                        cs = STATES.IDLE;
                         firstTime = true;
                     }
                     break;
@@ -76,19 +88,20 @@ public class StraightBackAndForthBlob extends LinearOpMode {
 
             }
 
-            telemetry.addData("x", blob.odo.getX());
-            telemetry.addData("y", blob.odo.getY());
-            telemetry.addData("error x",blob.targetX - blob.odo.x);
-            telemetry.addData("error y",blob.targetY - blob.odo.y);
-            telemetry.addData("error head",blob.error);
-            telemetry.addData("heading", blob.odo.getHeading());
-            telemetry.addData("target Heading", blob.targetHeading);
-            telemetry.addData("rotation (power)", blob.rotation);
-            telemetry.addData("error", blob.error);
-            telemetry.addData("real Heading", blob.realHeading);
-            telemetry.addData("real heading degrees", Math.toDegrees(blob.realHeading));
+            telemetry.addData("cs",cs.name());
+            telemetry.addData("x", robot.blob.odo.getX());
+            telemetry.addData("y", robot.blob.odo.getY());
+            telemetry.addData("velocity",robot.blob.odo.getSpeedTranslational());
+            telemetry.addData("error x",robot.blob.targetX - robot.blob.odo.x);
+            telemetry.addData("error y",robot.blob.targetY - robot.blob.odo.y);
+            telemetry.addData("error head",robot.blob.error);
+            telemetry.addData("heading", robot.blob.odo.getHeading());
+            telemetry.addData("target Heading", robot.blob.targetHeading);
+            telemetry.addData("rotation (power)", robot.blob.rotation);
+            telemetry.addData("error", robot.blob.error);
+            telemetry.addData("real Heading", robot.blob.realHeading);
+            telemetry.addData("real heading degrees", Math.toDegrees(robot.blob.realHeading));
 
-            blob.update();
             telemetry.update();
         }
     }

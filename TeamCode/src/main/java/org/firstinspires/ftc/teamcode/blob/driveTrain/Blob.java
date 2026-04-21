@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.blob.math.PIDControllerBlob;
 @Config
 public class Blob {
 
+    public static boolean usePredictiveDecel = false;
 
     DcMotorEx leftFront, leftBack, rightFront, rightBack;
 
@@ -94,13 +95,24 @@ public class Blob {
         return leftFront.getVelocity() * shooterSign;
     }
 
+    public boolean inPositionVelocity() {
+        return inPositionVelocity(BlobConstants.defaultVelocityThresh,BlobConstants.defaultTransThresh);
+    }
 
     public boolean inPositionVelocity(double velocityThreshold,double translationalThreshold){
+        double heading = odo.getHeading();
+        if(heading < 0) realHeading = Math.abs(heading);
+        else realHeading = 2 * Math.PI - heading;
+
+        error = targetHeading - realHeading;
+        if(Math.abs(error) > Math.PI) {
+            error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
+        }
         double xError = Math.abs(targetX - odo.getX());
         double yError = Math.abs(targetY - odo.getY());
         double posError = new Vector2d(xError, yError).magnitude();
 
-        return posError < translationalThreshold && odo.getSpeedTranslational() < velocityThreshold;
+        return posError < translationalThreshold && Math.abs(error) < BlobConstants.hDefTresh && odo.getSpeedTranslational() < velocityThreshold;
     }
     public boolean inPosition(){
 
@@ -277,8 +289,14 @@ public class Blob {
             return;
         }
 
-        x = controllerX.calculate(targetX, odo.x);
-        y = -controllerY.calculate(targetY , odo.y);
+        if(usePredictiveDecel) {
+            x = controllerX.calculate(targetX,odo.predictedX);
+            y = -controllerY.calculate(targetY,odo.predictedY);
+        }else {
+            x = controllerX.calculate(targetX, odo.x);
+            y = -controllerY.calculate(targetY , odo.y);
+        }
+
 
         totalDistance = Math.sqrt(Math.pow(targetX - prevX, 2) + Math.pow(targetY - prevY, 2));
         travelDistance = Math.sqrt(Math.pow(odo.getX() - prevX, 2) + Math.pow(odo.getY() - prevY, 2));

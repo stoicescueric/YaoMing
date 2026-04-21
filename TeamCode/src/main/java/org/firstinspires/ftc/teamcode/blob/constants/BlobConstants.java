@@ -18,9 +18,12 @@ public abstract class BlobConstants {
     public static double hDefTresh = Math.toRadians(3);
     public static double xDefTresh = 1;
     public static double yDefTresh = 1;
+
+    public static double defaultVelocityThresh = 4;
+    public static double defaultTransThresh = 2;
     //PID
-    public static double kP = 0.07, kI = 0, kD = 0.0079; //drive pid
-    public static double hP = 1.9, hI = 0, hD = 0.11;     //heading pid
+    public static double kP = 0.05, kI = 0, kD = 0.006; //drive pid
+    public static double hP = 1.2, hI = 0, hD = 0.11;     //heading pid
 
     //Deceleration
     public static double xDeceleration = 30.6366666667, yDeceleration = 57;

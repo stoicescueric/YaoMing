@@ -103,7 +103,10 @@ public class Odometry {
         xVelocity = xVelocityFilter.getValue(odo.getVelX(DistanceUnit.INCH));
         yVelocity = yVelocityFilter.getValue(odo.getVelY(DistanceUnit.INCH));
         headingVelocity = hVelocityFilter.getValue(odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
-
+        double cosH = Math.cos(heading);
+        double sinH = Math.sin(heading);
+        xRobotVelocity = xVelocity * cosH - yVelocity * sinH;
+        yRobotVelocity = xVelocity * sinH + yVelocity * cosH;
         speedTranslational = Math.hypot(xVelocity, yVelocity);
 
         // Safely Calculate Acceleration (Prevent Divide-by-Zero)
@@ -127,18 +130,19 @@ public class Odometry {
         }
     }
 
+    public double xVelRobotCentric,yVelRobotCentricl;
     private void updateGlide() {
         zpam = BlobConstants.zpam;
 
         // Convert Field-Centric velocity to Robot-Centric velocity
         double cosH = Math.cos(-heading);
         double sinH = Math.sin(-heading);
-        xRobotVelocity = xVelocity * cosH - yVelocity * sinH;
-        yRobotVelocity = xVelocity * sinH + yVelocity * cosH;
+        xVelRobotCentric = xVelocity * cosH - yVelocity * sinH;
+        yVelRobotCentricl = xVelocity * sinH + yVelocity * cosH;
 
         // Kinematic stopping distance: d = v^2 / (2a)
-        forwardGlide = Math.signum(xRobotVelocity) * (xRobotVelocity * xRobotVelocity) / (2.0 * xDeceleration * zpam);
-        lateralGlide = Math.signum(yRobotVelocity) * (yRobotVelocity * yRobotVelocity) / (2.0 * yDeceleration * zpam);
+        forwardGlide = Math.signum(xVelRobotCentric) * (xVelRobotCentric * xVelRobotCentric) / (2.0 * xDeceleration);
+        lateralGlide = Math.signum(yVelRobotCentricl) * (yVelRobotCentricl * yVelRobotCentricl) / (2.0 * yDeceleration);
 
         // Convert Robot-Centric glide back to Field-Centric glide
         cosH = Math.cos(heading);

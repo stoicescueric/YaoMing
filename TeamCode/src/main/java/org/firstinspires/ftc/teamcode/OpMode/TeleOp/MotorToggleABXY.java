@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpMode.TeleOp;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Util.Wrapper.GamePadController;
 
-@Disabled
 
+@Config
 @TeleOp(name = "MotorToggleABXY", group = "Pedro Pathing")
 public class MotorToggleABXY extends LinearOpMode {
     private DcMotor m1, m2, m3, m4;
@@ -26,10 +27,10 @@ public class MotorToggleABXY extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        m1 = hardwareMap.get(DcMotor.class, "m1");
-        m2 = hardwareMap.get(DcMotor.class, "m2");
-        m3 = hardwareMap.get(DcMotor.class, "m3");
-        m4 = hardwareMap.get(DcMotor.class, "m4");
+        m1 = hardwareMap.get(DcMotor.class, "fl");
+        m2 = hardwareMap.get(DcMotor.class, "bl");
+        m3 = hardwareMap.get(DcMotor.class, "fr");
+        m4 = hardwareMap.get(DcMotor.class, "br");
 
         setZeroPowerBrake(m1);
         setZeroPowerBrake(m2);
