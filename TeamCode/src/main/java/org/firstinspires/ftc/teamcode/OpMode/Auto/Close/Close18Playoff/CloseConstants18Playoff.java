@@ -13,12 +13,13 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
-    public static double shootingTime = 700;
+    public static double shootingTime = 280;
+    public static double shootingPercentage = 0.9;
     public static double turretPositionRed = 0.315;
 
-    public static double pickUp2Percentage = 0.65;
-    public static double pickUp3Percentage = 0.65;
-    public static double pickUp1Percentage = 0.65;
+    public static double pickUp2Percentage = 0.8;
+    public static double pickUp3Percentage = 0.8;
+    public static double pickUp1Percentage = 0.8;
     public static double turretPositionBlue = 0.636;
     public static double failSafeDtTime = 2000;
     public static double hoodPosition = 0.615;
@@ -39,19 +40,19 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 12.7,pickUp2Y = 25, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X = 12.7,pickUp2Y = 22, pickUp2Heading = Math.toRadians(270);
     public static double pickUp2X2 = 12.7,pickUp2Y2 = 51.3, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
-    public static double pickUp3X = 36,pickUp3Y = 26, pickUp3Heading = Math.toRadians(270);
+    public static double pickUp3X = 22,pickUp3Y = 24, pickUp3Heading = Math.toRadians(270);
     public static double pickUp3X2 = 36,pickUp3Y2 = 53, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 1900;
+    public static long failSafePickupTime = 1400;
     public static int gateCycleCount = 4;
     public static double turretPreloadRed = 0.51;
     public static double turretPreloadBlue = 0.49;
@@ -156,6 +157,9 @@ public class CloseConstants18Playoff {
     }
     public double getPickUp1Percentage() {
         return pickUp1Percentage;
+    }
+    public double getShootingPercentage() {
+        return shootingPercentage;
     }
     public double getFailSafeLastRun() {
         return timerFailsafeGateLastRun;

@@ -265,7 +265,7 @@ public  class Launcher implements Module {
                 break;
             case LAUNCHING:
 
-                if(robot.sensors.sotm){
+                if(true){
                     try {
                         target = velocity.get(targetDistance);
                         target+=offsetPower;
@@ -322,7 +322,7 @@ public  class Launcher implements Module {
     }
 
     public boolean isReady(){
-        return Math.abs(currentVel - target) < OuttakePositions.errorVelThreeshold;
+        return Math.abs(currentVel - getTargetWithOffset()) < OuttakePositions.errorVelThreeshold;
     }
     public void autoAimOn(boolean on){
         auto_aim = on;

@@ -22,7 +22,7 @@ public abstract class BlobConstants {
     public static double defaultVelocityThresh = 4;
     public static double defaultTransThresh = 2;
     //PID
-    public static double kP = 0.055, kI = 0, kD = 0; //drive pid
+    public static double kP = 0.05, kI = 0, kD = 0.006; //drive pid
     public static double hP = 1.2, hI = 0, hD = 0.11;     //heading pid
 
     //Deceleration

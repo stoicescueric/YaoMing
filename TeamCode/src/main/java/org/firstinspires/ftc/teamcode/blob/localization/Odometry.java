@@ -103,10 +103,6 @@ public class Odometry {
         xVelocity = xVelocityFilter.getValue(odo.getVelX(DistanceUnit.INCH));
         yVelocity = yVelocityFilter.getValue(odo.getVelY(DistanceUnit.INCH));
         headingVelocity = hVelocityFilter.getValue(odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
-        double cosH = Math.cos(heading);
-        double sinH = Math.sin(heading);
-        xRobotVelocity = xVelocity * cosH - yVelocity * sinH;
-        yRobotVelocity = xVelocity * sinH + yVelocity * cosH;
         speedTranslational = Math.hypot(xVelocity, yVelocity);
 
         // Safely Calculate Acceleration (Prevent Divide-by-Zero)
@@ -175,8 +171,8 @@ public class Odometry {
     public double getHeading() { return heading; }
     public double getRealHeading() { return realHead; }
 
-    public double getVelX() { return xRobotVelocity; }
-    public double getVelY() { return yRobotVelocity; }
+    public double getVelX() { return xVelocity; }
+    public double getVelY() { return yVelocity; }
     public double getAngularVelocity() { return headingVelocity; }
     public double getSpeedTranslational() { return speedTranslational; }
 }
