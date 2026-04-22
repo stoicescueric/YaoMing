@@ -91,6 +91,9 @@ public class StraightBackAndForthBlob extends LinearOpMode {
             telemetry.addData("cs",cs.name());
             telemetry.addData("x", robot.blob.odo.getX());
             telemetry.addData("y", robot.blob.odo.getY());
+            telemetry.addData("xPower",robot.blob.xPower);
+            telemetry.addData("yPower",robot.blob.yPower);
+            telemetry.addData("headingPower",robot.blob.headingPower);
             telemetry.addData("velocity",robot.blob.odo.getSpeedTranslational());
             telemetry.addData("error x",robot.blob.targetX - robot.blob.odo.x);
             telemetry.addData("error y",robot.blob.targetY - robot.blob.odo.y);

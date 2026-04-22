@@ -22,15 +22,15 @@ public abstract class BlobConstants {
     public static double defaultVelocityThresh = 4;
     public static double defaultTransThresh = 2;
     //PID
-    public static double kP = 0.05, kI = 0, kD = 0.006; //drive pid
+    public static double kP = 0.055, kI = 0, kD = 0; //drive pid
     public static double hP = 1.2, hI = 0, hD = 0.11;     //heading pid
 
     //Deceleration
-    public static double xDeceleration = 30.6366666667, yDeceleration = 57;
+    public static double xDeceleration = 80, yDeceleration = 90;
     public static double zpam = 2;
 
     //Constants
-    public static double lateralMultiplier = 1.3;
+    public static double lateralMultiplier = 1.4;
     public static double voltageConstant = 12;
 
     //Localization

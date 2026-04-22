@@ -323,12 +323,13 @@ public class Sensors {
 
         if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + velY * timeLatencyTurret), getTargetX() - (shooterWorldX + velX * timeLatencyTurret));
         else shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
-//        shooterAngle = updateTurretPrediction(shooterAngle, 0);
+        if(lookUpTurret) shooterAngle = updateTurretPrediction(shooterAngle, 0);
 
         light.setPosition(lightColor.value);
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
+    public static boolean lookUpTurret = false;
     public static double rpmTimeLatency = 0.1;
 
     /**

@@ -15,6 +15,10 @@ public class CloseConstants18Playoff {
     public static double turretTargetPos = 0.364;
     public static double shootingTime = 700;
     public static double turretPositionRed = 0.315;
+
+    public static double pickUp2Percentage = 0.65;
+    public static double pickUp3Percentage = 0.65;
+    public static double pickUp1Percentage = 0.65;
     public static double turretPositionBlue = 0.636;
     public static double failSafeDtTime = 2000;
     public static double hoodPosition = 0.615;
@@ -143,6 +147,15 @@ public class CloseConstants18Playoff {
         }else {
             return turretPreloadRed;
         }
+    }
+    public double getPickUp2Percentage() {
+        return pickUp2Percentage;
+    }
+    public double getPickUp3Percentage() {
+        return pickUp3Percentage;
+    }
+    public double getPickUp1Percentage() {
+        return pickUp1Percentage;
     }
     public double getFailSafeLastRun() {
         return timerFailsafeGateLastRun;

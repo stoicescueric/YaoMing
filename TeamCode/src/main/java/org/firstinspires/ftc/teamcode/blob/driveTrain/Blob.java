@@ -90,6 +90,7 @@ public class Blob {
         //setTargetVector(0, 0, 0);
     }
 
+    public double xPower,yPower,headingPower;
     public static double shooterSign = -1;
     public double returnFrVelocity() {
         return leftFront.getVelocity() * shooterSign;
@@ -183,6 +184,9 @@ public class Blob {
 
         //Log.w("Blob Values","" + x +" " + y + " " + rx );
         x *= lateralMultiplier;
+        xPower = x;
+        yPower = y;
+        headingPower = rx;
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx) , 1);
         frontLeftPower = ((y + x + rx) / denominator) * maxPower;
         backLeftPower = ((y - x + rx) / denominator) * maxPower;
@@ -264,6 +268,9 @@ public class Blob {
     }
     public double getVelocityY() {
         return odo.yVelocity;
+    }
+    public boolean getOverPercentage(double perc) {
+        return progress >= perc;
     }
 
     public void update()

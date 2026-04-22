@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class velocityController {
-    public static double kP = 0.002; //0.007
+    public static double kP = 0.0035; //0.007
     public static double kPShooting = 0.007; //0.007
     public static double kI = 0;
     public  boolean shooting = true;
