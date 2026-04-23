@@ -83,6 +83,7 @@ public class Close18 extends OpMode {
 
     }
 
+    public boolean failSafeGate = false;
     boolean pickup2 = false,go_pickup2 = false,go_clear_intake = false;
     @Override
     public void loop() {
@@ -118,7 +119,7 @@ public class Close18 extends OpMode {
                 }
 
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(2,3,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break; //TEST
                 setPathState(AutoStates.GO_PICKUP2_2);
                 break;
             case GO_PICKUP2_2:
@@ -150,12 +151,15 @@ public class Close18 extends OpMode {
                 break;
             case GO_TO_SCORE2:
 
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 //robot.drive.followPath(constants.scorePickup2, true);
                 robot.blob.setTargetPosition(constants.scorePose);
                 setPathState(AutoStates.WAIT_SCORE2);
                 break;
             case WAIT_SCORE2:
+                if(robot.blob.progress > constants.getShootingPercentage()) {
+                    robot.outtake.launcher.updateOffssetHood = true;
+                }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
@@ -175,14 +179,19 @@ public class Close18 extends OpMode {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                     robot.blob.maxPower = 0.6;
                 }
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if ((!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime() || robot.blob.isStuck())) break; ///TEST
                 else {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                    failSafeGate = false;
                     setPathState(AutoStates.WAIT_GATE_PICKUP);
                 }
                 break;
             case WAIT_GATE_PICKUP:
                 if ((robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.PRE_OFF_OPEN || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
+                    if(!failSafeGate && pathTimer.getElapsedTime() > constants.getFailSafeGateTime()) {
+                        robot.blob.setTargetPosition(constants.gatePickupPose); //TEST
+                        failSafeGate = true;
+                    }
                     setPathState(AutoStates.GO_SCORE_GATE_PICKUP);
                 }
                 break;
@@ -203,6 +212,9 @@ public class Close18 extends OpMode {
 
                 break;
             case WAIT_SCORE_GATE_PICKUP:
+                if(robot.blob.progress > constants.getShootingPercentage()) {
+                    robot.outtake.launcher.updateOffssetHood = true;
+                }
                 if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 gateCycleCounter++;
@@ -277,6 +289,9 @@ public class Close18 extends OpMode {
                 setPathState(AutoStates.WAIT_SCORE3);
                 break;
             case WAIT_SCORE3:
+                if(robot.blob.progress > constants.getShootingPercentage()) {
+                    robot.outtake.launcher.updateOffssetHood = true;
+                }
                 if(timerAuto.milliseconds() > constants.getFailSafePark()) {
                     setPathState(AutoStates.GO_TO_PARK);
                     break;

@@ -85,11 +85,13 @@ public  class Launcher implements Module {
         target = vel;
         target_tilt = hood;
         launcherState = LauncherState.GO_TO_VEL_HOOD;
+        updateOffssetHood = false;
     }
     public void goToSpecificValues(Pose pose) {
         target = velocity.get(sensors.getDistanceFromPose(pose));
         target_tilt = hood.get(sensors.getDistanceFromPose(pose));
         launcherState = LauncherState.GO_TO_VEL_HOOD;
+        updateOffssetHood = false;
     }
     public void addData() {
         rebuildLutVelFromDashboard();
@@ -138,21 +140,25 @@ public  class Launcher implements Module {
     private double shootingVoltage;
 
     private double getTargetWithOffset() {
-        return target + offsetTicks;
+        return target;
+    }
+    public void setOffsetInch(double inch) {
+        distanceOffset+=inch;
     }
 
-    public void addOffsetTicks(double ticks) {
-        offsetTicks += ticks;
-    }public static double maxCloseZone = 1600;
+
+    public static double maxCloseZone = 1600;
     public static double minCloseZone = 1200;
 
     public static double maxFarZone = 2100;
     public static double minFarZone = 1950;
+    public static double distanceOffset = 0;
 
     public double getOffsetTicks() {
         return offsetTicks;
     }
     public boolean closeMode = true;
+    public boolean updateOffssetHood = false;
 
     @Override
     public void update() {
@@ -170,7 +176,7 @@ public  class Launcher implements Module {
 
         currentVel = -robot.blob.returnFrVelocity();
 
-        double targetDistance = robot.sensors.getShooterDistanceToBackboard();
+        double targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset;
 
         switch (launcherState){
             case OFF:
@@ -231,6 +237,9 @@ public  class Launcher implements Module {
                 motor2.setPower(power);
                 break;
             case GO_TO_VEL_HOOD:
+                if(updateOffssetHood) {
+                    target_tilt = hood.get(targetDistance);
+                }
                 power = velController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);

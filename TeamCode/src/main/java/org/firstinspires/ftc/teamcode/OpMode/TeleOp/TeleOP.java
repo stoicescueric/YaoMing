@@ -220,6 +220,7 @@ public class TeleOP extends LinearOpMode
 
 
     public static double incrementTurret = 2;
+    public static double distanceIncrement = 3;
     public void outtakeUpdate() {
 
 //        if (gg.xOnce()) {
@@ -240,10 +241,10 @@ public class TeleOP extends LinearOpMode
         }
 
         if (gg.dpadUpOnce()) {
-            robot.outtake.launcher.addOffsetTicks(50);
+            robot.outtake.launcher.setOffsetInch(3);
         }
         if (gg.dpadDownOnce()) {
-            robot.outtake.launcher.addOffsetTicks(-50);
+            robot.outtake.launcher.setOffsetInch(-3);
         }
 
 

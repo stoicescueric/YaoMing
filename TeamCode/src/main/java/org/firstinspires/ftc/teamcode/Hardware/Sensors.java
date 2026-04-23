@@ -264,8 +264,8 @@ public class Sensors {
                 double t = SHOOTER_FEEDER_DELAY + interpolatedTOF;
                 double t2 = t * t;
 
-                double displaceX = ((xVelocityRobot * t) + (0.5 * xAccRobot * t2 * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
-                double displaceY = ((yVelocityRobot * t) + (0.5 * yAccRobot * t2 * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
+                double displaceX = ((xVelocityRobot * t) + (xAccRobot * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
+                double displaceY = ((yVelocityRobot * t) + (yAccRobot * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
 
                 virtualTargetX = targetX + (displaceX * sotmDirX);
                 virtualTargetY = targetY + (displaceY * sotmDirY);
@@ -321,7 +321,8 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
-        if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + velY * timeLatencyTurret), getTargetX() - (shooterWorldX + velX * timeLatencyTurret));
+        if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
+                , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
         else shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
         if(lookUpTurret) shooterAngle = updateTurretPrediction(shooterAngle, 0);
 
@@ -329,6 +330,7 @@ public class Sensors {
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
+    public static double accelFactorLatency = 0;
     public static boolean lookUpTurret = false;
     public static double rpmTimeLatency = 0.1;
 
@@ -497,11 +499,17 @@ public class Sensors {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    public static double autoSensorBeam = 0.7;
     public double getShooterX() { return shooterWorldX; }
     public double getShooterY() { return shooterWorldY; }
     public void setUsePredictivePose(boolean use) { usePredictivePose = use; }
 
     public boolean areAllBeamsLowForTime() {
+        if(Info.phase == Phase.AUTONOMOUS) { ///TEST
+            return getHowLongBeam1() > IntakeConstants.beam1stopDelay * autoSensorBeam &&
+                    getHowLongBeam2() > IntakeConstants.beam2stopDelay * autoSensorBeam &&
+                    getHowLongBeam3() > IntakeConstants.beam3StopDelay * autoSensorBeam;
+        }
         return getHowLongBeam1() > IntakeConstants.beam1stopDelay &&
                 getHowLongBeam2() > IntakeConstants.beam2stopDelay &&
                 getHowLongBeam3() > IntakeConstants.beam3StopDelay;

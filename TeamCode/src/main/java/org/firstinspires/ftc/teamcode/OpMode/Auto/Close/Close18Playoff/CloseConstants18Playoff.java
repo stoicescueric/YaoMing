@@ -56,8 +56,10 @@ public class CloseConstants18Playoff {
     public static int gateCycleCount = 4;
     public static double turretPreloadRed = 0.51;
     public static double turretPreloadBlue = 0.49;
+    public static double failSafeGateTime = 1000;
     public static int gateClearCount = 1;
     public static double gatePickupX = 15.5, gatePickupY = 55.5, gatePickupHeading = 4.280019301402063;
+    public static double gatePickupXFailSafe = 14.7, gatePickupYFailSafe = 55.8, gatePickupHeadingFailSafe = 4.290019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
@@ -74,6 +76,7 @@ public class CloseConstants18Playoff {
     public static double parkFailSafe = 30000;
     public Pose parkPose;
     public Pose clear;
+    public Pose gateFailSafe;
 
     public Pose preload;
 
@@ -95,6 +98,7 @@ public class CloseConstants18Playoff {
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clear = new Pose(clearX, clearY * (Info.alliance == Alliance.RED ? 1 : -1), clearHeading * (Info.alliance == Alliance.RED ? 1 : -1));
 
+        gateFailSafe = new Pose(gatePickupXFailSafe, gatePickupYFailSafe * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeadingFailSafe * (Info.alliance == Alliance.RED ? 1 : -1));
 //        if(Info.alliance == Alliance.BLUE) {
 //            turretTargetPos = 0.5 + (0.5 - turretTargetPos);
 //        }
@@ -160,6 +164,9 @@ public class CloseConstants18Playoff {
     }
     public double getShootingPercentage() {
         return shootingPercentage;
+    }
+    public double getFailSafeGateTime() {
+        return failSafeGateTime;
     }
     public double getFailSafeLastRun() {
         return timerFailsafeGateLastRun;
