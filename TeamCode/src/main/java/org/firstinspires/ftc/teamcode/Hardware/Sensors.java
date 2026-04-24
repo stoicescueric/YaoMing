@@ -158,7 +158,7 @@ public class Sensors {
     }
 
     public static boolean usePredictivePose = true;
-    public static double timeLatencyTurret = 0.315; //sec
+    public static double timeLatencyTurret = 0.4; //sec
     public static double debouncerTime = 50;
 
     private void initSensors() {
@@ -232,7 +232,7 @@ public class Sensors {
 
         calculateVelAndAcc();
 
-        if(isFarZone()) {
+        if(false) {
             if(Info.alliance == Alliance.RED) {
                 targetX = targetXRedFar;
                 targetY = targetYRedFar;
@@ -252,6 +252,8 @@ public class Sensors {
 
         shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
         shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
+//        shooterWorldX = currentX;
+//        shooterWorldY = currentY;
 
         if(sotm) {
             double deltaX = targetX - getX();
@@ -296,6 +298,10 @@ public class Sensors {
             breakBeamPos1High = false;
         }
 
+        if(isInTargetZone(shooterWorldX,shooterWorldY)) {
+            robot.outtake.turret.forceUpdate=true;
+        }
+
         if (breakBeamPos2 != null) {
             lastValuebreamBeamPos2 = breakBeamPos2High;
             breakBeamPos2High = bb2.calculate(!(breakBeamPos2.getState()));
@@ -321,8 +327,12 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
-        if(!sotm) shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
-                , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
+        if(!sotm) {
+            shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
+                    , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
+//            shooterAngle = Math.atan2(getTargetY() - robot.blob.odo.predictedY
+//                    , getTargetX() - robot.blob.odo.predictedX); //TEST
+        }
         else shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
         if(lookUpTurret) shooterAngle = updateTurretPrediction(shooterAngle, 0);
 
@@ -330,7 +340,7 @@ public class Sensors {
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
-    public static double accelFactorLatency = 0;
+    public static double accelFactorLatency = -0.01;
     public static boolean lookUpTurret = false;
     public static double rpmTimeLatency = 0.1;
 

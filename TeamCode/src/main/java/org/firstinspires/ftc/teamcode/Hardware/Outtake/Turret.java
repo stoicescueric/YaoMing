@@ -51,6 +51,7 @@ public class Turret implements Module {
     public static boolean useAngularComp = false;
     public static double turretLag = 0.1;
     public static double cachingFix = 0.0005;
+    public static double offset = 0;
     public double lastPos = 0;
     public boolean forceUpdate = false;
     @Override
@@ -85,11 +86,11 @@ public class Turret implements Module {
 //                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY + " turret pos " + pos);
 
                 if(!forceUpdate) {
-                    servoLeft.setPosition(pos);
-                    servoRight.setPosition(pos);
+                    servoLeft.setPosition(pos + offset);
+                    servoRight.setPosition(pos - offset);
                 }else {
-                    servoLeft.setPosition(pos);
-                    servoRight.setPosition(pos);
+                    servoLeft.setPosition(pos + offset);
+                    servoRight.setPosition(pos - offset);
                 }
 
                 lastPos = pos;

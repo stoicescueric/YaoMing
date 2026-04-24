@@ -13,7 +13,7 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
-    public static double shootingTime = 280;
+    public static double shootingTime = 400;
     public static double shootingPercentage = 0.9;
     public static double turretPositionRed = 0.315;
 
@@ -47,7 +47,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
 
-    public static double pickUp3X = 22,pickUp3Y = 24, pickUp3Heading = Math.toRadians(270);
+    public static double pickUp3X = 36,pickUp3Y = 24, pickUp3Heading = Math.toRadians(270);
     public static double pickUp3X2 = 36,pickUp3Y2 = 53, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;

@@ -26,6 +26,7 @@ public class TeleOP extends LinearOpMode
     public static boolean robotCentric = false;
     public static boolean ediControlls = false;
     public static boolean flipFieldFrame = false;
+    public static boolean telemetryEnabled = true;
     public boolean isReadyingFlywheel = false;
     public static double driverFrameOffsetDeg = -90;
     GamePadController gg;
@@ -69,6 +70,7 @@ public class TeleOP extends LinearOpMode
         }
         gg = new GamePadController(gamepad1);
 
+
         robot.blob.odo.setPose(startPose);
         robot.blob.odo.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -90,25 +92,28 @@ public class TeleOP extends LinearOpMode
 
             outtakeUpdate();
             intakeUpdate();
-            telemetry.addData("voltage",robot.sensors.getVoltage());
-            telemetry.addData("heading",robot.blob.odo.getHeading());
-            telemetry.addData("x",robot.blob.odo.getX());
-            telemetry.addData("x",robot.blob.odo.getY());
-            telemetry.addData("velocity current",robot.outtake.launcher.currentVel);
-            telemetry.addData("velocity target",robot.outtake.launcher.target);
-            telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
-            telemetry.addData("intake State",robot.intakeTransfer.intakeState);
-            telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
-            telemetry.addData("velocity x",robot.sensors.getVelX());
-            telemetry.addData("velocity y",robot.sensors.getVelY());
-            telemetry.addData("power shooter",robot.outtake.launcher.getPower());
-            telemetry.addData("timer", motorTimer.seconds());  double loop = System.nanoTime();
+            double loop = System.nanoTime();
+            if(telemetryEnabled){
+                telemetry.addData("voltage",robot.sensors.getVoltage());
+                telemetry.addData("heading",robot.blob.odo.getHeading());
+                telemetry.addData("x",robot.blob.odo.getX());
+                telemetry.addData("y",robot.blob.odo.getY());
+                telemetry.addData("velocity current",robot.outtake.launcher.currentVel);
+                telemetry.addData("velocity target",robot.outtake.launcher.target);
+                telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
+                telemetry.addData("intake State",robot.intakeTransfer.intakeState);
+                telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
+                telemetry.addData("velocity x",robot.sensors.getVelX());
+                telemetry.addData("velocity y",robot.sensors.getVelY());
+                telemetry.addData("power shooter",robot.outtake.launcher.getPower());
+                telemetry.addData("timer", motorTimer.seconds());
+
+                telemetry.addData("sotm",robot.sensors.sotm);
+                telemetry.addData("zone",robot.outtake.launcher.closeMode);
+                telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
+            }
+
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-            telemetry.addData("sotm",robot.sensors.sotm);
-            telemetry.addData("zone",robot.outtake.launcher.closeMode);
-            telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
-
-
             loopTime = loop;
             telemetry.update();
             robot.update();
@@ -180,6 +185,7 @@ public class TeleOP extends LinearOpMode
             if (Info.alliance == Alliance.RED) {
                 robot.blob.odo.setPose(resetPoseRed);
                 robot.outtake.turret.resetOffset();
+
             }else {
                 robot.blob.odo.setPose(resetPoseBlue);
                 robot.outtake.turret.resetOffset();

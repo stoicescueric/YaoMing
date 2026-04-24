@@ -153,6 +153,7 @@ public  class Launcher implements Module {
     public static double maxFarZone = 2100;
     public static double minFarZone = 1950;
     public static double distanceOffset = 0;
+    public static double distanceDefault = 0;
 
     public double getOffsetTicks() {
         return offsetTicks;
@@ -163,7 +164,7 @@ public  class Launcher implements Module {
     @Override
     public void update() {
 
-        if(launcherState!=LauncherState.LAUNCHING) {
+        if(launcherState!=LauncherState.LAUNCHING && launcherState!=LauncherState.SHOOT_STARTED) {
             velController.shooting = false;
         }else {
             velController.shooting = true;
@@ -176,7 +177,7 @@ public  class Launcher implements Module {
 
         currentVel = -robot.blob.returnFrVelocity();
 
-        double targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset;
+        double targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
 
         switch (launcherState){
             case OFF:
@@ -274,17 +275,17 @@ public  class Launcher implements Module {
                 break;
             case LAUNCHING:
 
-                if(true){
+                if(robot.sensors.sotm){
                     try {
                         target = velocity.get(targetDistance);
                         target+=offsetPower;
-                        target_tilt = hood.get(targetDistance);
                     } catch (Exception e) {
                         robot.op.gamepad1.rumble(250);
                         robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                         break;
                     }
                 }
+                target_tilt = hood.get(targetDistance);
 
                 power = velController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
                 motor1.setPower(power);

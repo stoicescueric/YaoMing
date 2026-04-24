@@ -175,12 +175,6 @@ public class Robot {
         field.setStroke("#00ccff");
         field.strokeCircle(rxIn, ryIn, 7);
         field.strokeLine(rxIn, ryIn, rxIn + Math.cos(rh) * headingVecLenIn, ryIn + Math.sin(rh) * headingVecLenIn);
-        double rxInPred = blob.odo.predictedX;
-        double ryInPred = blob.odo.predictedY;
-        double rhPred = sensors.getHeading(); // radians
-        field.setStroke("#00ccff");
-        field.strokeCircle(rxInPred, ryInPred, 7);
-
         double shootTx = sensors.getTargetX();
         double shootTy = sensors.getTargetY();
         double movingGoalX = sensors.getMoveGoalX();

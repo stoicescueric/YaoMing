@@ -72,7 +72,11 @@ public class Outtake {
                 break;
             case START_FEEDING_RAPID_FIRE:
                 turret.forceUpdate = true;
-                if(launcher.isReady() && (launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED || launcher.launcherState == Launcher.LauncherState.TUNE_PID)&& robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) {
+                if(launcher.isReady() && (launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
+                    cntTransfer++;
+                }
+
+                if(cntTransfer > transferThreeshold && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.TRANSFER);
                     outtakeState = OuttakeState.RAPID_FIRE;
                     launcher.launcherState = Launcher.LauncherState.LAUNCHING;
