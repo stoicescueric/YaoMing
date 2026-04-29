@@ -24,7 +24,7 @@ public class Blob {
 
     public static boolean usePredictiveDecel = false;
 
-    DcMotorEx leftFront, leftBack, rightFront, rightBack;
+    CachingDcMotorEx leftFront, leftBack, rightFront, rightBack;
 
     public double targetX, targetY, x = 0, y = 0;
     public double targetHeading, rotation, realHeading, targetHeadingBlob;
@@ -65,10 +65,10 @@ public class Blob {
 
         state=initialState;
         odo = new Odometry(hardwareMap);
-        leftFront = hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName);
-        leftBack = hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName);
-        rightFront = hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName);
-        rightBack = hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName);
+        leftFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftFrontName),0.003);
+        leftBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.leftBackName),0.003);
+        rightFront = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightFrontName),0.003);
+        rightBack = new CachingDcMotorEx(hardwareMap.get(DcMotorEx.class, BlobConstants.rightBackName),0.003);
 
 
 
@@ -93,7 +93,7 @@ public class Blob {
     public double xPower,yPower,headingPower;
     public static double shooterSign = -1;
     public double returnFrVelocity() {
-        return leftFront.getVelocity() * shooterSign;
+        return velocityLauncher * shooterSign;
     }
 
     public boolean inPositionVelocity() {
@@ -188,6 +188,18 @@ public class Blob {
         yPower = y;
         headingPower = rx;
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx) , 1);
+        double inputMagnitude = Math.abs(x) + Math.abs(y) + Math.abs(rx);
+        if (inputMagnitude < 0.02) {
+            frontLeftPower = 0;
+            backLeftPower = 0;
+            frontRightPower = 0;
+            backRightPower = 0;
+            leftFront.setPower(0);
+            leftBack.setPower(0);
+            rightFront.setPower(0);
+            rightBack.setPower(0);
+            return;
+        }
         frontLeftPower = ((y + x + rx) / denominator) * maxPower;
         backLeftPower = ((y - x + rx) / denominator) * maxPower;
         frontRightPower = ((y - x - rx) / denominator) * maxPower;
@@ -272,9 +284,11 @@ public class Blob {
     public boolean getOverPercentage(double perc) {
         return progress >= perc;
     }
+    public double velocityLauncher;
 
     public void update()
     {
+        velocityLauncher = leftFront.getVelocity();
         odo.update();
         if (state !=State.PID) {return;}
 

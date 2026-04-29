@@ -154,6 +154,8 @@ public class Sensors {
         shotTime.add(76,0.6);
         shotTime.add(85,0.7);
         shotTime.add(95,0.8);
+        shotTime.add(110,0.95);
+        shotTime.add(130,1.05);
         shotTime.createLUT();
     }
 
@@ -218,17 +220,17 @@ public class Sensors {
     }
 
     public void update() {
-        Pose prevPose = pose;
 
-        double prevX = currentX;
-        double prevY = currentY;
 
-        long prevUpdateTimeNs = lastUpdateTimeNs;
-        pose = robot.blob.odo.getPose();
 
-        currentX = pose.getX();
-        currentY = pose.getY();
-        currentHeading = pose.getHeading();
+
+
+
+
+
+        currentX = robot.blob.odo.getX();
+        currentY = robot.blob.odo.getY();
+        currentHeading = robot.blob.odo.getHeading();
 
         calculateVelAndAcc();
 
@@ -384,12 +386,13 @@ public class Sensors {
     }
 
     public double getVoltage() { return voltage; }
+
     public Pose getPose() { return pose; }
     public double getX() { return currentX; }
 
     public void calculateVelAndAcc() {
-        xAccRobot = robot.blob.odo.getAccVector().getX();
-        yAccRobot = robot.blob.odo.getAccVector().getY();
+        xAccRobot = robot.blob.odo.getAccX();
+        yAccRobot = robot.blob.odo.getAccY();
 
         velX = robot.blob.getVelocityX();
         velY  = robot.blob.getVelocityY();

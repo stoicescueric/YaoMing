@@ -14,23 +14,29 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
+import org.firstinspires.ftc.teamcode.Util.Controllers.Team254FlywheelController;
 import org.firstinspires.ftc.teamcode.Util.Controllers.velocityController;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 import org.firstinspires.ftc.teamcode.Util.Utils;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
 
 @Config
-public  class Launcher implements Module {
-    CachingDcMotorEx motor1,motor2;
+public class Launcher implements Module {
+    CachingDcMotorEx motor1, motor2;
 
-    CachingServo tilt;
+    Servo tilt;
 
     public static double offsetPower = 0;
-    public static double[] Distances = {1, 50, 55.2, 58, 60, 63 , 66, 69, 76.5, 85.5, 90.3, 95, 100,110,120,        130,135,140,145,150,155,160,200};
+    public static double[] Distances = {1, 50, 55.2, 58, 60, 63, 66, 69, 76.5, 85.5, 90.3, 95, 100, 110, 120, 130, 135, 140, 145, 150, 155, 160, 200};
     // Corresponding Velocity values
-    public static double[] velValues = {1320, 1320, 1330, 1360,   1370, 1395  , 1400, 1420,1460, 1550, 1570, 1600,1700,1700,1700,        1900,1900,1950,2020,2080,2130,2130,2130};
-    public static double[] hoodValues = {0.08, 0.08,0.1, 0.1, 0.13,  0.16  , 0.19, 0.20, 0.23, 0.27, 0.27, 0.33,0.34,0.34,0.34, 0.35, 0.36, 0.39, 0.40, 0.42,0.43,0.43,0.38};
-    //
+    public static double[] velValues = {1320, 1320, 1330, 1360, 1370, 1395, 1400, 1420, 1500, 1550, 1570, 1600, 1700, 1700, 1700, 1850, 1850, 1900, 1950, 2000, 2040, 2040, 2040};
+    public static double[] hoodValues = {0.1, 0.1, 0.12, 0.12, 0.13, 0.16, 0.19, 0.20, 0.23, 0.27, 0.27, 0.33, 0.34, 0.34, 0.34, 0.37, 0.38, 0.41, 0.42, 0.44, 0.45, 0.45, 0.45};
+
+//    public static double[] Distances = {1, 50, 58, 66,70.5, 74, 82, 90, 98,106,114,  130,135,140,145,150,155,160,200};
+//    // Corresponding Velocity values
+//    public static double[] velValues = {1300, 1300, 1310, 1350, 1430, 1450, 1510, 1560, 1700,1750,  1850,1850,1900,1950,2000,2040,2040,2040};
+//    public static double[] hoodValues = {0.04, 0.04, 0.12, 0.15,0.19, 0.21, 0.23, 0.25, 0.3, 0.36, 0.37,   0.37, 0.38, 0.41, 0.42, 0.44,0.45,0.45,0.45};
+//    //
 
     velocityController velController;
 
@@ -52,20 +58,22 @@ public  class Launcher implements Module {
 
     Sensors sensors;
     public double target = 0;
-    public  boolean auto_aim = true;
+    public boolean auto_aim = true;
     public double currentVel = 0;
-    public  double recycleVelocity = 500;
-    public  double recycleTilt = 1;
+    public double recycleVelocity = 500;
+    public double recycleTilt = 1;
     public LauncherState launcherState = LauncherState.OFF;
     public static boolean rebuildTables = false;
 
-    DcMotorEx encoder;
+    public static boolean use254 = false;
+    Team254FlywheelController velocityController254;
     Robot robot;
+
     public Launcher(Robot robot, Sensors sensors) {
         this.robot = robot;
-        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter1"),0.001);
-        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class,"shooter2"),0.001);
-        tilt = new CachingServo(robot.hw.get(Servo.class,"tilt"));
+        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter1"), 0.007);
+        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter2"), 0.007);
+        tilt = robot.hw.get(Servo.class, "tilt");
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
         addData();
@@ -76,28 +84,34 @@ public  class Launcher implements Module {
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2.setDirection(DcMotorEx.Direction.FORWARD);
         velController = new velocityController();
+        velocityController254 = new Team254FlywheelController();
+
         this.sensors = sensors;
         velocityController.reset();
+        velocityController254.reset();
     }
 
 
-    public void goToSpecificValues(double vel,double hood) {
+    public void goToSpecificValues(double vel, double hood) {
         target = vel;
         target_tilt = hood;
         launcherState = LauncherState.GO_TO_VEL_HOOD;
         updateOffssetHood = false;
     }
+
     public void goToSpecificValues(Pose pose) {
         target = velocity.get(sensors.getDistanceFromPose(pose));
         target_tilt = hood.get(sensors.getDistanceFromPose(pose));
         launcherState = LauncherState.GO_TO_VEL_HOOD;
         updateOffssetHood = false;
     }
+
     public void addData() {
         rebuildLutVelFromDashboard();
         rebuildLutHoodFromDashboard();
 
     }
+
     public void rebuildLutVelFromDashboard() {
         velocity = new InterpLUT();
         int len = Math.min(Distances.length, velValues.length);
@@ -106,6 +120,7 @@ public  class Launcher implements Module {
         }
         velocity.createLUT();
     }
+
     public void rebuildLutHoodFromDashboard() {
         hood = new InterpLUT();
         int len = Math.min(Distances.length, hoodValues.length);
@@ -114,6 +129,7 @@ public  class Launcher implements Module {
         }
         hood.createLUT();
     }
+
     public static double target_tilt = 0.5;
     public double power;
 
@@ -142,12 +158,13 @@ public  class Launcher implements Module {
     private double getTargetWithOffset() {
         return target;
     }
+
     public void setOffsetInch(double inch) {
-        distanceOffset+=inch;
+        distanceOffset += inch;
     }
 
 
-    public static double maxCloseZone = 1600;
+    public static double maxCloseZone = 1610;
     public static double minCloseZone = 1200;
 
     public static double maxFarZone = 2100;
@@ -158,18 +175,20 @@ public  class Launcher implements Module {
     public double getOffsetTicks() {
         return offsetTicks;
     }
+
     public boolean closeMode = true;
     public boolean updateOffssetHood = false;
+    double targetDistance;
 
     @Override
     public void update() {
 
-        if(launcherState!=LauncherState.LAUNCHING && launcherState!=LauncherState.SHOOT_STARTED) {
+        if (launcherState != LauncherState.LAUNCHING && launcherState != LauncherState.SHOOT_STARTED) {
             velController.shooting = false;
-        }else {
+        } else {
             velController.shooting = true;
         }
-        if(rebuildTables) {
+        if (rebuildTables) {
             rebuildLutVelFromDashboard();
             rebuildLutHoodFromDashboard();
             rebuildTables = false;
@@ -177,9 +196,9 @@ public  class Launcher implements Module {
 
         currentVel = -robot.blob.returnFrVelocity();
 
-        double targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
+        targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
 
-        switch (launcherState){
+        switch (launcherState) {
             case OFF:
                 target = 0;
                 power = velController.calculate(target, currentVel, sensors.getVoltage());
@@ -188,31 +207,35 @@ public  class Launcher implements Module {
                 break;
             case TUNE_PID:
                 target = tunePidTarget;
-                power = velController.calculate(tunePidTarget,currentVel,sensors.getVoltage());
-                motor1.setPower(power );
+                power = velController.calculate(tunePidTarget, currentVel, sensors.getVoltage());
+                motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case IDLE:
                 double speed;
 
-                try{
-                    if(useAdaptiveVel) {
-                        if(closeMode) {
-                            target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
-                            target = Utils.minMaxClip(target,minCloseZone,maxCloseZone);
-                        }else {
-                            target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
-                            target = Utils.minMaxClip(target,minFarZone,maxFarZone);
+                try {
+                    if (useAdaptiveVel) {
+                        if (closeMode) {
+                            target = velocity.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[velValues.length - 1]));
+                            target = Utils.minMaxClip(target, minCloseZone, maxCloseZone);
+                        } else {
+                            target = velocity.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[velValues.length - 1]));
+                            target = Utils.minMaxClip(target, minFarZone, maxFarZone);
                         }
-                        power = velController.calculate(getTargetWithOffset(), currentVel,sensors.getVoltage()); // 0.75 ca sa nu stea la full power constant
-                    }else {
-                        if(sensors.isFarZone()) {
+                        if (use254) {
+                            power = velocityController254.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                        } else {
+                            power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                        }
+                    } else {
+                        if (sensors.isFarZone()) {
                             power = idleVelocityFar;
-                        }else {
+                        } else {
                             power = idleVelocityClose;
                         }
                     }
-                    target_tilt = hood.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[hoodValues.length-1]));
+                    target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
                 } catch (Exception e) {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.3;
@@ -223,25 +246,29 @@ public  class Launcher implements Module {
                 break;
             case SHOOT_STARTED:
                 //robot.outtake.turret.backlashYok();
-                if(auto_aim){
-                    if(closeMode) {
-                        target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
-                        target = Utils.minMaxClip(target,minCloseZone,maxCloseZone);
-                    }else {
-                        target = velocity.get(Utils.minMaxClip(targetDistance,Distances[0],Distances[velValues.length-1]));
-                        target = Utils.minMaxClip(target,minFarZone,maxFarZone);
+                if (auto_aim) {
+                    if (closeMode) {
+                        target = velocity.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[velValues.length - 1]));
+                        target = Utils.minMaxClip(target, minCloseZone, maxCloseZone);
+                    } else {
+                        target = velocity.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[velValues.length - 1]));
+                        target = Utils.minMaxClip(target, minFarZone, maxFarZone);
                     }
                     target_tilt = hood.get(targetDistance);
                 }
-                power = velController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
+                if (use254) {
+                    power = velocityController254.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                } else {
+                    power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                }
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case GO_TO_VEL_HOOD:
-                if(updateOffssetHood) {
+                if (updateOffssetHood) {
                     target_tilt = hood.get(targetDistance);
                 }
-                power = velController.calculate(getTargetWithOffset(),currentVel,sensors.getVoltage());
+                power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -249,7 +276,7 @@ public  class Launcher implements Module {
                 try {
                     if (auto_aim) {
                         target = velocity.get(targetDistance);
-                        target+=offsetPower;
+                        target += offsetPower;
                         target_tilt = hood.get(targetDistance);
                     }
                 } catch (Exception e) {
@@ -265,7 +292,7 @@ public  class Launcher implements Module {
                 power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
-                if(auto_aim) {
+                if (auto_aim) {
                     try {
                         target_tilt = hood.get(targetDistance);
                     } catch (Exception e) {
@@ -275,10 +302,10 @@ public  class Launcher implements Module {
                 break;
             case LAUNCHING:
 
-                if(robot.sensors.sotm){
+                if (robot.sensors.sotm) {
                     try {
                         target = velocity.get(targetDistance);
-                        target+=offsetPower;
+                        target += offsetPower;
                     } catch (Exception e) {
                         robot.op.gamepad1.rumble(250);
                         robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
@@ -287,7 +314,11 @@ public  class Launcher implements Module {
                 }
                 target_tilt = hood.get(targetDistance);
 
-                power = velController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
+                if (use254) {
+                    power = velocityController254.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                } else {
+                    power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                }
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -305,11 +336,13 @@ public  class Launcher implements Module {
     public void snapshotVoltage() {
         shootingVoltage = sensors.getVoltage();
     }
+
     public void increaseDecreaseTarget(double delta) {
         target += (delta * 50);
     }
-    public void setTarget(double target,double hood_tilt) {
-        if(launcherState!=LauncherState.TUNE_PID) launcherState = LauncherState.SHOOT_STARTED;
+
+    public void setTarget(double target, double hood_tilt) {
+        if (launcherState != LauncherState.TUNE_PID) launcherState = LauncherState.SHOOT_STARTED;
     }
 
     public void setFlywheel(double target) {
@@ -320,32 +353,40 @@ public  class Launcher implements Module {
     public void toggleZone() {
         closeMode = !closeMode;
     }
-    public void setTargetTPS(double targetTPS){
-        this.target=targetTPS;
+
+    public void setTargetTPS(double targetTPS) {
+        this.target = targetTPS;
 
     }
-    public void setTargetHood(double hood_tilt){
+
+    public void setTargetHood(double hood_tilt) {
         target_tilt = hood_tilt;
     }
+
     public void setAuto_aim(boolean state) {
         auto_aim = state;
     }
 
-    public boolean isReady(){
-        return Math.abs(currentVel - getTargetWithOffset()) < OuttakePositions.errorVelThreeshold;
+    public boolean isReady() {
+        if (!use254) {
+            return Math.abs(currentVel - getTargetWithOffset()) < OuttakePositions.errorVelThreeshold;
+        } else {
+            return velocityController254.isReady(currentVel, getTargetWithOffset());
+        }
     }
-    public void autoAimOn(boolean on){
+
+    public void autoAimOn(boolean on) {
         auto_aim = on;
     }
 
-    public double getTarget_tilt(){
+    public double getTarget_tilt() {
         return target_tilt;
     }
+
     public static double SHOOTER_TICKS_PER_REV = 28.0;
     public static double FLYWHEEL_RADIUS_IN = 69.2 / 25.4;
     public static double FLYWHEEL_GEAR_RATIO = 1.0;
     public static double PROJECTILE_TRANSFER_COEFF = 0.7; // tune in dashboard
-
 
 
     public double getProjectileSpeedEstimate() {

@@ -97,10 +97,15 @@ public class IntakeTransfer implements Module {
     public StallCheck stallCheck = StallCheck.IDLE;
 
     public IntakeState intakeState = IntakeState.OFF;
+    public IntakeState lastintakeState = IntakeState.OFF_OPEN;
     public BlockerState blockerState = BlockerState.CLOSE;
+    public BlockerState lastblockerState = BlockerState.OPEN;
     public PowerArmState powerArmState = PowerArmState.INTAKE;
+    public PowerArmState lastpowerArmState = PowerArmState.LOW;
     public ConveyorState conveyorState = ConveyorState.OFF;
+    public ConveyorState lastconveyorState = ConveyorState.ON;
     public CapacState capacState = CapacState.BLEG;
+    public CapacState lastcapacState = CapacState.WIGGLEWIGGLEWIGGLE;
     long startSleep = 0;
     double sleeptime = 0;
     public double intakeSensorCounter = 0;
@@ -115,8 +120,8 @@ public class IntakeTransfer implements Module {
 
     public IntakeTransfer(Robot robot, Sensors sensors) {
         this.robot = robot;
-        intake = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "intake"), 0.001);
-        conveyor = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "transfer"), 0.001);
+        intake = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "intake"), 0.007);
+        conveyor = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "transfer"), 0.007);
 
         powerArm = new CachingServo(robot.hw.get(Servo.class, "powerArm"));
         blocker = new CachingServo(robot.hw.get(Servo.class, "blocker"));
@@ -330,92 +335,101 @@ public class IntakeTransfer implements Module {
                 break;
         }
 
-        switch (blockerState) {
-            case OPEN:
-                if (blockerOpenTriggeredTime == 0) {
-                    blockerOpenTriggeredTime = System.currentTimeMillis();
-                }
-                if (System.currentTimeMillis() - blockerOpenTriggeredTime >= OuttakePositions.blockerOpenDelayMs) {
-                    blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
-                }
-                break;
-            case BLOCKER_ACTUALLY_OPEN:
-                blockerOpenTriggeredTime = 0;
-                blocker.setPosition(IntakeConstants.blockerOpen);
-                break;
-            case CLOSE:
-                blockerOpenTriggeredTime = 0;
-                blocker.setPosition(IntakeConstants.blockerClose);
-                break;
+        if(blockerState != lastblockerState) {
+            switch (blockerState) {
+                case OPEN:
+                    if (blockerOpenTriggeredTime == 0) {
+                        blockerOpenTriggeredTime = System.currentTimeMillis();
+                    }
+                    if (System.currentTimeMillis() - blockerOpenTriggeredTime >= OuttakePositions.blockerOpenDelayMs) {
+                        blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
+                    }
+                    break;
+                case BLOCKER_ACTUALLY_OPEN:
+                    blockerOpenTriggeredTime = 0;
+                    blocker.setPosition(IntakeConstants.blockerOpen);
+                    break;
+                case CLOSE:
+                    blockerOpenTriggeredTime = 0;
+                    blocker.setPosition(IntakeConstants.blockerClose);
+                    break;
+            }
         }
-        switch (powerArmState) {
-            case LOW:
-                powerArm.getController().pwmEnable();
-                powerArm.setPosition(IntakeConstants.powerArmLow);
-                break;
-            case INTAKE:
-                powerArm.getController().pwmEnable();
-                powerArm.setPosition(IntakeConstants.powerArmIntake);
-                break;
-            case BLEG:
-                powerArm.getController().pwmDisable();
-                break;
-            case RECYCLE:
-                powerArm.getController().pwmEnable();
-                powerArm.setPosition(IntakeConstants.powerArmRecycle);
-                break;
-            case TRANSFER:
-                powerArm.getController().pwmEnable();
-                powerArm.setPosition(IntakeConstants.powerArmVeryLow);
-                break;
+        lastblockerState = blockerState;
+        if(lastpowerArmState != powerArmState) {
+            switch (powerArmState) {
+                case LOW:
+                    powerArm.setPosition(IntakeConstants.powerArmLow);
+                    break;
+                case INTAKE:
+                    powerArm.setPosition(IntakeConstants.powerArmIntake);
+                    break;
+                case BLEG:
+                    powerArm.getController().pwmDisable();
+                    break;
+                case RECYCLE:
+                    powerArm.setPosition(IntakeConstants.powerArmRecycle);
+                    break;
+                case TRANSFER:
+                    powerArm.setPosition(IntakeConstants.powerArmVeryLow);
+                    break;
+            }
         }
-        switch (capacState){
-            case BLEG:
-                capac.setPosition(IntakeConstants.capacBleg);
-                break;
-            case RECYCLE:
-                capac.setPosition(IntakeConstants.capacRecycle);
-                break;
-            case WIGGLEWIGGLEWIGGLE:
-                //Wiggle Wiggle Wiggle, du-tu-tu du du du, Wiggle Wiggle Wiggle...
-                break;
+        lastpowerArmState = powerArmState;
+        if(lastcapacState != capacState) {
+            switch (capacState) {
+                case BLEG:
+                    capac.setPosition(IntakeConstants.capacBleg);
+                    break;
+                case RECYCLE:
+                    capac.setPosition(IntakeConstants.capacRecycle);
+                    break;
+                case WIGGLEWIGGLEWIGGLE:
+                    //Wiggle Wiggle Wiggle, du-tu-tu du du du, Wiggle Wiggle Wiggle...
+                    break;
+            }
         }
-        switch (conveyorState) {
-            case REVERSE_LITTLE:
-                setNormalizedTransferPower(IntakeConstants.ConveyerLittle);
-                break;
-            case OFF:
-                setNormalizedTransferPower(0);
-                break;
-            case recycle1:
-                setNormalizedTransferPower(IntakeConstants.transferFirstPhase);
-                break;
-            case recycle2:
-                setNormalizedTransferPower(IntakeConstants.transferSecondPhase);
-                break;
-            case recycle3:
-                setNormalizedTransferPower(IntakeConstants.conveyerPhase3);
-                break;
-            case ON:
-                setNormalizedTransferPower(IntakeConstants.onPowerConveyer);
-                break;
-            case POWER_FOR_TIME:
-                setNormalizedTransferPower(power_time);
-                break;
-            case TRANSFER:
-                if(robot.sensors.isFarZone()) {
-                    setNormalizedTransferPower(IntakeConstants.transferPowerIntakeFarZone);
-                } else {
-                    setNormalizedTransferPower(IntakeConstants.transferPowerTransfer);
-                }
-                break;
-            case reverseTransfer:
-                setNormalizedTransferPower(IntakeConstants.reverseConPhase3);
-                break;
-            case REVERSE:
-                setNormalizedTransferPower(-IntakeConstants.reversePower);
-                break;
+        lastcapacState = capacState;
+
+        if(conveyorState != lastconveyorState) {
+            switch (conveyorState) {
+                case REVERSE_LITTLE:
+                    setNormalizedTransferPower(IntakeConstants.ConveyerLittle);
+                    break;
+                case OFF:
+                    setNormalizedTransferPower(0);
+                    break;
+                case recycle1:
+                    setNormalizedTransferPower(IntakeConstants.transferFirstPhase);
+                    break;
+                case recycle2:
+                    setNormalizedTransferPower(IntakeConstants.transferSecondPhase);
+                    break;
+                case recycle3:
+                    setNormalizedTransferPower(IntakeConstants.conveyerPhase3);
+                    break;
+                case ON:
+                    setNormalizedTransferPower(IntakeConstants.onPowerConveyer);
+                    break;
+                case POWER_FOR_TIME:
+                    setNormalizedTransferPower(power_time);
+                    break;
+                case TRANSFER:
+                    if (robot.sensors.isFarZone()) {
+                        setNormalizedTransferPower(IntakeConstants.transferPowerIntakeFarZone);
+                    } else {
+                        setNormalizedTransferPower(IntakeConstants.transferPowerTransfer);
+                    }
+                    break;
+                case reverseTransfer:
+                    setNormalizedTransferPower(IntakeConstants.reverseConPhase3);
+                    break;
+                case REVERSE:
+                    setNormalizedTransferPower(-IntakeConstants.reversePower);
+                    break;
+            }
         }
+        lastconveyorState = conveyorState;
         previousState = intakeState;
 
 

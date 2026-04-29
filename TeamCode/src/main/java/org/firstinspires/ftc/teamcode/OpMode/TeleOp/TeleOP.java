@@ -47,7 +47,7 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(-3.5, 24.7, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(-5.3, 53.39, Math.PI/2); //TODO
+    Pose resetPoseRed = new Pose(-5.7, 54, Math.PI/2); //TODO
     Pose resetPoseBlue = new Pose(-5.3,-53.2, -Math.PI/2);
     Pose resetCenter = new Pose(0, 0, Math.PI/2);
     private double loopTime = 0;
@@ -92,12 +92,16 @@ public class TeleOP extends LinearOpMode
 
             outtakeUpdate();
             intakeUpdate();
-            double loop = System.nanoTime();
+
             if(telemetryEnabled){
                 telemetry.addData("voltage",robot.sensors.getVoltage());
                 telemetry.addData("heading",robot.blob.odo.getHeading());
                 telemetry.addData("x",robot.blob.odo.getX());
                 telemetry.addData("y",robot.blob.odo.getY());
+                telemetry.addData("shooterX",robot.sensors.getShooterX());
+                telemetry.addData("shooterY",robot.sensors.getShooterY());
+                telemetry.addData("dx from center",robot.sensors.getShooterX() - robot.blob.odo.getX());
+                telemetry.addData("dy from center",robot.sensors.getShooterY() - robot.blob.odo.getY());
                 telemetry.addData("velocity current",robot.outtake.launcher.currentVel);
                 telemetry.addData("velocity target",robot.outtake.launcher.target);
                 telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
@@ -110,29 +114,43 @@ public class TeleOP extends LinearOpMode
 
                 telemetry.addData("sotm",robot.sensors.sotm);
                 telemetry.addData("zone",robot.outtake.launcher.closeMode);
-                telemetry.addData("distance to backboard", robot.sensors.getDistanceToBackboard());
+                telemetry.addData("distance to backboard", robot.sensors.getShooterDistanceToBackboard());
             }
 
-            telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-            loopTime = loop;
-            telemetry.update();
+
             robot.update();
+            double loop = System.nanoTime();
+            telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+            telemetry.update();
+            loopTime = loop;
         }
     }
     //posibil sa trb sa mut robot.update inainte de stall check chestie
 
 
 
-
+    private double applyDeadband(double value, double deadband) {
+        if (Math.abs(value) < deadband) return 0;
+        return value;
+    }
     public static double rotateNormal = 1;
     public static double translationalNormal = 1;
     public static double driveSlowMultiplier = 1;
     public static double headingSlowMultiplier = 1;
     public static boolean useSlowZone = false;
+    double forward;
+    double strafe;
+    double rotate;
+    double X;
+    double Y;
+    double rotation;
+
+    double x;
+    double allianceRotation;
+    double heading ;
+    double y;
     public void updateDrive() {
-        double forward;
-        double strafe;
-        double rotate;
+
         if(ediControlls) {
             forward = -gg.right_stick_y;
             strafe = gg.right_stick_x;
@@ -144,6 +162,9 @@ public class TeleOP extends LinearOpMode
             rotate = gg.right_stick_x;
         }
 
+        forward = applyDeadband(forward, 0.05);
+        strafe = applyDeadband(strafe, 0.05);
+        rotate = applyDeadband(rotate, 0.05);
 
         forward *= translationalNormal;
         strafe  *= rotateNormal;
@@ -165,15 +186,15 @@ public class TeleOP extends LinearOpMode
         }
 
         robot.blob.setMode(Blob.State.DRIVE);
-        double X=strafe;
-        double Y=forward;
-        double rotation=rotate;
+         X=strafe;
+         Y=forward;
+         rotation=rotate;
 
-        double x = X;
-        double y = Y;
+         x = X;
+         y = Y;
         if (!robotCentric) {
-            double allianceRotation = (Info.alliance == Alliance.BLUE) ? Math.PI : 0;
-            double heading = -robot.blob.odo.getHeading() + Math.PI/2 + allianceRotation;
+             allianceRotation = (Info.alliance == Alliance.BLUE) ? Math.PI : 0;
+             heading = -robot.blob.odo.getHeading() + Math.PI/2 + allianceRotation;
 
             x = X * Math.cos(heading) - Y * Math.sin(heading);
             y = X * Math.sin(heading) + Y * Math.cos(heading);
@@ -233,11 +254,6 @@ public class TeleOP extends LinearOpMode
 //            shootWhileMoving = !shootWhileMoving;
 //        }
 
-        Outtake.OuttakeState state = robot.outtake.outtakeState;
-        double x = robot.sensors.getX();
-        double y = robot.sensors.getY();
-        boolean inZone = robot.sensors.isInTargetZone(x, y);
-        inZone = true;
 
         boolean isStill = true;
         if(gg.dpadRightOnce()) {
@@ -258,12 +274,9 @@ public class TeleOP extends LinearOpMode
             if(robot.intakeTransfer.isRecycle()) {
                 robot.intakeTransfer.spinUpRecycle();
             }else {
-                if (state == Outtake.OuttakeState.IDLE) {
-                    if (inZone) {
-                        // Idle and in zone: shoot immediately
-                        robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
+                if (robot.outtake.outtakeState == Outtake.OuttakeState.IDLE) {
+                    robot.outtake.start_feed_rapid(OuttakePositions.farLaunchVelocity, OuttakePositions.farLaunchTilt);
 
-                    }
                 } else {
                     // Any other non-IDLE state: STOP
                     isReadyingFlywheel = false;

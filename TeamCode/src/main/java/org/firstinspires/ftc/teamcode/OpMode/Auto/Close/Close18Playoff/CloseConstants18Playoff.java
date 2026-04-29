@@ -40,8 +40,8 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 12.7,pickUp2Y = 22, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 12.7,pickUp2Y2 = 51.3, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 12,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 12,pickUp2Y2 = 51, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
@@ -58,7 +58,7 @@ public class CloseConstants18Playoff {
     public static double turretPreloadBlue = 0.49;
     public static double failSafeGateTime = 1000;
     public static int gateClearCount = 1;
-    public static double gatePickupX = 15.5, gatePickupY = 55.5, gatePickupHeading = 4.280019301402063;
+    public static double gatePickupX = 15, gatePickupY = 55.5, gatePickupHeading = 4.280019301402063;
     public static double gatePickupXFailSafe = 14.7, gatePickupYFailSafe = 55.8, gatePickupHeadingFailSafe = 4.290019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;

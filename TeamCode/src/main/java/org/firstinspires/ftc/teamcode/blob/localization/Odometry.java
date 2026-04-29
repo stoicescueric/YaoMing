@@ -56,8 +56,6 @@ public class Odometry {
     private final LowPassFilter xAccFilter = new LowPassFilter(filterParameterTranslationalAcc, 0);
     private final LowPassFilter yAccFilter = new LowPassFilter(filterParameterTranslationalAcc, 0);
 
-    private final ArrayDeque<Double> xAccelSamples = new ArrayDeque<>(ACCEL_WINDOW + 1);
-    private final ArrayDeque<Double> yAccelSamples = new ArrayDeque<>(ACCEL_WINDOW + 1);
 
     public Odometry(HardwareMap hardwareMap) {
         odo = hardwareMap.get(GoBildaPinpointDriver.class, BlobConstants.pinpointName);
@@ -147,17 +145,6 @@ public class Odometry {
         yGlide = forwardGlide * sinH + lateralGlide * cosH;
     }
 
-    private double pushAndAverage(ArrayDeque<Double> window, double sample) {
-        window.addLast(sample);
-        if (window.size() > ACCEL_WINDOW) {
-            window.pollFirst();
-        }
-        double sum = 0;
-        for (double v : window) sum += v;
-        return sum / window.size();
-    }
-
-    // --- Public Getters & Setters ---
 
     public void calibrate() { odo.recalibrateIMU(); }
     public void reset() { odo.setPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0)); }
@@ -165,6 +152,8 @@ public class Odometry {
 
     public Pose getPose() { return new Pose(x, y, heading); }
     public Vector2d getAccVector() { return new Vector2d(xAcc, yAcc); }
+    public double getAccX() { return xAcc; }
+    public double getAccY() { return yAcc; }
 
     public double getX() { return x; }
     public double getY() { return y; }

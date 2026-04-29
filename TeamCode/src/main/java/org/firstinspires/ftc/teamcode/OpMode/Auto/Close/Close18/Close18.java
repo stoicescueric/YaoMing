@@ -102,6 +102,7 @@ public class Close18 extends OpMode {
                 robot.outtake.specificValues(constants.preload);
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
+                robot.outtake.turret.setPosFixed(constants.getTurretPosPreload());
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case WAIT_SCORE_PRELOAD:
@@ -123,6 +124,7 @@ public class Close18 extends OpMode {
                 setPathState(AutoStates.GO_PICKUP2_2);
                 break;
             case GO_PICKUP2_2:
+                robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 if(!go_pickup2) {
                     robot.blob.maxPower = 1;
                     robot.blob.setTargetPosition(constants.pickUpPose2_2);
@@ -179,7 +181,7 @@ public class Close18 extends OpMode {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                     robot.blob.maxPower = 0.6;
                 }
-                if ((!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime() || robot.blob.isStuck())) break; ///TEST
+                if ((!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime() && !robot.blob.isStuck())) break; ///TEST
                 else {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                     failSafeGate = false;
@@ -275,7 +277,7 @@ public class Close18 extends OpMode {
                     break;
                 }
                 robot.blob.setTargetPosition(constants.pickUpPose3_2);
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if ((!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime() && !robot.blob.isStuck())) break;
                 setPathState(AutoStates.GO_TO_SCORE3);
                 break;
             case GO_TO_SCORE3:

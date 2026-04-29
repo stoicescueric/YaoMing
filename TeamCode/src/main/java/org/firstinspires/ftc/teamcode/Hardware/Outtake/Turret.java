@@ -30,10 +30,12 @@ public class Turret implements Module {
     public enum TurretState {
         OFF,
         FIXED_ANGLE,
+        FIXED_POS,
         TRACKING
     }
 
-    public static double centerPose = 0.485;
+    public double fixed_pos = 0.5;
+    public static double centerPose = 0.477;
     public TurretState turretState = TurretState.TRACKING;
     Robot robot;
 
@@ -51,7 +53,7 @@ public class Turret implements Module {
     public static boolean useAngularComp = false;
     public static double turretLag = 0.1;
     public static double cachingFix = 0.0005;
-    public static double offset = 0;
+    public static double offset = 0.004;
     public double lastPos = 0;
     public boolean forceUpdate = false;
     @Override
@@ -67,6 +69,10 @@ public class Turret implements Module {
                 servoRight.setPosition(centerPose );
 
 
+                break;
+            case FIXED_POS:
+                servoLeft.setPosition(fixed_pos);
+                servoRight.setPosition(fixed_pos);
                 break;
             case TRACKING:
                 double robotHeading = sensors.getHeading(); // radians
@@ -99,7 +105,8 @@ public class Turret implements Module {
     }
 
     public void setPosFixed(double pos){
-        centerPose = pos;
+         fixed_pos = pos;
+         turretState = TurretState.FIXED_POS;
     }
 
 
@@ -111,11 +118,15 @@ public class Turret implements Module {
     }
 
     private double angleToTurretPosition(double angle) {
-        double position = Range.scale(angle,
-                OuttakePositions.MIN_TURRET_ANGLE,
-                OuttakePositions.MAX_TURRET_ANGLE,
-                OuttakePositions.MIN_TURRET_POSITION,
-                OuttakePositions.MAX_TURRET_POSITION);
+        double slope = (OuttakePositions.MAX_TURRET_POSITION - OuttakePositions.MIN_TURRET_POSITION) / Math.toRadians(180);
+
+        double position = centerPose - (slope * angle);
+
+//        double position = Range.scale(angle,
+//                OuttakePositions.MIN_TURRET_ANGLE,
+//                OuttakePositions.MAX_TURRET_ANGLE,
+//                OuttakePositions.MIN_TURRET_POSITION,
+//                OuttakePositions.MAX_TURRET_POSITION);
         return Range.clip(position,
                 OuttakePositions.MIN_TURRET_RANGE,
                 OuttakePositions.MAX_TURRET_RANGE);

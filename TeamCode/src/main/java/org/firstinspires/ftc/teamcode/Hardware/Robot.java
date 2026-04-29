@@ -48,10 +48,8 @@ public class Robot {
     private double intakeTimeMs = 0;
     private double outtakeTimeMs = 0;
 
-    private DcMotorEx flDriveMotor = null;
-    private DcMotorEx blDriveMotor = null;
-    private DcMotorEx frDriveMotor = null;
-    private DcMotorEx brriveMotor = null;
+    long currentLoopTime;
+    long t1,t2,t3,t4,t5;
 
     LynxModule cHub;
 
@@ -68,21 +66,11 @@ public class Robot {
         TelemetryUtil.setup();
     }
 
-    private void ensureFlMotor() {
-        if (flDriveMotor == null && hw != null) {
-            try {
-                flDriveMotor = hw.get(DcMotorEx.class, "leftFront");
-                blDriveMotor = hw.get(DcMotorEx.class, "leftBack");
-                frDriveMotor = hw.get(DcMotorEx.class, "rightFront");
-                brriveMotor = hw.get(DcMotorEx.class, "rightBack");
-            } catch (Exception ignored) {
-            }
-        }
-    }
+
 
     public void update() {
         // Measure total loop time
-        long currentLoopTime = System.nanoTime();
+        currentLoopTime = System.nanoTime();
         if (lastLoopTime != 0) {
             loopTimeMs = (currentLoopTime - lastLoopTime) / 1_000_000.0;
         }
@@ -91,25 +79,25 @@ public class Robot {
         cHub.clearBulkCache();
 
         // Profile Blob
-        long t1 = System.nanoTime();
+        t1 = System.nanoTime();
         blob.update();
 
         // Profile Sensors
-        long t2 = System.nanoTime();
+        t2 = System.nanoTime();
         blobTimeMs = (t2 - t1) / 1_000_000.0;
         sensors.update();
 
         // Profile Intake
-        long t3 = System.nanoTime();
+        t3 = System.nanoTime();
         sensorsTimeMs = (t3 - t2) / 1_000_000.0;
         intakeTransfer.update();
 
         // Profile Outtake
-        long t4 = System.nanoTime();
+        t4 = System.nanoTime();
         intakeTimeMs = (t4 - t3) / 1_000_000.0;
         outtake.update();
 
-        long t5 = System.nanoTime();
+        t5 = System.nanoTime();
         outtakeTimeMs = (t5 - t4) / 1_000_000.0;
 
         Info.lastPoseX = sensors.getX();
@@ -149,12 +137,6 @@ public class Robot {
         TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
-        if (flDriveMotor != null) {
-            TelemetryUtil.packet.put("FL Motor amps", flDriveMotor.getCurrent(CurrentUnit.AMPS));
-            TelemetryUtil.packet.put("BL Motor amps", blDriveMotor.getCurrent(CurrentUnit.AMPS));
-            TelemetryUtil.packet.put("BR Motor amps", brriveMotor.getCurrent(CurrentUnit.AMPS));
-            TelemetryUtil.packet.put("FR Motor amps", frDriveMotor.getCurrent(CurrentUnit.AMPS));
-        }
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());
