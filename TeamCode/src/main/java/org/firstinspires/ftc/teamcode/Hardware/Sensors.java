@@ -41,13 +41,15 @@ public class Sensors {
         GREEN(0.5),
         BLUE(0.611);
         final double value;
+
         LightColor(double value) {
             this.value = value;
         }
     }
+
     public LightColor lightColor = LightColor.OFF;
     Pose pose;
-    double currentX,currentY,currentHeading;
+    double currentX, currentY, currentHeading;
     public static double FORWARD_TURRET_OFFSET = -1.66;
 
     private double currentVelocityShooter = 0;
@@ -64,18 +66,18 @@ public class Sensors {
     private boolean breakBeamPos2High = false;
     private boolean breakBeamPos3High = false;
 
-    public  double targetX = -66.6;
-    public  double targetY = -65;
-    public static double targetXRedClose = -71;
+    public double targetX = -66.6;
+    public double targetY = -65;
+    public static double targetXRedClose = -67;
     public static double targetYRedClose = 67;
-    public double targetXBlueClose = -71;
+    public double targetXBlueClose = -67;
     public double targetYBlueClose = -67;
 
     public static double targetXRedFar = -72;
     public static double servoPos = 0.4;
-    public static double targetYRedFar = 64;
+    public static double targetYRedFar = 60;
     public double targetXBlueFar = -72;
-    public double targetYBlueFar = -64;
+    public double targetYBlueFar = -60;
     public double virtualTargetX = targetX;
     public double virtualTargetY = targetY;
 
@@ -90,13 +92,13 @@ public class Sensors {
     private long lastStillCheckLoopTimeNs = 0; // Robot.loopTime at last history update
 
     public static double CLOSEZONE_X1 = -89, CLOSEZONE_Y1 = 89;
-    public static double CLOSEZONE_X2 = 15,  CLOSEZONE_Y2 = 0;
+    public static double CLOSEZONE_X2 = 15, CLOSEZONE_Y2 = 0;
     public static double CLOSEZONE_X3 = -89, CLOSEZONE_Y3 = -89;
     public static double FARZONE_X1 = 63, FARZONE_Y1 = 24;
-    public static double FARZONE_X2 = 44,  FARZONE_Y2 = 0;
-    public static double FARZONE_X3 = 63,  FARZONE_Y3 = -24;
+    public static double FARZONE_X2 = 44, FARZONE_Y2 = 0;
+    public static double FARZONE_X3 = 63, FARZONE_Y3 = -24;
 
-    public double projectedX,projectedY;
+    public double projectedX, projectedY;
 
     public boolean sotm = false;
 
@@ -111,16 +113,16 @@ public class Sensors {
     public double xVelocityRobot, yVelocityRobot;
     public double xAccRobot, yAccRobot;
     public static double filterParameter = 0.65;
-    private  final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
+    private final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
     private final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameter, 0);
 
     public static double DEFAULT_PROJECTILE_SPEED = 300.0; // inches per second, rough guess
 
     private DigitalChannel breakBeamPos1, breakBeamPos2, breakBeamPos3;
-    private Debouncer bb1,bb2,bb3;
-    public boolean lastValueBreakBreamPos1,lastValuebreamBeamPos2,lastValuebreamBeamPos3;
+    private Debouncer bb1, bb2, bb3;
+    public boolean lastValueBreakBreamPos1, lastValuebreamBeamPos2, lastValuebreamBeamPos3;
 
-    public long firstTrueBeam1,firstTrueBeam2,firstTrueBeam3;
+    public long firstTrueBeam1, firstTrueBeam2, firstTrueBeam3;
 
     // --- SOTM / TURRET PREDICTION VARIABLES ---
     public static double ACCEL_COMP_FACTOR = 0;     // Multiplier for the 0.5*a*t^2 term
@@ -137,10 +139,10 @@ public class Sensors {
     public Sensors(Robot robot) {
         this.robot = robot;
         initSensors();
-        if(Info.alliance == Alliance.BLUE){
+        if (Info.alliance == Alliance.BLUE) {
             targetX = targetXBlueClose;
             targetY = targetYBlueClose;
-        }else {
+        } else {
             targetX = targetXRedClose;
             targetY = targetYRedClose;
         }
@@ -149,18 +151,18 @@ public class Sensors {
     }
 
     void createShotTime() {
-        shotTime.add(50,0.5);
-        shotTime.add(60,0.54);
-        shotTime.add(76,0.6);
-        shotTime.add(85,0.7);
-        shotTime.add(95,0.8);
-        shotTime.add(110,0.95);
-        shotTime.add(130,1.05);
+        shotTime.add(50, 0.5);
+        shotTime.add(60, 0.54);
+        shotTime.add(76, 0.6);
+        shotTime.add(85, 0.7);
+        shotTime.add(95, 0.8);
+        shotTime.add(110, 0.95);
+        shotTime.add(130, 1.05);
         shotTime.createLUT();
     }
 
     public static boolean usePredictivePose = true;
-    public static double timeLatencyTurret = 0.4; //sec
+    public static double timeLatencyTurret = 0.35; //sec
     public static double debouncerTime = 50;
 
     private void initSensors() {
@@ -168,7 +170,7 @@ public class Sensors {
         bb1 = new Debouncer(debouncerTime, Debouncer.DebounceType.kBoth);
         bb2 = new Debouncer(debouncerTime, Debouncer.DebounceType.kBoth);
         bb3 = new Debouncer(debouncerTime, Debouncer.DebounceType.kBoth);
-        light = new CachingServo(robot.hw.get(Servo.class,"led"));
+        light = new CachingServo(robot.hw.get(Servo.class, "led"));
         voltageSensor = new CachingVoltageSensor(robot.hw);
 
         breakBeamPos1 = robot.hw.get(DigitalChannel.class, "beamBrakePos1");
@@ -177,31 +179,31 @@ public class Sensors {
 
         breakBeamPos2 = robot.hw.get(DigitalChannel.class, "beamBrakePos2");
         breakBeamPos2.setMode(DigitalChannel.Mode.INPUT);
-        lastValuebreamBeamPos2= breakBeamPos2.getState();
+        lastValuebreamBeamPos2 = breakBeamPos2.getState();
 
         breakBeamPos3 = robot.hw.get(DigitalChannel.class, "beamBrakePos3");
         breakBeamPos3.setMode(DigitalChannel.Mode.INPUT);
-        lastValuebreamBeamPos3= breakBeamPos3.getState();
+        lastValuebreamBeamPos3 = breakBeamPos3.getState();
 
         voltage = robot.hw.voltageSensor.iterator().next().getVoltage();
         readVoltageTime = System.currentTimeMillis();
         lastUpdateTimeNs = System.nanoTime();
     }
 
-    public double getTargetX(){
-        if(sotm) return virtualTargetX;
+    public double getTargetX() {
+        if (sotm) return virtualTargetX;
         return targetX;
     }
 
-    public double getTargetY(){
-        if(sotm) return virtualTargetY;
+    public double getTargetY() {
+        if (sotm) return virtualTargetY;
         return targetY;
     }
 
     CachingVoltageSensor voltageSensor;
 
-    public double getDistanceBetweenPoints(double x1,double x2,double y1,double y2){
-        return Math.sqrt((x1 - x2) * (x1-x2) + (y1 - y2) * (y1 - y2));
+    public double getDistanceBetweenPoints(double x1, double x2, double y1, double y2) {
+        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 
     public static double threesholdTime = 0.050;
@@ -222,49 +224,45 @@ public class Sensors {
     public void update() {
 
 
-
-
-
-
-
-
         currentX = robot.blob.odo.getX();
         currentY = robot.blob.odo.getY();
         currentHeading = robot.blob.odo.getHeading();
 
         calculateVelAndAcc();
+        if(Info.alliance == Alliance.RED) {
 
-        if(false) {
-            if(Info.alliance == Alliance.RED) {
+            if (!robot.outtake.launcher.closeMode) {
                 targetX = targetXRedFar;
                 targetY = targetYRedFar;
+            } else {
+                targetX = targetXRedClose;
+                targetY = targetYRedClose;
+            }
+        }else {
+            if ( robot.outtake.launcher.closeMode) {
+                targetX = targetXBlueClose;
+                targetY = targetYBlueClose;
             } else {
                 targetX = targetXBlueFar;
                 targetY = targetYBlueFar;
             }
-        } else {
-            if(Info.alliance == Alliance.RED) {
-                targetX = targetXRedClose;
-                targetY = targetYRedClose;
-            } else {
-                targetX = targetXBlueClose;
-                targetY = targetYBlueClose;
-            }
+
         }
+
 
         shooterWorldX = currentX + (FORWARD_TURRET_OFFSET * Math.cos(currentHeading));
         shooterWorldY = currentY + (FORWARD_TURRET_OFFSET * Math.sin(currentHeading));
 //        shooterWorldX = currentX;
 //        shooterWorldY = currentY;
 
-        if(sotm) {
+        if (sotm) {
             double deltaX = targetX - getX();
             double deltaY = targetY - getY();
-            virtualDistance = Math.hypot(deltaX,deltaY);
+            virtualDistance = Math.hypot(deltaX, deltaY);
             interpolatedTOF = shotTime.get(virtualDistance);
-            if(useFixedTof) interpolatedTOF = fixedTOF;
+            if (useFixedTof) interpolatedTOF = fixedTOF;
 
-            for(int i = 0;i<convergenceLoopCnt;i++) {
+            for (int i = 0; i < convergenceLoopCnt; i++) {
                 double t = SHOOTER_FEEDER_DELAY + interpolatedTOF;
                 double t2 = t * t;
 
@@ -275,7 +273,7 @@ public class Sensors {
                 virtualTargetY = targetY + (displaceY * sotmDirY);
                 double newVirtualDistance = Math.hypot(virtualTargetX - getX(), virtualTargetY - getY());
                 double newTOF = shotTime.get(newVirtualDistance);
-                if(useFixedTof) newTOF = fixedTOF;
+                if (useFixedTof) newTOF = fixedTOF;
 
 
                 if (Math.abs(newTOF - interpolatedTOF) < PHYSICS_SHOT_TIME_EPS) break;
@@ -291,25 +289,25 @@ public class Sensors {
         if (breakBeamPos1 != null) {
             lastValueBreakBreamPos1 = breakBeamPos1High;
             breakBeamPos1High = bb1.calculate(!(breakBeamPos1.getState()));
-            if(breakBeamPos1High && !lastValueBreakBreamPos1) {
+            if (breakBeamPos1High && !lastValueBreakBreamPos1) {
                 firstTrueBeam1 = System.currentTimeMillis();
-            }else if(!breakBeamPos1High && !lastValueBreakBreamPos1) {
+            } else if (!breakBeamPos1High && !lastValueBreakBreamPos1) {
                 firstTrueBeam1 = System.currentTimeMillis();
             }
         } else {
             breakBeamPos1High = false;
         }
 
-        if(isInTargetZone(shooterWorldX,shooterWorldY)) {
-            robot.outtake.turret.forceUpdate=true;
+        if (isInTargetZone(shooterWorldX, shooterWorldY)) {
+            robot.outtake.turret.forceUpdate = true;
         }
 
         if (breakBeamPos2 != null) {
             lastValuebreamBeamPos2 = breakBeamPos2High;
             breakBeamPos2High = bb2.calculate(!(breakBeamPos2.getState()));
-            if(breakBeamPos2High && !lastValuebreamBeamPos2) {
+            if (breakBeamPos2High && !lastValuebreamBeamPos2) {
                 firstTrueBeam2 = System.currentTimeMillis();
-            }else if(!breakBeamPos2High && !lastValuebreamBeamPos2) {
+            } else if (!breakBeamPos2High && !lastValuebreamBeamPos2) {
                 firstTrueBeam2 = System.currentTimeMillis();
             }
         } else {
@@ -320,31 +318,32 @@ public class Sensors {
             lastValuebreamBeamPos3 = breakBeamPos3High;
             breakBeamPos3High = bb3.calculate(!(breakBeamPos3.getState()));
 
-            if(breakBeamPos3High && !lastValuebreamBeamPos3) {
+            if (breakBeamPos3High && !lastValuebreamBeamPos3) {
                 firstTrueBeam3 = System.currentTimeMillis();
-            }else if(!breakBeamPos3High && !lastValuebreamBeamPos3) {
+            } else if (!breakBeamPos3High && !lastValuebreamBeamPos3) {
                 firstTrueBeam3 = System.currentTimeMillis();
             }
         } else {
             breakBeamPos3High = false;
         }
 
-        if(!sotm) {
+        if (!sotm) {
             shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
                     , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
 //            shooterAngle = Math.atan2(getTargetY() - robot.blob.odo.predictedY
 //                    , getTargetX() - robot.blob.odo.predictedX); //TEST
-        }
-        else shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
-        if(lookUpTurret) shooterAngle = updateTurretPrediction(shooterAngle, 0);
+        } else
+            shooterAngle = Math.atan2(getTargetY() - shooterWorldY, getTargetX() - shooterWorldX);
+        if (lookUpTurret) shooterAngle = updateTurretPrediction(shooterAngle, 0);
+
 
         light.setPosition(lightColor.value);
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
-    public static double accelFactorLatency = -0.01;
+    public static double accelFactorLatency = -0.0;
     public static boolean lookUpTurret = false;
-    public static double rpmTimeLatency = 0.1;
+    public static double rpmTimeLatency = 0;
 
     /**
      * Calculates the predicted turret angle based on current velocity
@@ -378,49 +377,90 @@ public class Sensors {
     void calculateDistance() {
         double dx = getTargetX() - (shooterWorldX + velX * rpmTimeLatency);
         double dy = getTargetY() - (shooterWorldY + velY * rpmTimeLatency);
-        shooterDistanceBackboard =  Math.sqrt(dx * dx + dy * dy);
+        shooterDistanceBackboard = Math.sqrt(dx * dx + dy * dy);
 
         dx = targetX - currentX;
-        dy = targetY -currentY;
-        distanceToBackBoard =  Math.sqrt(dx * dx + dy * dy);
+        dy = targetY - currentY;
+        distanceToBackBoard = Math.sqrt(dx * dx + dy * dy);
     }
 
-    public double getVoltage() { return voltage; }
+    public double getVoltage() {
+        return voltage;
+    }
 
-    public Pose getPose() { return pose; }
-    public double getX() { return currentX; }
+    public Pose getPose() {
+        return pose;
+    }
+
+    public double getX() {
+        return currentX;
+    }
 
     public void calculateVelAndAcc() {
         xAccRobot = robot.blob.odo.getAccX();
         yAccRobot = robot.blob.odo.getAccY();
 
         velX = robot.blob.getVelocityX();
-        velY  = robot.blob.getVelocityY();
+        velY = robot.blob.getVelocityY();
 
         xVelocityRobot = velX;
         yVelocityRobot = velY;
     }
 
-    public void toggleSOTM(boolean val) { sotm = val; }
-    public double getMoveGoalX() { return virtualTargetX; }
-    public double getMoveGoalY() { return virtualTargetY; }
+    public void toggleSOTM(boolean val) {
+        sotm = val;
+    }
+
+    public double getMoveGoalX() {
+        return virtualTargetX;
+    }
+
+    public double getMoveGoalY() {
+        return virtualTargetY;
+    }
 
     double distanceToBackBoard;
     double shooterDistanceBackboard;
     public static double sotmDirY = -1;
     public static double sotmDirX = -1;
-    public double getDistanceToBackboard() { return distanceToBackBoard; }
-    public double getShooterDistanceToBackboard() { return shooterDistanceBackboard; }
+
+    public double getDistanceToBackboard() {
+        return distanceToBackBoard;
+    }
+
+    public double getShooterDistanceToBackboard() {
+        return shooterDistanceBackboard;
+    }
 
     double shooterAngle;
-    public double getShooterAngleToTarget() { return shooterAngle; }
-    public double getAngularVelocity() { return robot.blob.odo.getAngularVelocity(); }
-    public double getY() { return currentY; }
-    public double getVelocityIntake() { return intakeSpeed; }
-    public double getHeading() { return currentHeading; }
-    public double getVelocity() { return currentVelocityShooter; }
 
-    public boolean isIntakeMotor1OverCurrent() { return intakeMotor1OverCurrent; }
+    public double getShooterAngleToTarget() {
+        return shooterAngle;
+    }
+
+    public double getAngularVelocity() {
+        return robot.blob.odo.getAngularVelocity();
+    }
+
+    public double getY() {
+        return currentY;
+    }
+
+    public double getVelocityIntake() {
+        return intakeSpeed;
+    }
+
+    public double getHeading() {
+        return currentHeading;
+    }
+
+    public double getVelocity() {
+        return currentVelocityShooter;
+    }
+
+    public boolean isIntakeMotor1OverCurrent() {
+        return intakeMotor1OverCurrent;
+    }
 
     public boolean shootingLong() {
         return currentX > OuttakePositions.FAR_ZONE_X_THRESHOLD;
@@ -459,9 +499,17 @@ public class Sensors {
         }
     }
 
-    public void setLedColor(LightColor state) { lightColor = state; }
-    public double getVelX() { return xVelocityRobot; }
-    public double getVelY() { return yVelocityRobot; }
+    public void setLedColor(LightColor state) {
+        lightColor = state;
+    }
+
+    public double getVelX() {
+        return xVelocityRobot;
+    }
+
+    public double getVelY() {
+        return yVelocityRobot;
+    }
 
     public double estimateShotTimeOfFlight(double distance) {
         double speed = DEFAULT_PROJECTILE_SPEED;
@@ -470,13 +518,13 @@ public class Sensors {
     }
 
     public boolean isInSlowZone() {
-        double[] xs = { SLOWZONE_X1, SLOWZONE_X2, SLOWZONE_X3, SLOWZONE_X4 };
+        double[] xs = {SLOWZONE_X1, SLOWZONE_X2, SLOWZONE_X3, SLOWZONE_X4};
         double[] ys;
 
         if (Info.alliance == Alliance.BLUE) {
-            ys = new double[]{ -SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4 };
+            ys = new double[]{-SLOWZONE_Y1, -SLOWZONE_Y2, -SLOWZONE_Y3, -SLOWZONE_Y4};
         } else {
-            ys = new double[]{ SLOWZONE_Y1, SLOWZONE_Y2, SLOWZONE_Y3, SLOWZONE_Y4 };
+            ys = new double[]{SLOWZONE_Y1, SLOWZONE_Y2, SLOWZONE_Y3, SLOWZONE_Y4};
         }
 
         return isPointInPolygon(currentX, currentY, xs, ys);
@@ -498,13 +546,29 @@ public class Sensors {
         return inside;
     }
 
-    public boolean isBreakBeamPos1Low(){ return breakBeamPos1High; }
-    public boolean isBreakBeamPos2Low(){ return breakBeamPos2High; }
-    public boolean isBreakBeamPos3Low(){ return breakBeamPos3High; }
+    public boolean isBreakBeamPos1Low() {
+        return breakBeamPos1High;
+    }
 
-    public double getHowLongBeam3() { return System.currentTimeMillis() - firstTrueBeam3; }
-    public double getHowLongBeam2() { return System.currentTimeMillis() - firstTrueBeam2; }
-    public double getHowLongBeam1() { return System.currentTimeMillis() - firstTrueBeam1; }
+    public boolean isBreakBeamPos2Low() {
+        return breakBeamPos2High;
+    }
+
+    public boolean isBreakBeamPos3Low() {
+        return breakBeamPos3High;
+    }
+
+    public double getHowLongBeam3() {
+        return System.currentTimeMillis() - firstTrueBeam3;
+    }
+
+    public double getHowLongBeam2() {
+        return System.currentTimeMillis() - firstTrueBeam2;
+    }
+
+    public double getHowLongBeam1() {
+        return System.currentTimeMillis() - firstTrueBeam1;
+    }
 
     public double getDistanceFromPose(Pose pose) {
         double dx = getTargetX() - pose.getX();
@@ -513,12 +577,21 @@ public class Sensors {
     }
 
     public static double autoSensorBeam = 0.7;
-    public double getShooterX() { return shooterWorldX; }
-    public double getShooterY() { return shooterWorldY; }
-    public void setUsePredictivePose(boolean use) { usePredictivePose = use; }
+
+    public double getShooterX() {
+        return shooterWorldX;
+    }
+
+    public double getShooterY() {
+        return shooterWorldY;
+    }
+
+    public void setUsePredictivePose(boolean use) {
+        usePredictivePose = use;
+    }
 
     public boolean areAllBeamsLowForTime() {
-        if(Info.phase == Phase.AUTONOMOUS) { ///TEST
+        if (Info.phase == Phase.AUTONOMOUS) { ///TEST
             return getHowLongBeam1() > IntakeConstants.beam1stopDelay * autoSensorBeam &&
                     getHowLongBeam2() > IntakeConstants.beam2stopDelay * autoSensorBeam &&
                     getHowLongBeam3() > IntakeConstants.beam3StopDelay * autoSensorBeam;

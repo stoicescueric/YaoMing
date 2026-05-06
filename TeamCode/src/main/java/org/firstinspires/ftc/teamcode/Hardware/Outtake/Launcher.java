@@ -261,6 +261,7 @@ public class Launcher implements Module {
                 } else {
                     power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 }
+                snapshotVoltage();
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -311,13 +312,14 @@ public class Launcher implements Module {
                         robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                         break;
                     }
+                    target_tilt = hood.get(targetDistance);
                 }
-                target_tilt = hood.get(targetDistance);
+
 
                 if (use254) {
                     power = velocityController254.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
                 } else {
-                    power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                    power = velController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
                 }
                 motor1.setPower(power);
                 motor2.setPower(power);

@@ -43,7 +43,7 @@ public class Odometry {
     public double xDeceleration = BlobConstants.xDeceleration;
     public double yDeceleration = BlobConstants.yDeceleration;
 
-    public static double filterParameterTranslational = 0.75;
+    public static double filterParameterTranslational = 0.9;
     public static double filterParameterTranslationalAcc = 0.4;
     public static double filterParameterAngular = 0.8;
     private static final int ACCEL_WINDOW = 5;

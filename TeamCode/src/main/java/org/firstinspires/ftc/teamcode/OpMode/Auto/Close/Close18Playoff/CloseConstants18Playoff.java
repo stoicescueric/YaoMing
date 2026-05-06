@@ -13,7 +13,7 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
-    public static double shootingTime = 400;
+    public static double shootingTime = 480;
     public static double shootingPercentage = 0.9;
     public static double turretPositionRed = 0.315;
 
@@ -26,10 +26,11 @@ public class CloseConstants18Playoff {
     public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
     public static double waitBeforeClear = 500;
-    public static double clearTimeAfterCycle = 700;
-    public static double startX = -55.62, startY = 44.98, headingStartRed = -4.084268299733297; //TODO
+    public static double clearTimeAfterCycle = 550;
+    public static double startX = -56, startY = 45, headingStartRed = -4.054268299733297; //TODO
+    public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
     public Pose startPose;
-    public static double shootingX = -1, shootingY = 7.7, shootingHeading = Math.toRadians(270);
+    public static double shootingX = -10, shootingY = 13, shootingHeading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 12,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
@@ -40,8 +41,8 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 12,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 12,pickUp2Y2 = 51, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X = 10.9,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 10.5,pickUp2Y2 = 53, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
@@ -54,18 +55,23 @@ public class CloseConstants18Playoff {
     //gate
     public static long failSafePickupTime = 1400;
     public static int gateCycleCount = 4;
-    public static double turretPreloadRed = 0.51;
-    public static double turretPreloadBlue = 0.49;
-    public static double failSafeGateTime = 1000;
-    public static int gateClearCount = 1;
-    public static double gatePickupX = 15, gatePickupY = 55.5, gatePickupHeading = 4.280019301402063;
-    public static double gatePickupXFailSafe = 14.7, gatePickupYFailSafe = 55.8, gatePickupHeadingFailSafe = 4.290019301402063;
+    public static double turretPreloadRed = 0.49;
+    public static double turretPreloadBlue = 0.455;
+    public static double failSafeGateTime = 1400;
+    public static int gateClearCount1 = 1;
+    public static int gateClearCount2 = 2;
+    public static int gateClearCount3 = 3;
+    public static int gateClearCount4 = 0;
+    public static int headingTheeshold = 50;
+    public static double gatePickupX = 14.8, gatePickupY = 58.4, gatePickupHeading = 4.280019301402063;
+    public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.290019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
 
+    public static double stack1Take = 1;
     //clear gate
-    public static double clearX = -1, clearY = 56.2, clearHeading = Math.toRadians(90)-Math.PI;
-    public static double clearXInter = 2, clearYInter = 46, clearHeadingInter = Math.toRadians(270);
+    public static double clearX = -3, clearY = 52, clearHeading = Math.toRadians(270);
+    public static double clearXInter = -5, clearYInter = 51, clearHeadingInter = 4.71;
     public Pose clearInter;
 
 
@@ -74,6 +80,7 @@ public class CloseConstants18Playoff {
 
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
+    public static double clearStack2Timer = 900;
     public Pose parkPose;
     public Pose clear;
     public Pose gateFailSafe;
@@ -83,7 +90,8 @@ public class CloseConstants18Playoff {
     public void buildPaths() {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
-        startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1),headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1) );
+        startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1), headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1));
+
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         scorePoseGateInter = new Pose(shootingInterX, shootingInterY * (Info.alliance == Alliance.RED ? 1 : -1), shootingUnterHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -165,14 +173,19 @@ public class CloseConstants18Playoff {
     public double getShootingPercentage() {
         return shootingPercentage;
     }
+    public double getHeadingThreeshold() {
+        return headingTheeshold;
+    }
     public double getFailSafeGateTime() {
         return failSafeGateTime;
     }
     public double getFailSafeLastRun() {
         return timerFailsafeGateLastRun;
     }
+    public double getClearGate2Time() {
+        return clearStack2Timer;
+    }
     public double getWaitBeforeClear() {return waitBeforeClear;}
-    public int getGateClearCount(){return gateClearCount;}
     public double getClearTimeAfterCycle(){return clearTimeAfterCycle;}
 
 }

@@ -21,8 +21,9 @@ public class velocityController {
     public static boolean useVoltageComp = true;
     public static boolean useBB = true;
     public static double bbPower = 1.0;
-    public static double bbThreeshold = 125;
-    public static double bbThresholdDown = 30;
+    public static double bbPowerMinus = -0.2;
+    public static double bbThreeshold = 110;
+    public static double bbThresholdDown = 50;
 
     private static double lastError = 0;
     private static double lastPower = 0;
@@ -56,7 +57,7 @@ public class velocityController {
                 power = bbPower;
             }else {
                 if(error < -bbThresholdDown) {
-                    power = 0;
+                    power = bbPowerMinus;
                 }
             }
         }

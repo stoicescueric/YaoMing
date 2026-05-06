@@ -7,9 +7,9 @@ public class IntakeConstants {
 
     /*-----MOTOR POWERS---*/
     public static double intakePowerIntake = 1;
-    public static double intakePowerIntakeFarZone = 0.73;
+    public static double intakePowerIntakeFarZone = 0.6;
     public static double transferPowerIntake =0.85;
-    public static double transferPowerIntakeFarZone = 0.73;
+    public static double transferPowerIntakeFarZone = 0.6;
     public static double reversePower = 1;
     public static double intakePowerRecycle = 1;
 
@@ -40,16 +40,16 @@ public class IntakeConstants {
 
     /*----- SERVO POSITIONS----*/
 
-    public static double capacBleg = 0.52;
-    public static double capacRecycle = 0.37;
+    public static double capacBleg = 0.62;
+    public static double capacRecycle = 0.44;
     public static double capacReleaseTransfer = 350;
 
-    public static double blockerOpen = 0.26;
-    public static double blockerClose = 0.075;
+    public static double blockerOpen = 0.23;
+    public static double blockerClose = 0.03;
 
     public static double powerArmLow = 0.45;
-    public static double powerArmRecycle = 0.64;
-    public static double powerArmIntake = 0.45;
+    public static double powerArmRecycle = 0.84;
+    public static double powerArmIntake = 0.46;
     public static double powerArmVeryLow = 0.45;
 
     public static double preciseShotDelay = 400;

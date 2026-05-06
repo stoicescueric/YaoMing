@@ -55,6 +55,7 @@ public class Turret implements Module {
     public static double cachingFix = 0.0005;
     public static double offset = 0.004;
     public double lastPos = 0;
+    public double launchingMaxError = 0.01;
     public boolean forceUpdate = false;
     @Override
     public void update() {
@@ -91,14 +92,8 @@ public class Turret implements Module {
 //                Log.w("Turret info: ","robot heading " + robotHeading + " directAngle " + directGlobalAngle + " relative Angle " + relativeAngle);
 //                Log.w("Turret info: " ,"target X Y " +  backboardX + " " + backboardY + " turret pos " + pos);
 
-                if(!forceUpdate) {
-                    servoLeft.setPosition(pos + offset);
-                    servoRight.setPosition(pos - offset);
-                }else {
-                    servoLeft.setPosition(pos + offset);
-                    servoRight.setPosition(pos - offset);
-                }
-
+                servoLeft.setPosition(pos + offset);
+                servoRight.setPosition(pos - offset);
                 lastPos = pos;
                 break;
         }
