@@ -219,14 +219,22 @@ public class Launcher implements Module {
                         if (closeMode) {
                             target = velocity.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[velValues.length - 1]));
                             target = Utils.minMaxClip(target, minCloseZone, maxCloseZone);
+                            target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
+
                         } else {
                             target = velocity.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[velValues.length - 1]));
                             target = Utils.minMaxClip(target, minFarZone, maxFarZone);
+                            target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
+
                         }
                         if (use254) {
                             power = velocityController254.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                            target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
+
                         } else {
                             power = velController.calculate(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                            target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
+
                         }
                     } else {
                         if (sensors.isFarZone()) {
@@ -235,7 +243,6 @@ public class Launcher implements Module {
                             power = idleVelocityClose;
                         }
                     }
-                    target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
                 } catch (Exception e) {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.3;
@@ -302,17 +309,18 @@ public class Launcher implements Module {
                 }
                 break;
             case LAUNCHING:
-
-                if (robot.sensors.sotm) {
-                    try {
-                        target = velocity.get(targetDistance);
-                        target += offsetPower;
-                    } catch (Exception e) {
-                        robot.op.gamepad1.rumble(250);
-                        robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                        break;
+                if(auto_aim) {
+                    if (robot.sensors.sotm) {
+                        try {
+                            target = velocity.get(targetDistance);
+                            target += offsetPower;
+                        } catch (Exception e) {
+                            robot.op.gamepad1.rumble(250);
+                            robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
+                            break;
+                        }
+                        target_tilt = hood.get(targetDistance);
                     }
-                    target_tilt = hood.get(targetDistance);
                 }
 
 
@@ -401,4 +409,7 @@ public class Launcher implements Module {
         if (projSpeed < 0) projSpeed = 0.0;
         return projSpeed;
     }
+    public void setUseAdaptiveVel(boolean val){useAdaptiveVel = val;}
+    public void setIdleVelocityClose(double val){idleVelocityClose = val;}
+    public void setTargetTilt(double tilt){target_tilt = tilt;}
 }

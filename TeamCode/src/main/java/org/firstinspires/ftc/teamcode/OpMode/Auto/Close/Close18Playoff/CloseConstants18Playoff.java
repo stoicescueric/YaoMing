@@ -81,6 +81,9 @@ public class CloseConstants18Playoff {
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
     public static double clearStack2Timer = 900;
+    public static double timeBeforePreloadSOTM = 500;
+    public static double preloadVel = 1550;
+    public static double preloadHood = 0.11;
     public Pose parkPose;
     public Pose clear;
     public Pose gateFailSafe;
@@ -187,5 +190,8 @@ public class CloseConstants18Playoff {
     }
     public double getWaitBeforeClear() {return waitBeforeClear;}
     public double getClearTimeAfterCycle(){return clearTimeAfterCycle;}
+    public double getTimeBeforePreloadSOTM(){return timeBeforePreloadSOTM;}
+    public double getPreloadVel(){return preloadVel;}
+    public double getPreloadHood(){return preloadHood;}
 
 }

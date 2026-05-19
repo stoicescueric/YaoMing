@@ -53,6 +53,7 @@ public class Outtake {
         cntTransfer = 0;
     }
 
+    public boolean verify_launcher = true;
     public void start_feed_precise(double target,double hood) {
         launcher.setTarget(target,hood);
         outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
@@ -72,7 +73,7 @@ public class Outtake {
                 break;
             case START_FEEDING_RAPID_FIRE:
                 turret.forceUpdate = true;
-                if(launcher.isReady() && (launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
+                if((!verify_launcher || launcher.isReady())  && (launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
                     cntTransfer++;
                 }
 
