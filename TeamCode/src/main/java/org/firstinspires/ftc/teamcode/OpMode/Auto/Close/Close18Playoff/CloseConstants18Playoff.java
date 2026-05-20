@@ -13,7 +13,7 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
-    public static double shootingTime = 480;
+    public static double shootingTime = 250;
     public static double shootingPercentage = 0.9;
     public static double turretPositionRed = 0.315;
 
@@ -54,10 +54,10 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3_2;
     //gate
     public static long failSafePickupTime = 1400;
-    public static int gateCycleCount = 4;
+    public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
-    public static double failSafeGateTime = 1400;
+    public static double failSafeGateTime = 1000;
     public static int gateClearCount1 = 1;
     public static int gateClearCount2 = 2;
     public static int gateClearCount3 = 3;
