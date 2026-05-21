@@ -14,6 +14,7 @@ public class CloseConstants18Playoff {
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
     public static double shootingTime = 250;
+    public static double preloadWait = 100;
     public static double shootingPercentage = 0.9;
     public static double turretPositionRed = 0.315;
 
@@ -32,6 +33,7 @@ public class CloseConstants18Playoff {
     public Pose startPose;
     public static double shootingX = -10, shootingY = 13, shootingHeading = Math.toRadians(250);
     public static double shootPreloadX = -14.5,shootPreloadY = 12,shootPreloadH = Math.toRadians(220);
+    public static double rotatePreloadX = -14.5,rotatePreloadY = 12,rotatePreloadH = Math.toRadians(270);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
     public Pose scorePoseGateInter;
@@ -89,6 +91,7 @@ public class CloseConstants18Playoff {
     public Pose gateFailSafe;
 
     public Pose preload;
+    public Pose rotatePreload;
 
     public void buildPaths() {
 
@@ -99,6 +102,7 @@ public class CloseConstants18Playoff {
         scorePoseGateInter = new Pose(shootingInterX, shootingInterY * (Info.alliance == Alliance.RED ? 1 : -1), shootingUnterHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
         preload = new Pose(shootPreloadX, shootPreloadY * (Info.alliance == Alliance.RED ? 1 : -1), shootPreloadH * (Info.alliance == Alliance.RED ? 1 : -1));
+        rotatePreload = new Pose(rotatePreloadX, rotatePreloadY * (Info.alliance == Alliance.RED ? 1 : -1), rotatePreloadH * (Info.alliance == Alliance.RED ? 1 : -1));
         clearGateAfterCycle = new Pose(clearGateX, clearGateY * (Info.alliance == Alliance.RED ? 1 : -1), clearGateHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose = new Pose(pickUp1X, pickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose1_Inter = new Pose(InterpickUp1X, InterpickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), InterpickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -134,6 +138,9 @@ public class CloseConstants18Playoff {
 
     public double getShootingTime() {
         return shootingTime;
+    }
+    public double getPreloadWait() {
+        return preloadWait;
     }
     public double getMaxPower(){
         return max_power_pickUp;

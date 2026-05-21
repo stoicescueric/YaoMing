@@ -48,7 +48,8 @@ public class Close27 extends OpMode {
         WAIT_SCORE_1,
         GO_TO_PARK,
         PARK,
-        SLEEP
+        SLEEP,
+        ROTATE_PRELOAD,
     }
 
     public AutoStates autoStates = AutoStates.IDLE;
@@ -104,13 +105,18 @@ public class Close27 extends OpMode {
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
 //                robot.outtake.turret.setPosFixed(constants.getTurretPosPreload());
-                robot.outtake.turret.turretState = Turret.TurretState.TRACKING; //newly added
+                robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case WAIT_SCORE_PRELOAD:
                 if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())
                     break;
+                robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
+                sleep(constants.getPreloadWait(), AutoStates.ROTATE_PRELOAD, true);
+                break;
+            case ROTATE_PRELOAD:
+                robot.blob.setTargetPosition(constants.rotatePreload);
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_0, true);
                 break;
             case GO_PICKUP2:
