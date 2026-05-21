@@ -30,7 +30,7 @@ public class CloseConstants18Playoff {
     public static double startX = -56, startY = 45, headingStartRed = -4.054268299733297; //TODO
     public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
     public Pose startPose;
-    public static double shootingX = -10, shootingY = 13, shootingHeading = Math.toRadians(270);
+    public static double shootingX = -10, shootingY = 13, shootingHeading = Math.toRadians(250);
     public static double shootPreloadX = -14.5,shootPreloadY = 12,shootPreloadH = Math.toRadians(220);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
@@ -53,7 +53,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 1400;
+    public static long failSafePickupTime = 1250;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;

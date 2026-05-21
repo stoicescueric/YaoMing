@@ -576,7 +576,7 @@ public class Sensors {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public static double autoSensorBeam = 0.7;
+    public static double autoSensorBeam = 0.4 ;
 
     public double getShooterX() {
         return shooterWorldX;
