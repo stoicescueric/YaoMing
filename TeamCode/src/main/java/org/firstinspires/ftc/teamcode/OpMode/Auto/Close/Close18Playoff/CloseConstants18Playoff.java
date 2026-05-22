@@ -31,11 +31,13 @@ public class CloseConstants18Playoff {
     public static double startX = -56, startY = 45, headingStartRed = -4.054268299733297; //TODO
     public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
     public Pose startPose;
-    public static double shootingX = -10, shootingY = 13, shootingHeading = Math.toRadians(250);
+    public static double shootingX = -10, shootingY = 13, shootingHeading = Math.toRadians(300);
+    public static double shootingS1X = -10, shootingS1Y = 13, shootingS1Heading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 12,shootPreloadH = Math.toRadians(220);
     public static double rotatePreloadX = -14.5,rotatePreloadY = 12,rotatePreloadH = Math.toRadians(270);
     public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
+    public Pose scoreS1Pose;
     public Pose scorePoseGateInter;
 
     public static double pickUp1X = -13, pickUp1Y = 50.3, pickUp1Heading = Math.toRadians(270);
@@ -55,7 +57,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 1250;
+    public static long failSafePickupTime = 1100;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
@@ -99,6 +101,7 @@ public class CloseConstants18Playoff {
         startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1), headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1));
 
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
+        scoreS1Pose = new Pose(shootingS1X, shootingS1Y * (Info.alliance == Alliance.RED ? 1 : -1), shootingS1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         scorePoseGateInter = new Pose(shootingInterX, shootingInterY * (Info.alliance == Alliance.RED ? 1 : -1), shootingUnterHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         clearInter = new Pose(clearXInter, clearYInter * (Info.alliance == Alliance.RED ? 1 : -1), clearHeadingInter * (Info.alliance == Alliance.RED ? 1 : -1));
         preload = new Pose(shootPreloadX, shootPreloadY * (Info.alliance == Alliance.RED ? 1 : -1), shootPreloadH * (Info.alliance == Alliance.RED ? 1 : -1));

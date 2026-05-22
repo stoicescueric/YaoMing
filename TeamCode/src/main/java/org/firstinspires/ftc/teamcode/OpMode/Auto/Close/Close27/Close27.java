@@ -104,19 +104,19 @@ public class Close27 extends OpMode {
                 robot.outtake.specificValues(constants.preload);
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
-//                robot.outtake.turret.setPosFixed(constants.getTurretPosPreload());
+//                robot.outtake.turret.setPosFixed(constants.getTurretPosition());
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+                setPathState(AutoStates.ROTATE_PRELOAD);
+                break;
+            case ROTATE_PRELOAD:
+                if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case WAIT_SCORE_PRELOAD:
-                if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())
-                    break;
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-                robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getPreloadWait(), AutoStates.ROTATE_PRELOAD, true);
-                break;
-            case ROTATE_PRELOAD:
                 robot.blob.setTargetPosition(constants.rotatePreload);
+                if (!robot.blob.inPosition(3.8, 3.8, 0.18) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_0, true);
                 break;
             case GO_PICKUP2:
@@ -155,7 +155,7 @@ public class Close27 extends OpMode {
                     break;
                 //robot.drive.followPath(constants.scorePickup1, true);
                 robot.blob.maxPower = 1;
-                robot.blob.setTargetPosition(constants.scorePose);
+                robot.blob.setTargetPosition(constants.scoreS1Pose);
                 setPathState(AutoStates.WAIT_SCORE_1);
                 break;
             case WAIT_SCORE_1:
