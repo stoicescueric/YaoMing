@@ -600,4 +600,7 @@ public class Sensors {
                 getHowLongBeam2() > IntakeConstants.beam2stopDelay &&
                 getHowLongBeam3() > IntakeConstants.beam3StopDelay;
     }
+    public void setTimeLatencyTurret(double timeLatency) {
+        timeLatencyTurret = timeLatency;
+    }
 }

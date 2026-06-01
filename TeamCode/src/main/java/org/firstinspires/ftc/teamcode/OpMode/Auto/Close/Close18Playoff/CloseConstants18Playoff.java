@@ -14,6 +14,8 @@ public class CloseConstants18Playoff {
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
     public static double shootingTime = 250;
+    public static double shootingTimeSOTM = 200;
+    public static double shootingTimeSOTMdelay = 70;
     public static double preloadWait = 100;
     public static double shootingPercentage = 0.9;
     public static double turretPositionRed = 0.315;
@@ -141,6 +143,12 @@ public class CloseConstants18Playoff {
 
     public double getShootingTime() {
         return shootingTime;
+    }
+    public double getShootingTimeSOTM() {
+        return shootingTimeSOTM;
+    }
+    public double getShootingTimeSOTMdelay() {
+        return shootingTimeSOTMdelay;
     }
     public double getPreloadWait() {
         return preloadWait;

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18Playoff.CloseConstants18Playoff;
+import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
@@ -20,7 +21,6 @@ public class Close27 extends OpMode {
     Timer pathTimer;
     int gateCycleCounter = 0;
     int gateCycleCount = 5;
-
     ElapsedTime timerAuto = null;
     public enum AutoStates {
         IDLE,
@@ -43,7 +43,8 @@ public class Close27 extends OpMode {
         GO_PICKUP1_0,
         GO_CLEAR,
         GO_CLEAR_INTER,
-
+        CYCLE_SOTM,
+        SCORE2_SOTM,
         GO_TO_SCORE1,
         WAIT_SCORE_1,
         GO_TO_PARK,
@@ -195,7 +196,6 @@ public class Close27 extends OpMode {
                 setPathState(AutoStates.GO_TO_SCORE2);
                 break;
             case GO_TO_SCORE2:
-
                 //robot.drive.followPath(constants.scorePickup2, true);
                 robot.blob.setTargetPosition(constants.scorePose);
                 setPathState(AutoStates.WAIT_SCORE2);
@@ -205,9 +205,13 @@ public class Close27 extends OpMode {
                     robot.outtake.launcher.updateOffssetHood = true;
                 }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.3,1.3,0.11) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getShootingTime(), AutoStates.GO_GATE_PICKUP,true);
+                sleep(constants.getShootingTimeSOTM(), AutoStates.SCORE2_SOTM,true);
+                break;
+            case SCORE2_SOTM:
+                robot.blob.setTargetPosition(constants.gatePickupPose, constants.getHeadingThreeshold());
+                sleep(constants.getShootingTimeSOTMdelay(), AutoStates.GO_GATE_PICKUP,true);
                 break;
             case GO_GATE_PICKUP:
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
@@ -256,17 +260,21 @@ public class Close27 extends OpMode {
                     robot.outtake.launcher.updateOffssetHood = true;
                 }
 
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.3,1.3,0.11) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 gateCycleCounter++;
                 if (gateCycleCounter < gateCycleCount) {
-                    sleep(constants.getShootingTime(), AutoStates.GO_GATE_PICKUP,true);
+                    sleep(constants.getShootingTimeSOTM(), AutoStates.CYCLE_SOTM,true);
                 } else {
                     sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK,true);
                 }
                 break;
+            case CYCLE_SOTM:
+                robot.blob.setTargetPosition(constants.gatePickupPose, constants.getHeadingThreeshold());
+                sleep(constants.getShootingTimeSOTMdelay(), AutoStates.GO_GATE_PICKUP,true);
 
+                break;
             case GO_TO_PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);                //robot.drive.followPath(constants.goToPark, true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
