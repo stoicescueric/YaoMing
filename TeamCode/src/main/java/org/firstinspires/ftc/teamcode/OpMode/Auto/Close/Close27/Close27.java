@@ -101,13 +101,13 @@ public class Close27 extends OpMode {
                 break;
             case GO_TO_SCORE_FROM_START:
                 //robot.drive.followPath(constants.scorePreload, true);
-                robot.blob.setTargetPosition(constants.preload);
+                robot.blob.setTargetPosition(constants.preload, 80);
                 robot.outtake.specificValues(constants.preload);
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
 //                robot.outtake.turret.setPosFixed(constants.getTurretPosition());
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-                setPathState(AutoStates.ROTATE_PRELOAD);
+                setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case ROTATE_PRELOAD:
                 if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
@@ -115,7 +115,7 @@ public class Close27 extends OpMode {
                 break;
             case WAIT_SCORE_PRELOAD:
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-                robot.blob.setTargetPosition(constants.rotatePreload);
+//                robot.blob.setTargetPosition(constants.rotatePreload);
                 if (!robot.blob.inPosition(3.8, 3.8, 0.18) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_0, true);
@@ -148,7 +148,7 @@ public class Close27 extends OpMode {
                 //robot.drive.followPath(constants.grabPickUp1, constants.getMaxPower(), true);
                 robot.blob.setTargetPosition(constants.pickUpPose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                setPathState(AutoStates.GO_TO_SCORE1);
+                setPathState(AutoStates.GO_CLEAR);
                 break;
 
             case GO_TO_SCORE1:
@@ -193,7 +193,7 @@ public class Close27 extends OpMode {
                 if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.blob.setTargetPosition(constants.clear);
-                setPathState(AutoStates.GO_TO_SCORE2);
+                setPathState(AutoStates.GO_TO_SCORE1);
                 break;
             case GO_TO_SCORE2:
                 //robot.drive.followPath(constants.scorePickup2, true);
@@ -250,7 +250,11 @@ public class Close27 extends OpMode {
                 robot.blob.setTargetPosition(constants.scorePoseGateInter);
                 if(robot.blob.progress > constants.percentage) {
                     setPathState(AutoStates.WAIT_SCORE_GATE_PICKUP);
-                    robot.blob.setTargetPosition(constants.scorePose);
+                    if (gateCycleCounter < gateCycleCount) {
+                        robot.blob.setTargetPosition(constants.scorePose);
+                    } else {
+                        robot.blob.setTargetPosition(constants.parkPose24);
+                    }
                 }
 
 
@@ -267,7 +271,7 @@ public class Close27 extends OpMode {
                 if (gateCycleCounter < gateCycleCount) {
                     sleep(constants.getShootingTimeSOTM(), AutoStates.CYCLE_SOTM,true);
                 } else {
-                    sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK,true);
+                    sleep(constants.getShootingTime(), AutoStates.PARK,true);
                 }
                 break;
             case CYCLE_SOTM:

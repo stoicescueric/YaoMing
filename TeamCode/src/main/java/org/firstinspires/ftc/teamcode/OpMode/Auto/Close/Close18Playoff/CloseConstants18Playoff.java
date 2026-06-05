@@ -83,6 +83,8 @@ public class CloseConstants18Playoff {
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
+    public static double parkX24 = -3.5, parkY24 = 24.7, parkHeading24 = Math.toRadians(90)-Math.PI;
+
 
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
@@ -91,6 +93,7 @@ public class CloseConstants18Playoff {
     public static double preloadVel = 1550;
     public static double preloadHood = 0.11;
     public Pose parkPose;
+    public Pose parkPose24;
     public Pose clear;
     public Pose gateFailSafe;
 
@@ -100,6 +103,7 @@ public class CloseConstants18Playoff {
     public void buildPaths() {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
+        parkPose24 = new Pose(parkX24, parkY24 * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading24 * (Info.alliance == Alliance.RED ? 1 : -1));
         startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1), headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1));
 
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
