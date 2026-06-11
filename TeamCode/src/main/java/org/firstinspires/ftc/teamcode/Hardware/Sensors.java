@@ -162,7 +162,7 @@ public class Sensors {
     }
 
     public static boolean usePredictivePose = true;
-    public static double timeLatencyTurret = 0.35; //sec
+    public static double timeLatencyTurret = 0.4; //sec
     public static double debouncerTime = 50;
 
     private void initSensors() {
@@ -341,7 +341,7 @@ public class Sensors {
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
-    public static double accelFactorLatency = -0.0;
+    public static double accelFactorLatency = 0.01;
     public static boolean lookUpTurret = false;
     public static double rpmTimeLatency = 0;
 
