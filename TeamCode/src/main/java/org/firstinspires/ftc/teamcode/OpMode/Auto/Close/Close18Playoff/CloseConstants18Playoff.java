@@ -76,14 +76,14 @@ public class CloseConstants18Playoff {
 
     public static double stack1Take = 1;
     //clear gate
-    public static double clearX = -3, clearY = 52, clearHeading = Math.toRadians(270);
+    public static double clearX = 1.701067, clearY = 56.659670, clearHeading = -3.1444059;
     public static double clearXInter = -5, clearYInter = 51, clearHeadingInter = 4.71;
     public Pose clearInter;
 
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
-    public static double parkX24 = -3.5, parkY24 = 24.7, parkHeading24 = Math.toRadians(90)-Math.PI;
+    public static double parkX24 = -5.8740, parkY24 = 22.28701, parkHeading24 = -5.29419;
 
 
     public static double timerFailsafeGateLastRun = 29500;

@@ -47,7 +47,7 @@ public class TeleOP extends LinearOpMode
     Pose startPose;
     Pose startPoseRed = new Pose(-3.5, 24.7, Math.PI/2);
     Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
-    Pose resetPoseRed = new Pose(-6, 53.3, Math.PI/2); //TODO
+    Pose resetPoseRed = new Pose(-5.7, 53.7, Math.PI/2); //TODO
     Pose resetPoseRedHuman = new Pose(64.7, 60.4, Math.PI/2); //TODO
     Pose resetPoseRedBlue = new Pose(63, 60.4, Math.PI/2); //TODO
     Pose resetPoseBlue = new Pose(-7,-53.2, -Math.PI/2);

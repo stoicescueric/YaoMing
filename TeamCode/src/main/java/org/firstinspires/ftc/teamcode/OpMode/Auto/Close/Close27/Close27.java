@@ -101,13 +101,13 @@ public class Close27 extends OpMode {
                 break;
             case GO_TO_SCORE_FROM_START:
                 //robot.drive.followPath(constants.scorePreload, true);
-                robot.blob.setTargetPosition(constants.preload, 80);
+                robot.blob.setTargetPosition(constants.preload);
                 robot.outtake.specificValues(constants.preload);
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
 //                robot.outtake.turret.setPosFixed(constants.getTurretPosition());
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-                setPathState(AutoStates.WAIT_SCORE_PRELOAD);
+                setPathState(AutoStates.ROTATE_PRELOAD);
                 break;
             case ROTATE_PRELOAD:
                 if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
@@ -115,7 +115,7 @@ public class Close27 extends OpMode {
                 break;
             case WAIT_SCORE_PRELOAD:
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-//                robot.blob.setTargetPosition(constants.rotatePreload);
+                robot.blob.setTargetPosition(constants.rotatePreload);
                 if (!robot.blob.inPosition(3.8, 3.8, 0.18) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_0, true);
@@ -152,7 +152,7 @@ public class Close27 extends OpMode {
                 break;
 
             case GO_TO_SCORE1:
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())
+                if (!robot.blob.inPosition(1.3,1.3,0.11) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())
                     break;
                 //robot.drive.followPath(constants.scorePickup1, true);
                 robot.blob.maxPower = 1;
