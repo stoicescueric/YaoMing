@@ -91,9 +91,9 @@ public class Sensors {
     private double lastStillHeading = Double.NaN;
     private long lastStillCheckLoopTimeNs = 0; // Robot.loopTime at last history update
 
-    public static double CLOSEZONE_X1 = -89, CLOSEZONE_Y1 = 89;
-    public static double CLOSEZONE_X2 = 15, CLOSEZONE_Y2 = 0;
-    public static double CLOSEZONE_X3 = -89, CLOSEZONE_Y3 = -89;
+    public static double CLOSEZONE_X1 = -72, CLOSEZONE_Y1 = 72;   // top-left field corner
+    public static double CLOSEZONE_X2 = 72, CLOSEZONE_Y2 = 72;    // top-right field corner
+    public static double CLOSEZONE_X3 = 0, CLOSEZONE_Y3 = 0;      // field center
     public static double FARZONE_X1 = 63, FARZONE_Y1 = 24;
     public static double FARZONE_X2 = 44, FARZONE_Y2 = 0;
     public static double FARZONE_X3 = 63, FARZONE_Y3 = -24;
@@ -328,8 +328,13 @@ public class Sensors {
         }
 
         if (!sotm) {
-            shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
-                    , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
+            if (poseAlign) {
+                double[] aim = closestPointInZone(shooterWorldX, shooterWorldY);
+                shooterAngle = Math.atan2(getTargetY() - aim[1], getTargetX() - aim[0]);
+            } else {
+                shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
+                        , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
+            }
 //            shooterAngle = Math.atan2(getTargetY() - robot.blob.odo.predictedY
 //                    , getTargetX() - robot.blob.odo.predictedX); //TEST
         } else
@@ -343,6 +348,7 @@ public class Sensors {
 
     public static double accelFactorLatency = 0.01;
     public static boolean lookUpTurret = false;
+    public static boolean poseAlign = false;
     public static double rpmTimeLatency = 0;
 
     /**
@@ -476,6 +482,39 @@ public class Sensors {
         return false;
     }
 
+    public double[] closestPointInZone(double px, double py) {
+        boolean isFar = shootingLong();
+        double x1 = isFar ? FARZONE_X1 : CLOSEZONE_X1, y1 = isFar ? FARZONE_Y1 : CLOSEZONE_Y1;
+        double x2 = isFar ? FARZONE_X2 : CLOSEZONE_X2, y2 = isFar ? FARZONE_Y2 : CLOSEZONE_Y2;
+        double x3 = isFar ? FARZONE_X3 : CLOSEZONE_X3, y3 = isFar ? FARZONE_Y3 : CLOSEZONE_Y3;
+
+        if (isPointInTriangle(px, py, x1, y1, x2, y2, x3, y3)) {
+            return new double[]{px, py};
+        }
+
+        double[] best = closestOnSegment(x1, y1, x2, y2, px, py);
+        double bd = Math.hypot(best[0] - px, best[1] - py);
+
+        double[] e2 = closestOnSegment(x2, y2, x3, y3, px, py);
+        double d2 = Math.hypot(e2[0] - px, e2[1] - py);
+        if (d2 < bd) { best = e2; bd = d2; }
+
+        double[] e3 = closestOnSegment(x3, y3, x1, y1, px, py);
+        double d3 = Math.hypot(e3[0] - px, e3[1] - py);
+        if (d3 < bd) { best = e3; }
+
+        return best;
+    }
+
+    private double[] closestOnSegment(double ax, double ay, double bx, double by, double px, double py) {
+        double dx = bx - ax, dy = by - ay;
+        double lsq = dx * dx + dy * dy;
+        if (lsq == 0) return new double[]{ax, ay};
+        double t = ((px - ax) * dx + (py - ay) * dy) / lsq;
+        t = Math.max(0.0, Math.min(1.0, t));
+        return new double[]{ax + t * dx, ay + t * dy};
+    }
+
     private boolean isPointInTriangle(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3) {
         double denom = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
         if (denom == 0) return false;
@@ -557,6 +596,8 @@ public class Sensors {
     public boolean isBreakBeamPos3Low() {
         return breakBeamPos3High;
     }
+
+    public void setPoseAlign(boolean type){poseAlign=type;}
 
     public double getHowLongBeam3() {
         return System.currentTimeMillis() - firstTrueBeam3;

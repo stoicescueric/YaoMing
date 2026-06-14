@@ -14,7 +14,7 @@ public class CloseConstants18Playoff {
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
     public static double shootingTime = 250;
-    public static double shootingTimeSOTM = 200;
+    public static double shootingTimeSOTM = 220;
     public static double shootingTimeSOTMdelay = 70;
     public static double preloadWait = 100;
     public static double shootingPercentage = 0.9;
@@ -30,7 +30,7 @@ public class CloseConstants18Playoff {
     public static double launcherVelocity = 1000;
     public static double waitBeforeClear = 500;
     public static double clearTimeAfterCycle = 550;
-    public static double startX = -56, startY = 45, headingStartRed = -4.054268299733297; //TODO
+    public static double startX = -56.19205985482283, startY = 44.60143562376968, headingStartRed = -4.054268299733297; //TODO
     public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
     public Pose startPose;
     public static double shootingX = -9, shootingY = 15, shootingHeading = Math.toRadians(300);
@@ -76,7 +76,7 @@ public class CloseConstants18Playoff {
 
     public static double stack1Take = 1;
     //clear gate
-    public static double clearX = 1.701067, clearY = 56.659670, clearHeading = -3.1444059;
+    public static double clearX = 0, clearY = 55.9, clearHeading = -3.1444059;
     public static double clearXInter = -5, clearYInter = 51, clearHeadingInter = 4.71;
     public Pose clearInter;
 

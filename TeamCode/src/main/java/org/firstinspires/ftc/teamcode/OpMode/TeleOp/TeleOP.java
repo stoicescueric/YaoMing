@@ -81,6 +81,7 @@ public class TeleOP extends LinearOpMode
         waitForStart();
         robot.outtake.launcher.autoAimOn(true);
         robot.sensors.setUsePredictivePose(true);
+        robot.sensors.setPoseAlign(false);
         motorTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
         while(opModeIsActive())
