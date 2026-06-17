@@ -36,25 +36,27 @@ public class Odometry {
     // --- Acceleration State ---
     public double xAcc, yAcc;
     private double lastVelocityX, lastVelocityY;
-    private final ElapsedTime timerAcc = new ElapsedTime();
+    private final ElapsedTime loopTimer = new ElapsedTime();
 
     // --- Constants & Config ---
     public double zpam = BlobConstants.zpam;
     public double xDeceleration = BlobConstants.xDeceleration;
     public double yDeceleration = BlobConstants.yDeceleration;
 
-    public static double filterParameterTranslational = 0.9;
-    public static double filterParameterTranslationalAcc = 0.4;
-    public static double filterParameterAngular = 0.8;
-    private static final int ACCEL_WINDOW = 5;
+    // Time constants (seconds) for the dt-aware low-pass filters. Larger tau = more smoothing.
+    // These supersede the old fixed alphas: alpha = dt / (tau + dt) is recomputed every loop,
+    // so the cutoff stays constant regardless of loop frequency.
+    public static double tauTranslational = 0.0017;     // ~ old alpha 0.9 @ 15ms loop
+    public static double tauTranslationalAcc = 0.0225;  // ~ old alpha 0.4 @ 15ms loop
+    public static double tauAngular = 0.0038;           // ~ old alpha 0.8 @ 15ms loop
 
     // --- Filters ---
-    private final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameterTranslational, 0);
-    private final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameterTranslational, 0);
-    private final LowPassFilter hVelocityFilter = new LowPassFilter(filterParameterAngular, 0);
+    private final LowPassFilter xVelocityFilter = LowPassFilter.fromTimeConstant(tauTranslational, 0);
+    private final LowPassFilter yVelocityFilter = LowPassFilter.fromTimeConstant(tauTranslational, 0);
+    private final LowPassFilter hVelocityFilter = LowPassFilter.fromTimeConstant(tauAngular, 0);
 
-    private final LowPassFilter xAccFilter = new LowPassFilter(filterParameterTranslationalAcc, 0);
-    private final LowPassFilter yAccFilter = new LowPassFilter(filterParameterTranslationalAcc, 0);
+    private final LowPassFilter xAccFilter = LowPassFilter.fromTimeConstant(tauTranslationalAcc, 0);
+    private final LowPassFilter yAccFilter = LowPassFilter.fromTimeConstant(tauTranslationalAcc, 0);
 
 
     public Odometry(HardwareMap hardwareMap) {
@@ -72,7 +74,7 @@ public class Odometry {
             Thread.currentThread().interrupt(); // Restore interrupted status
         }
 
-        timerAcc.reset();
+        loopTimer.reset();
     }
 
     public void update() {
@@ -97,31 +99,34 @@ public class Odometry {
     }
 
     private void calculateVelAndAcc() {
-        // Read & Filter Velocities
-        xVelocity = xVelocityFilter.getValue(odo.getVelX(DistanceUnit.INCH));
-        yVelocity = yVelocityFilter.getValue(odo.getVelY(DistanceUnit.INCH));
-        headingVelocity = hVelocityFilter.getValue(odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
+        // One loop dt drives every filter so the cutoff is loop-rate independent.
+        double dt = loopTimer.seconds();
+        loopTimer.reset();
+        if (dt < 1e-4) dt = 1e-4; // guard against zero/negative dt
+
+        // Push live dashboard tuning into the filters.
+        xVelocityFilter.setTimeConstant(tauTranslational);
+        yVelocityFilter.setTimeConstant(tauTranslational);
+        hVelocityFilter.setTimeConstant(tauAngular);
+        xAccFilter.setTimeConstant(tauTranslationalAcc);
+        yAccFilter.setTimeConstant(tauTranslationalAcc);
+
+        // Read & Filter Velocities (dt-aware EMA: alpha = dt / (tau + dt))
+        xVelocity = xVelocityFilter.getValue(odo.getVelX(DistanceUnit.INCH), dt);
+        yVelocity = yVelocityFilter.getValue(odo.getVelY(DistanceUnit.INCH), dt);
+        headingVelocity = hVelocityFilter.getValue(odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS), dt);
         speedTranslational = Math.hypot(xVelocity, yVelocity);
 
-        // Safely Calculate Acceleration (Prevent Divide-by-Zero)
-        double dt = timerAcc.seconds();
-        if (dt > 0.001) {
-            double rawXAcc = (xVelocity - lastVelocityX) / dt;
-            double rawYAcc = (yVelocity - lastVelocityY) / dt;
+        // Acceleration from filtered velocity, then low-passed with the same dt.
+        double rawXAcc = (xVelocity - lastVelocityX) / dt;
+        double rawYAcc = (yVelocity - lastVelocityY) / dt;
 
-            // Apply Low Pass Filter
-            double lpfXAcc = xAccFilter.getValue(rawXAcc);
-            double lpfYAcc = yAccFilter.getValue(rawYAcc);
+        xAcc = xAccFilter.getValue(rawXAcc, dt);
+        yAcc = yAccFilter.getValue(rawYAcc, dt);
 
-            // Apply Moving Average (Warning: Double filtering causes phase lag)
-            xAcc = lpfXAcc;
-            yAcc = lpfYAcc;
-
-            // Save states for next loop
-            lastVelocityX = xVelocity;
-            lastVelocityY = yVelocity;
-            timerAcc.reset();
-        }
+        // Save states for next loop
+        lastVelocityX = xVelocity;
+        lastVelocityY = yVelocity;
     }
 
     public double xVelRobotCentric,yVelRobotCentricl;

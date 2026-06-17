@@ -111,6 +111,7 @@ public class TeleOP extends LinearOpMode
                 telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
                 telemetry.addData("velocity x",robot.sensors.getVelX());
                 telemetry.addData("velocity y",robot.sensors.getVelY());
+                telemetry.addData("robot speed (in/s)",Math.hypot(robot.sensors.getVelX(), robot.sensors.getVelY()));
                 telemetry.addData("power shooter",robot.outtake.launcher.getPower());
                 telemetry.addData("timer", motorTimer.seconds());
 

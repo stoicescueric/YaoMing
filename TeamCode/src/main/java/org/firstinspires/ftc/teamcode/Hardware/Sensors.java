@@ -331,9 +331,10 @@ public class Sensors {
             if (poseAlign) {
                 double[] aim = closestPointInZone(shooterWorldX, shooterWorldY);
                 shooterAngle = Math.atan2(getTargetY() - aim[1], getTargetX() - aim[0]);
+            } else if (Math.hypot(robot.sensors.getVelX(), robot.sensors.getVelY()) > poseAlignTreshold) {
+                shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency)), getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
             } else {
-                shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
-                        , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
+                shooterAngle = Math.atan2(getTargetY() - (shooterWorldY), getTargetX() - (shooterWorldX));
             }
 //            shooterAngle = Math.atan2(getTargetY() - robot.blob.odo.predictedY
 //                    , getTargetX() - robot.blob.odo.predictedX); //TEST
@@ -349,6 +350,7 @@ public class Sensors {
     public static double accelFactorLatency = 0.01;
     public static boolean lookUpTurret = false;
     public static boolean poseAlign = false;
+    public static double poseAlignTreshold = 37;
     public static double rpmTimeLatency = 0;
 
     /**
