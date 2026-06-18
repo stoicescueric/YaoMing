@@ -125,14 +125,16 @@ public class Sensors {
     public long firstTrueBeam1, firstTrueBeam2, firstTrueBeam3;
 
     // --- SOTM / TURRET PREDICTION VARIABLES ---
-    public static double ACCEL_COMP_FACTOR = 0;     // Multiplier for the 0.5*a*t^2 term
-    public static double SOTM_GAIN = 0.9;            // Multiplier for physical momentum loss
+    public static double ACCEL_COMP_FACTOR = 0.17;     // Multiplier for the 0.5*a*t^2 term
+    public static double ACCEL_COMP_FACTOR_RPM = 0.17;     // Multiplier for the 0.5*a*t^2 term
+    public static double SOTM_GAIN = 1.25;            // Multiplier for physical momentum loss
     public static double SHOOTER_FEEDER_DELAY = 0.05; // Sec: Delay from 'fire' to ball exit
     public static double TURRET_MECH_LOOKAHEAD_S = 0.1; // Sec: Delay for Turret slew lag
     public static double VELO_THRESHOLD = 4.0;        // Rad/s: Deadband for lookahead
     public static double PHYSICS_SHOT_TIME_EPS = 0.05;// Convergence threshold for the solver
 
     private double lastTurretAngle = 0;
+    public static double weightTOFRadial = 0.55;
     private double turretAngleVelo = 0;
     private ElapsedTime turretAngleTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
@@ -154,10 +156,10 @@ public class Sensors {
         shotTime.add(50, 0.5);
         shotTime.add(60, 0.54);
         shotTime.add(76, 0.6);
-        shotTime.add(85, 0.7);
-        shotTime.add(95, 0.8);
-        shotTime.add(110, 0.95);
-        shotTime.add(130, 1.05);
+        shotTime.add(85, 0.65);
+        shotTime.add(95, 0.7);
+        shotTime.add(110, 0.8);
+        shotTime.add(130, 0.9);
         shotTime.createLUT();
     }
 
@@ -216,7 +218,8 @@ public class Sensors {
 
     double interpolatedTOF;
     double virtualDistance;
-
+    public static double TURRET_SOTM_SIGN = -1;
+    public static double RPM_SOTM_SIGN = -1;
     public boolean isFarZone() {
         return currentX > switchTarget;
     }
@@ -256,27 +259,87 @@ public class Sensors {
 //        shooterWorldY = currentY;
 
         if (sotm) {
-            double deltaX = targetX - getX();
-            double deltaY = targetY - getY();
-            virtualDistance = Math.hypot(deltaX, deltaY);
+            double dx = targetX - shooterWorldX;
+            double dy = targetY - shooterWorldY;
+
+            double realDistance = Math.max(Math.hypot(dx, dy), 1e-6);
+
+            // Direction from shooter to target.
+            double dirX = dx / realDistance;
+            double dirY = dy / realDistance;
+
+            // Perpendicular to target line.
+            double lateralX = -dirY;
+            double lateralY = dirX;
+
+            virtualDistance = realDistance;
             interpolatedTOF = shotTime.get(virtualDistance);
             if (useFixedTof) interpolatedTOF = fixedTOF;
 
             for (int i = 0; i < convergenceLoopCnt; i++) {
-                double t = SHOOTER_FEEDER_DELAY + interpolatedTOF;
-                double t2 = t * t;
+                // Separate TOF weights so you can tune turret and RPM independently.
+                double turretT = SHOOTER_FEEDER_DELAY + interpolatedTOF * weightTOF;
+                double rpmT = SHOOTER_FEEDER_DELAY + interpolatedTOF * weightTOFRadial;
 
-                double displaceX = ((xVelocityRobot * t) + (xAccRobot * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
-                double displaceY = ((yVelocityRobot * t) + (yAccRobot * ACCEL_COMP_FACTOR)) * SOTM_GAIN;
+                double turretT2 = turretT * turretT;
+                double rpmT2 = rpmT * rpmT;
 
-                virtualTargetX = targetX + (displaceX * sotmDirX);
-                virtualTargetY = targetY + (displaceY * sotmDirY);
-                double newVirtualDistance = Math.hypot(virtualTargetX - getX(), virtualTargetY - getY());
+                // Positive radialVel = robot moving toward target.
+                double radialVel =
+                        xVelocityRobot * dirX
+                                + yVelocityRobot * dirY;
+
+                double radialAccel =
+                        xAccRobot * dirX
+                                + yAccRobot * dirY;
+
+                // Positive lateralVel = robot moving sideways across target line.
+                double lateralVel =
+                        xVelocityRobot * lateralX
+                                + yVelocityRobot * lateralY;
+
+                double lateralAccel =
+                        xAccRobot * lateralX
+                                + yAccRobot * lateralY;
+
+
+
+                // Radial correction changes virtual distance, so it helps RPM/hood.
+                double radialDrift =
+                        radialVel * rpmT
+                                + 0.5 * radialAccel * rpmT2 * ACCEL_COMP_FACTOR_RPM;
+
+                // Lateral correction changes angle, so it helps turret lead.
+                double lateralDrift =
+                        lateralVel * turretT
+                                + 0.5 * lateralAccel * turretT2 * ACCEL_COMP_FACTOR;
+
+                radialDrift *= SOTM_GAIN ;
+                lateralDrift *= SOTM_GAIN;
+
+                // Aim from where the shooter will be by moving the target opposite robot motion.
+                // If either correction is backwards, flip its sign constant.
+                virtualTargetX =
+                        targetX
+                                + RPM_SOTM_SIGN * dirX * radialDrift
+                                + TURRET_SOTM_SIGN * lateralX * lateralDrift;
+
+                virtualTargetY =
+                        targetY
+                                + RPM_SOTM_SIGN * dirY * radialDrift
+                                + TURRET_SOTM_SIGN * lateralY * lateralDrift;
+
+                double newVirtualDistance = Math.hypot(
+                        virtualTargetX - shooterWorldX,
+                        virtualTargetY - shooterWorldY
+                );
+
                 double newTOF = shotTime.get(newVirtualDistance);
                 if (useFixedTof) newTOF = fixedTOF;
 
-
-                if (Math.abs(newTOF - interpolatedTOF) < PHYSICS_SHOT_TIME_EPS) break;
+                if (Math.abs(newTOF - interpolatedTOF) < PHYSICS_SHOT_TIME_EPS) {
+                    break;
+                }
 
                 virtualDistance = newVirtualDistance;
                 interpolatedTOF = newTOF;
@@ -327,13 +390,13 @@ public class Sensors {
             breakBeamPos3High = false;
         }
 
+
         if (!sotm) {
             if (poseAlign) {
                 double[] aim = closestPointInZone(shooterWorldX, shooterWorldY);
                 shooterAngle = Math.atan2(getTargetY() - aim[1], getTargetX() - aim[0]);
             } else {
-                shooterAngle = Math.atan2(getTargetY() - (shooterWorldY + (velY * timeLatencyTurret + yAccRobot * accelFactorLatency))
-                        , getTargetX() - (shooterWorldX + velX * timeLatencyTurret + accelFactorLatency * xAccRobot)); //TEST
+                shooterAngle = getTurretOnlySOTMAngle();
             }
 //            shooterAngle = Math.atan2(getTargetY() - robot.blob.odo.predictedY
 //                    , getTargetX() - robot.blob.odo.predictedX); //TEST
@@ -346,7 +409,61 @@ public class Sensors {
         voltage = voltageFilter.getValue(voltageSensor.getVoltage());
     }
 
-    public static double accelFactorLatency = 0;
+    public double getTurretOnlySOTMAngle() {
+        double dx = targetX - shooterWorldX;
+        double dy = targetY - shooterWorldY;
+
+        double distance = Math.hypot(dx, dy);
+
+        if (distance < 1e-6) {
+            return shooterAngle;
+        }
+
+        // Direct angle to the real target
+        double baseAngle = Math.atan2(dy, dx);
+
+        // Unit vector from shooter to target
+        double dirX = dx / distance;
+        double dirY = dy / distance;
+
+        // Perpendicular to target line.
+        // This is the direction that changes turret angle.
+        double lateralX = -dirY;
+        double lateralY = dirX;
+
+        // Project robot velocity and acceleration onto the lateral axis.
+        double lateralVel =
+                xVelocityRobot * lateralX
+                        + yVelocityRobot * lateralY;
+
+        double lateralAccel =
+                xAccRobot * lateralX
+                        + yAccRobot * lateralY;
+
+        double tof = shotTime.get(distance);
+        if (useFixedTof) {
+            tof = fixedTOF;
+        }
+
+        // Your model: effective TOF = feeder delay + weight * average TOF
+        double effectiveTof = SHOOTER_FEEDER_DELAY + tof * weightTOF;
+
+        double speed = Math.hypot(xVelocityRobot, yVelocityRobot);
+
+        // Predict sideways drift during the shot window
+        double lateralDrift =
+                lateralVel * effectiveTof
+                        + 0.5 * lateralAccel * effectiveTof * effectiveTof * accelFactorLatency;
+
+
+        // Convert sideways drift into an angular lead
+        double compensationAngle = Math.atan2(lateralDrift * TURRET_SOTM_SIGN, distance);
+
+        return baseAngle + compensationAngle;
+    }
+    public static double weightTOF = 0.7;
+
+    public static double accelFactorLatency = 0.17;
     public static boolean lookUpTurret = false;
     public static boolean poseAlign = false;
     public static double rpmTimeLatency = 0;

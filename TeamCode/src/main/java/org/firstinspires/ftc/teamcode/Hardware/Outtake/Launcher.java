@@ -131,7 +131,7 @@ public class Launcher implements Module {
     }
 
     public static double target_tilt = 0.5;
-    public double power;
+    public static double power;
 
     public static double hood_offset = 0;
     public static double offsetTicks = 0;
@@ -207,7 +207,7 @@ public class Launcher implements Module {
                 break;
             case TUNE_PID:
                 target = tunePidTarget;
-                power = velController.calculate(tunePidTarget, currentVel, sensors.getVoltage());
+                //power = velController.calculate(tunePidTarget, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;

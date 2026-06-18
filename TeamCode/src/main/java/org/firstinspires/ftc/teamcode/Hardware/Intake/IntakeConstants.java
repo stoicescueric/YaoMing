@@ -50,7 +50,7 @@ public class IntakeConstants {
     public static double powerArmLow = 0.46;
     public static double powerArmRecycle = 0.84;
     public static double powerArmIntake = 0.46;
-    public static double powerArmVeryLow = 0.46;
+    public static double powerArmVeryLow = 0.35;
 
     public static double preciseShotDelay = 400;
     public static double beam3StopDelay = 350;
