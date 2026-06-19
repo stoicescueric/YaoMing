@@ -20,7 +20,7 @@ public class Outtake {
     ElapsedTime shooterConsistency;
     public Turret turret;
     int cntTransfer = 0;
-    public static double transferThreeshold = 0;
+    public static double transferThreeshold = 1;
 
     public static boolean updateTurret = true;
     public static boolean updateLauncher = true;
@@ -73,11 +73,11 @@ public class Outtake {
                 break;
             case START_FEEDING_RAPID_FIRE:
                 turret.forceUpdate = true;
-                if((!verify_launcher || launcher.isReady())  && (launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
+                if((!verify_launcher || launcher.isReady())  && ((launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
                     cntTransfer++;
                 }
 
-                if(cntTransfer > transferThreeshold && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) {
+                if(cntTransfer > transferThreeshold ) {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.TRANSFER);
                     outtakeState = OuttakeState.RAPID_FIRE;
                     launcher.launcherState = Launcher.LauncherState.LAUNCHING;

@@ -220,12 +220,8 @@ public class IntakeTransfer implements Module {
                 robot.sensors.setLedColor(Sensors.LightColor.BLUE);
                 blockerState = BlockerState.BLOCKER_ACTUALLY_OPEN;
                 robot.outtake.launcher.snapshotVoltage();
-                if (blockerState != BlockerState.CLOSE) {
-                    intakeState = IntakeState.INTERMEDIARY_TRANSFER;
-                } else {
-                    sleep(IntakeConstants.openBlockerEarlyDelay, IntakeState.INTERMEDIARY_TRANSFER);
+                sleep(IntakeConstants.openBlockerEarlyDelay, IntakeState.INTERMEDIARY_TRANSFER);
 
-                }
 
                 //Log.w("START TRANSFER","previous state: " + previousState + " intakeState " + intakeState);
                 break;

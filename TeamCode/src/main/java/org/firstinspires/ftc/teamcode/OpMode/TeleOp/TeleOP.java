@@ -30,6 +30,7 @@ public class TeleOP extends LinearOpMode
     public boolean isReadyingFlywheel = false;
     public static double driverFrameOffsetDeg = -90;
     GamePadController gg;
+    GamePadController gg2;
     Robot robot;
 
     public static boolean isAutoAimOff = false;
@@ -71,6 +72,7 @@ public class TeleOP extends LinearOpMode
             }
         }
         gg = new GamePadController(gamepad1);
+        gg2 = new GamePadController(gamepad2);
 
 
         robot.blob.odo.setPose(startPose);
@@ -259,16 +261,16 @@ public class TeleOP extends LinearOpMode
 
 
         boolean isStill = true;
-        if(gg.dpadRightOnce()) {
+        if(gg.dpadRightOnce() || gg2.dpadRightOnce()) {
             robot.outtake.turret.addRemoveIncrementOffset(incrementTurret,1);
-        }else if(gg.dpadLeftOnce()) {
+        }else if(gg.dpadLeftOnce() || gg2.dpadLeftOnce()) {
             robot.outtake.turret.addRemoveIncrementOffset(incrementTurret,-1);
         }
 
-        if (gg.dpadUpOnce()) {
+        if (gg.dpadUpOnce() || gg2.dpadUpOnce()) {
             robot.outtake.launcher.setOffsetInch(3);
         }
-        if (gg.dpadDownOnce()) {
+        if (gg.dpadDownOnce() || gg2.dpadDownOnce()) {
             robot.outtake.launcher.setOffsetInch(-3);
         }
 

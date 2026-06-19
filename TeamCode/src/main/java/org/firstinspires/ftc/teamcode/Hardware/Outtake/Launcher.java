@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Util.Caching.CachingDcMotorEx;
 import org.firstinspires.ftc.teamcode.Util.Caching.CachingServo;
 import org.firstinspires.ftc.teamcode.Util.Controllers.Team254FlywheelController;
 import org.firstinspires.ftc.teamcode.Util.Controllers.velocityController;
+import org.firstinspires.ftc.teamcode.Util.Filters.LowPassFilter;
 import org.firstinspires.ftc.teamcode.Util.HardwareUtils;
 import org.firstinspires.ftc.teamcode.Util.Utils;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.InterpLUT;
@@ -62,17 +63,19 @@ public class Launcher implements Module {
     public double currentVel = 0;
     public double recycleVelocity = 500;
     public double recycleTilt = 1;
+    public static double coffiecntLowPassFilter = 0.4;
     public LauncherState launcherState = LauncherState.OFF;
     public static boolean rebuildTables = false;
 
     public static boolean use254 = false;
     Team254FlywheelController velocityController254;
     Robot robot;
+    LowPassFilter filter;
 
     public Launcher(Robot robot, Sensors sensors) {
         this.robot = robot;
-        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter1"), 0.007);
-        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter2"), 0.007);
+        this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter1"), 0.002);
+        this.motor2 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter2"), 0.002);
         tilt = robot.hw.get(Servo.class, "tilt");
         HardwareUtils.unlock(motor1);
         HardwareUtils.unlock(motor2);
@@ -86,6 +89,7 @@ public class Launcher implements Module {
         velController = new velocityController();
         velocityController254 = new Team254FlywheelController();
 
+        filter = new LowPassFilter(coffiecntLowPassFilter);
         this.sensors = sensors;
         velocityController.reset();
         velocityController254.reset();
@@ -166,6 +170,7 @@ public class Launcher implements Module {
 
     public static double maxCloseZone = 1610;
     public static double minCloseZone = 1200;
+    public static double accelerationWeight = 0.9;
 
     public static double maxFarZone = 2100;
     public static double minFarZone = 1950;
@@ -194,7 +199,7 @@ public class Launcher implements Module {
             rebuildTables = false;
         }
 
-        currentVel = -robot.blob.returnFrVelocity();
+        currentVel = filter.estimate(-robot.blob.returnFrVelocity());
 
         targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
 
@@ -329,8 +334,8 @@ public class Launcher implements Module {
                 } else {
                     power = velController.calculate(getTargetWithOffset(), currentVel, shootingVoltage);
                 }
-                motor1.setPower(power);
-                motor2.setPower(power);
+                motor1.setPower(power * accelerationWeight);
+                motor2.setPower(power * accelerationWeight);
                 break;
             case RECYCLE:
                 target = recycleVelocity;
