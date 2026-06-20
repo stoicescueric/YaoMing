@@ -31,7 +31,7 @@ public class velocityController {
     private static double lastError = 0;
     private static double lastPower = 0;
 
-    public static boolean pidPredict = false;
+    public static boolean pidPredict = true;
     public static double predictXThreshold = 36;
     public static double PRED_CLOSEZONE_X1 = -75, PRED_CLOSEZONE_Y1 = 83;   // top-left field corner
     public static double PRED_CLOSEZONE_X2 = -75,  PRED_CLOSEZONE_Y2 = -83;   // top-right field corner
