@@ -177,6 +177,11 @@ public class Launcher implements Module {
     public static double distanceOffset = 0;
     public static double distanceDefault = 0;
 
+
+    public static boolean forceDistance = false;
+    public static double forcedRobotX = 0; //robot coords nu shooter coords; robot angle nu e fortat
+    public static double forcedRobotY = 0;
+
     public double getOffsetTicks() {
         return offsetTicks;
     }
@@ -184,6 +189,9 @@ public class Launcher implements Module {
     public boolean closeMode = true;
     public boolean updateOffssetHood = false;
     double targetDistance;
+
+    public double predictX, predictY;
+    public boolean predicting = false;
 
     @Override
     public void update() {
@@ -201,7 +209,27 @@ public class Launcher implements Module {
 
         currentVel = filter.estimate(-robot.blob.returnFrVelocity());
 
-        targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
+        double shooterX = robot.sensors.getShooterWorldX();
+        double shooterY = robot.sensors.getShooterWorldY();
+        double[] predP = velController.predictPoint(shooterX, shooterY);
+        predictX = predP[0];
+        predictY = predP[1];
+        if (predP[0] == shooterX && predP[1] == shooterY) {
+            // pidPredict off / far side / already inside the zone -> real position.
+            predicting = false;
+            targetDistance = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
+        } else {
+            predicting = true;
+            // Projected onto the close-zone boundary -> pre-spin to the entry distance.
+            targetDistance = Math.hypot(robot.sensors.getTargetX() - predP[0],
+                    robot.sensors.getTargetY() - predP[1]) + distanceOffset + distanceDefault;
+        }
+
+        if (forceDistance) {
+            targetDistance = robot.sensors.getShooterDistanceFromRobot(
+                    forcedRobotX, forcedRobotY, robot.sensors.getHeading())
+                    + distanceOffset + distanceDefault;
+        }
 
         switch (launcherState) {
             case OFF:
@@ -212,7 +240,7 @@ public class Launcher implements Module {
                 break;
             case TUNE_PID:
                 target = tunePidTarget;
-                //power = velController.calculate(tunePidTarget, currentVel, sensors.getVoltage());
+                power = velController.calculate(tunePidTarget, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;

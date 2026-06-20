@@ -51,7 +51,7 @@ public class TeleOP extends LinearOpMode
     Pose resetPoseRed = new Pose(-5.7, 53.7, Math.PI/2); //TODO
     Pose resetPoseRedHuman = new Pose(64.7, 60.4, Math.PI/2); //TODO
     Pose resetPoseRedBlue = new Pose(63, 60.4, Math.PI/2); //TODO
-    Pose resetPoseBlue = new Pose(-7,-53.2, -Math.PI/2);
+    Pose resetPoseBlue = new Pose(-5.178795161209708,-53.01777997354823, -Math.PI/2);
     Pose resetCenter = new Pose(0, 0, Math.PI/2);
     private double loopTime = 0;
 

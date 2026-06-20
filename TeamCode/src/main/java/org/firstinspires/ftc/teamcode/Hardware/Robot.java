@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
+import org.firstinspires.ftc.teamcode.Util.Controllers.velocityController;
 
 import java.util.List;
 
@@ -175,6 +176,16 @@ public class Robot {
         field.strokeCircle(sensors.projectedX, sensors.projectedY, 2);
         field.setStroke("#4ef542");
         field.strokeCircle(movingGoalX,movingGoalY,2);
+
+        // pidPredict close-zone triangle + robot projection line (when projecting)
+        double[] zoneX = {velocityController.PRED_CLOSEZONE_X1, velocityController.PRED_CLOSEZONE_X2, velocityController.PRED_CLOSEZONE_X3};
+        double[] zoneY = {velocityController.PRED_CLOSEZONE_Y1, velocityController.PRED_CLOSEZONE_Y2, velocityController.PRED_CLOSEZONE_Y3};
+        field.setStroke("#ffaa00");
+        field.strokePolygon(zoneX, zoneY);
+        if (outtake.launcher.predicting) {
+            field.strokeCircle(outtake.launcher.predictX, outtake.launcher.predictY, 3);
+            field.strokeLine(shooterX, shooterY, outtake.launcher.predictX, outtake.launcher.predictY);
+        }
 
         TelemetryUtil.packet.put("Robot velX", sensors.getVelX());
         TelemetryUtil.packet.put("Robot velY", sensors.getVelY());

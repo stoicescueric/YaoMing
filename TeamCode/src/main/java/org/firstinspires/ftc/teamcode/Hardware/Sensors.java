@@ -91,9 +91,9 @@ public class Sensors {
     private double lastStillHeading = Double.NaN;
     private long lastStillCheckLoopTimeNs = 0; // Robot.loopTime at last history update
 
-    public static double CLOSEZONE_X1 = -72, CLOSEZONE_Y1 = 72;   // top-left field corner
-    public static double CLOSEZONE_X2 = 72, CLOSEZONE_Y2 = 72;    // top-right field corner
-    public static double CLOSEZONE_X3 = 0, CLOSEZONE_Y3 = 0;      // field center
+    public static double CLOSEZONE_X1 = -73, CLOSEZONE_Y1 = 83;   // top-left field corner
+    public static double CLOSEZONE_X2 = -75, CLOSEZONE_Y2 = 83;    // top-right field corner
+    public static double CLOSEZONE_X3 = 7, CLOSEZONE_Y3 = 0;      // field center
     public static double FARZONE_X1 = 63, FARZONE_Y1 = 24;
     public static double FARZONE_X2 = 44, FARZONE_Y2 = 0;
     public static double FARZONE_X3 = 63, FARZONE_Y3 = -24;
@@ -200,6 +200,14 @@ public class Sensors {
     public double getTargetY() {
         if (sotm) return virtualTargetY;
         return targetY;
+    }
+
+    public double getShooterWorldX() {
+        return shooterWorldX;
+    }
+
+    public double getShooterWorldY() {
+        return shooterWorldY;
     }
 
     CachingVoltageSensor voltageSensor;
@@ -732,6 +740,15 @@ public class Sensors {
         double dx = getTargetX() - pose.getX();
         double dy = getTargetY() - pose.getY();
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+
+    public double getShooterDistanceFromRobot(double robotX, double robotY, double heading) {
+        double sx = robotX + (FORWARD_TURRET_OFFSET * Math.cos(heading));
+        double sy = robotY + (FORWARD_TURRET_OFFSET * Math.sin(heading));
+        double dx = getTargetX() - sx;
+        double dy = getTargetY() - sy;
+        return Math.hypot(dx, dy);
     }
 
     public static double autoSensorBeam = 0.4 ;
