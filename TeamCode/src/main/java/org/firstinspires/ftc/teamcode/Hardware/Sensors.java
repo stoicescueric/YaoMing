@@ -472,7 +472,7 @@ public class Sensors {
     public static double weightTOF = 0.7;
 
     public static double accelFactorLatency = 0.17;
-    public static boolean lookUpTurret = false;
+    public static boolean lookUpTurret = true;
     public static boolean poseAlign = false;
     public static double rpmTimeLatency = 0;
 

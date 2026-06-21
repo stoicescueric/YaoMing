@@ -106,7 +106,8 @@ public class Close27 extends OpMode {
                 robot.blob.setTargetPosition(constants.preload);
                 robot.outtake.specificValues(constants.preload);
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.OPEN);
 //                robot.outtake.turret.setPosFixed(constants.getTurretPosition());
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 setPathState(AutoStates.ROTATE_PRELOAD);
