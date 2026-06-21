@@ -53,9 +53,9 @@ public class IntakeConstants {
     public static double powerArmVeryLow = 0.45;
 
     public static double preciseShotDelay = 400;
-    public static double beam3StopDelay = 350;
+    public static double beam3StopDelay = 100;
     public static double beam2stopDelay = 100;
-    public static double beam1stopDelay = 100;
+    public static double beam1stopDelay = 350;
     public static double timerRecycleFirstPhase = 150;
     public static double timerRecycleOpenBlocker = 200;
     public static double doneTransfer = 150;
