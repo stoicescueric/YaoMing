@@ -69,7 +69,7 @@ public class CloseConstants18Playoff {
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 13.8, gatePickupY = 56.5, gatePickupHeading = 4.340019301402063;
+    public static double gatePickupX = 13.8, gatePickupY = 56.5, gatePickupHeading = 4.30019301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -80,6 +80,7 @@ public class CloseConstants18Playoff {
     public static double clearXInter = -5, clearYInter = 51, clearHeadingInter = 4.71;
     public Pose clearInter;
 
+    public static double clearGateTime = 1500;
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
@@ -215,5 +216,6 @@ public class CloseConstants18Playoff {
     public double getTimeBeforePreloadSOTM(){return timeBeforePreloadSOTM;}
     public double getPreloadVel(){return preloadVel;}
     public double getPreloadHood(){return preloadHood;}
+    public double getClearGateTime(){return clearGateTime;}
 
 }

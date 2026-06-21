@@ -33,8 +33,8 @@ public class IntakeTransfer implements Module {
     public boolean stallTriggeredThisLoop = false;
     public static double INTAKE_NOMINAL_VOLTAGE = 12.0;
     public static double TRANSFER_NOMINAL_VOLTAGE = 12.0;
-    public static boolean normalizetransfer = true;
-    public static boolean normalizeIntake = true;
+    public static boolean normalizetransfer = false;
+    public static boolean normalizeIntake = false;
 
 
     public enum IntakeState {
