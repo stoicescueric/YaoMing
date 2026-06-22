@@ -69,7 +69,7 @@ public class CloseConstants18Playoff {
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 14, gatePickupY = 56.5, gatePickupHeading = 4.30019301402063;
+    public static double gatePickupX = 14, gatePickupY = 56.5, gatePickupHeading = 4.34019301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;

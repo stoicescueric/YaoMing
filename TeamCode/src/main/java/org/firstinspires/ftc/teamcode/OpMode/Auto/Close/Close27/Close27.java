@@ -81,7 +81,8 @@ public class Close27 extends OpMode {
         robot.sensors.setPoseAlign(true);
         robot.blob.odo.setPose(constants.startPose);
         robot.blob.odo.update();
-        robot.blob.targetHeading = constants.startPose.getHeading();
+        double startHeading = robot.blob.odo.getHeading();
+        robot.blob.targetHeading = (startHeading < 0) ? Math.abs(startHeading) : (2 * Math.PI - startHeading);
         pathTimer = new Timer();
         gateCycleCounter = 0;
         setPathState(AutoStates.GO_TO_SCORE_FROM_START);
@@ -120,7 +121,6 @@ public class Close27 extends OpMode {
                 break;
             case WAIT_SCORE_PRELOAD:
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-                robot.blob.setTargetPosition(constants.rotatePreload);
                 if (!robot.blob.inPosition(3.8, 3.8, 0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_0, true);

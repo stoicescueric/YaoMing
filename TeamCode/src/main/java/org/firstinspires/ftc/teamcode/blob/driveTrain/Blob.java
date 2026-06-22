@@ -319,8 +319,12 @@ public class Blob {
         }
 
 
-        totalDistance = Math.sqrt(Math.pow(targetX - prevX, 2) + Math.pow(targetY - prevY, 2));
-        travelDistance = Math.sqrt(Math.pow(odo.getX() - prevX, 2) + Math.pow(odo.getY() - prevY, 2));
+        double pathDx = targetX - prevX;
+        double pathDy = targetY - prevY;
+        double travDx = odo.getX() - prevX;
+        double travDy = odo.getY() - prevY;
+        totalDistance = Math.sqrt(pathDx * pathDx + pathDy * pathDy);
+        travelDistance = totalDistance > 0 ? (travDx * pathDx + travDy * pathDy) / totalDistance : 0;
         progress = totalDistance > 0 ? Math.min(Math.max(travelDistance / totalDistance, 0), 1) : 1;
 
         if (useHeadingThreshold) {
