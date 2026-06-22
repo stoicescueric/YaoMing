@@ -8,24 +8,24 @@ public class IntakeConstants {
     /*-----MOTOR POWERS---*/
     public static double intakePowerIntake = 1;
     public static double intakePowerIntakeFarZone = 0.6;
-    public static double transferPowerIntake = 0.9;
+    public static double transferPowerIntake = 0.83;
     public static double transferPowerIntakeFarZone = 0.6;
     public static double reversePower = 1;
     public static double intakePowerRecycle = 1;
 
-    public static double transferPowerTransfer = 0.9;
+    public static double transferPowerTransfer = 0.83;
     public static double intakeFirstPhase = 0;
     public static double intakeSecondPhase = 0.5;
     public static double transferFirstPhase = 0;
     public static double transferSecondPhase = 0.5;
     public static double onPowerConveyer = 1;
-    public static double ConveyerLittle = -0.05;
+    public static double ConveyerLittle = -0.0;
     public static double IntakeLittle = 0.05;
 
     public static double timerRecycleOne = 230;
     public static double timerRecycleTwo = 475;
     public static double powerArmRecycleUp = 100;
-    public static double openBlockerEarlyDelay = 100;
+    public static double openBlockerEarlyDelay = 20;
 
 
 

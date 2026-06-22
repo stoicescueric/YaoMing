@@ -168,13 +168,13 @@ public class Launcher implements Module {
     }
 
 
-    public static double maxCloseZone = 1610;
+    public static double maxCloseZone = 1640;
     public static double minCloseZone = 1200;
-    public static double accelerationWeight = 0.9;
+    public static double accelerationWeight = 1;
 
     public static double maxFarZone = 2100;
     public static double minFarZone = 1950;
-    public static double distanceOffset = 0;
+    public static double distanceOffset = 15;
     public static double distanceDefault = 0;
 
 
