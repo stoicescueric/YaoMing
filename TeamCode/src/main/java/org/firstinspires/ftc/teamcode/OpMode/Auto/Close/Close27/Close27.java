@@ -114,7 +114,8 @@ public class Close27 extends OpMode {
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case ROTATE_PRELOAD:
-                if (!robot.blob.inPosition(1.7, 1.7, 0.14) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(2, 2, 0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.sensors.toggleSOTM(false);
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case WAIT_SCORE_PRELOAD:
