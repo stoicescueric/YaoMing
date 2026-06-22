@@ -17,14 +17,14 @@ public class CloseConstants18Playoff {
     public static double shootingTimeSOTM = 220;
     public static double shootingTimeSOTMdelay = 70;
     public static double preloadWait = 100;
-    public static double shootingPercentage = 0.9;
+    public static double shootingPercentage = 0.8;
     public static double turretPositionRed = 0.315;
 
     public static double pickUp2Percentage = 0.8;
     public static double pickUp3Percentage = 0.8;
     public static double pickUp1Percentage = 0.8;
     public static double turretPositionBlue = 0.636;
-    public static double failSafeDtTime = 2000;
+    public static double failSafeDtTime = 1500;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
@@ -33,11 +33,11 @@ public class CloseConstants18Playoff {
     public static double startX = -56.19205985482283, startY = 44.60143562376968, headingStartRed = -4.054268299733297; //TODO
     public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
     public Pose startPose;
-    public static double shootingX = -9, shootingY = 16.5, shootingHeading = Math.toRadians(300);
-    public static double shootingS1X = -10, shootingS1Y = 16, shootingS1Heading = Math.toRadians(270);
+    public static double shootingX = -9, shootingY = 20, shootingHeading = Math.toRadians(300);
+    public static double shootingS1X = -10, shootingS1Y = 22, shootingS1Heading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 16,shootPreloadH = Math.toRadians(220);
     public static double rotatePreloadX = -14.5,rotatePreloadY = 12,rotatePreloadH = Math.toRadians(270);
-    public static double shootingInterX = -9, shootingInterY = 15.28, shootingUnterHeading = Math.toRadians(270);
+    public static double shootingInterX = -9, shootingInterY = 18, shootingUnterHeading = Math.toRadians(270);
     public Pose scorePose;
     public Pose scoreS1Pose;
     public Pose scorePoseGateInter;
@@ -59,7 +59,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 950;
+    public static long failSafePickupTime = 850;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;

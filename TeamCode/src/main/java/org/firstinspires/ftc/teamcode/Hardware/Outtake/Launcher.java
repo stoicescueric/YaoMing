@@ -137,7 +137,7 @@ public class Launcher implements Module {
     public static double target_tilt = 0.5;
     public static double power;
 
-    public static double hood_offset = 0;
+    public static double hood_offset = -0.035;
     public static double offsetTicks = 0;
 
     public double getHoodPosition() {

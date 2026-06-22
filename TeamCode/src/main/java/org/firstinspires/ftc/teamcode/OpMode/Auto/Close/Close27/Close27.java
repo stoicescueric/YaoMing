@@ -78,7 +78,7 @@ public class Close27 extends OpMode {
 
     @Override
     public void start() {
-        robot.sensors.setPoseAlign(true);
+        //robot.sensors.setPoseAlign(true);
         robot.blob.odo.setPose(constants.startPose);
         robot.blob.odo.update();
         double startHeading = robot.blob.odo.getHeading();
@@ -106,6 +106,7 @@ public class Close27 extends OpMode {
                 break;
             case GO_TO_SCORE_FROM_START:
                 //robot.drive.followPath(constants.scorePreload, true);
+                robot.blob.maxPower=0.8;
                 robot.blob.setTargetPosition(constants.rotatePreload, 80);
                 robot.outtake.specificValues(constants.preload);
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
@@ -113,6 +114,7 @@ public class Close27 extends OpMode {
                 robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.OPEN);
 //                robot.outtake.turret.setPosFixed(constants.getTurretPosition());
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+                robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case ROTATE_PRELOAD:
@@ -122,13 +124,12 @@ public class Close27 extends OpMode {
             case WAIT_SCORE_PRELOAD:
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 if (!robot.blob.inPosition(3.8, 3.8, 0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
-                sleep(constants.getShootingTime(), AutoStates.GO_PICKUP1_0, true);
+                robot.blob.maxPower=1;
+                setPathState(AutoStates.GO_PICKUP1_0);
                 break;
             case GO_PICKUP2:
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.CLOSE);
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 //robot.drive.followPath(constants.grabPickup2, constants.getMaxPower(), true);
                 if (!pickup2) {
 
@@ -150,7 +151,7 @@ public class Close27 extends OpMode {
                     break;
                 }
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                robot.outtake.specificValues(constants.scorePose);
+//                robot.outtake.specificValues(constants.scorePose);
                 //robot.drive.followPath(constants.grabPickUp1, constants.getMaxPower(), true);
                 robot.blob.setTargetPosition(constants.pickUpPose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
@@ -196,7 +197,7 @@ public class Close27 extends OpMode {
                 setPathState(AutoStates.WAIT_SCORE2);
                 break;
             case WAIT_SCORE2:
-                if(robot.blob.progress > constants.getShootingPercentage()) {
+                if(robot.blob.progress > constants.getShootingPercentage()/2) {
                     robot.outtake.launcher.updateOffssetHood = true;
                 }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
@@ -211,7 +212,7 @@ public class Close27 extends OpMode {
             case GO_GATE_PICKUP:
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
-                robot.outtake.specificValues(constants.scorePose);
+               // robot.outtake.specificValues(constants.scorePose);
 
                 //robot.drive.followPath(constants.grabGatePickup, constants.getMaxPower(), true);
                 robot.blob.setTargetPosition(constants.gatePickupPose, constants.getHeadingThreeshold());
@@ -231,6 +232,7 @@ public class Close27 extends OpMode {
                 break;
             case WAIT_GATE_PICKUP:
                 if ((robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.PRE_OFF_OPEN || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
+                    robot.blob.setTargetPosition(constants.scorePose, 0.0);
                     setPathState(AutoStates.GO_SCORE_GATE_PICKUP);
                 }
                 break;
@@ -242,7 +244,7 @@ public class Close27 extends OpMode {
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 //robot.drive.followPath(constants.scoreGatePickup, true);
                 robot.blob.maxPower = 1;
-                robot.blob.setTargetPosition(constants.scorePoseGateInter);
+                robot.blob.setTargetPosition(constants.scorePose);
                 if(robot.blob.progress > constants.percentage) {
                     setPathState(AutoStates.WAIT_SCORE_GATE_PICKUP);
                     if (gateCycleCounter < gateCycleCount) {
@@ -255,12 +257,12 @@ public class Close27 extends OpMode {
 
                 break;
             case WAIT_SCORE_GATE_PICKUP:
-                if(robot.blob.progress > constants.getShootingPercentage()) {
+                if(robot.blob.progress > constants.getShootingPercentage()*0.5) {
                     robot.outtake.launcher.updateOffssetHood = true;
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 }
 
-                if (!robot.blob.inPosition(1.3,1.3,0.11) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
+                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 gateCycleCounter++;
                 if (gateCycleCounter < gateCycleCount) {
@@ -283,8 +285,6 @@ public class Close27 extends OpMode {
             case PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);                //robot.drive.followPath(constants.goToPark, true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                if (!robot.blob.inPosition()) break;
-
                 requestOpModeStop();
                 break;
             case SLEEP:
