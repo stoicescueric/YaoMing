@@ -108,11 +108,7 @@ public class Close27 extends OpMode {
                 //robot.drive.followPath(constants.scorePreload, true);
                 robot.blob.maxPower=0.8;
                 robot.blob.setTargetPosition(constants.rotatePreload, 80);
-                robot.outtake.specificValues(constants.preload);
-                robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.OPEN);
-//                robot.outtake.turret.setPosFixed(constants.getTurretPosition());
+                robot.sensors.toggleSOTM(true);
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
@@ -143,6 +139,7 @@ public class Close27 extends OpMode {
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 if (!robot.blob.getOverPercentage(constants.getPickUp1Percentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())
                     break;
+                robot.sensors.toggleSOTM(false);
                 setPathState(AutoStates.GO_PICKUP1);
                 break;
             case GO_PICKUP1:
