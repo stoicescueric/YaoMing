@@ -71,7 +71,7 @@ public class Close27 extends OpMode {
 
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
-        robot.sensors.setPoseAlign(true);
+        robot.sensors.setPoseAlign(false);
 
 
     }
@@ -92,7 +92,7 @@ public class Close27 extends OpMode {
     }
 
     public boolean failSafeGate = false;
-    boolean pickup2 = false,go_pickup2 = false,go_clear_intake = false;
+    boolean pickup2 = false,go_pickup2 = false,go_clear_intake = false,go_score2 = false;
     @Override
     public void loop() {
         telemetry.addData("auto state",autoStates);
@@ -191,15 +191,23 @@ public class Close27 extends OpMode {
                 break;
             case GO_TO_SCORE2:
                 //robot.drive.followPath(constants.scorePickup2, true);
-                robot.blob.setTargetPosition(constants.scorePose);
-                setPathState(AutoStates.WAIT_SCORE2);
+                robot.blob.maxPower = 1;
+                if(!go_score2) {
+                    robot.blob.setTargetPosition(constants.scorePose, 0.0);
+                    go_score2 = true;
+                    break;
+                }
+                if(robot.blob.progress > constants.percentage) {
+                    setPathState(AutoStates.WAIT_SCORE2);
+                    robot.blob.setTargetPosition(constants.scorePose);
+                }
                 break;
             case WAIT_SCORE2:
                 if(robot.blob.progress > constants.getShootingPercentage()/2) {
                     robot.outtake.launcher.updateOffssetHood = true;
                 }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.inPosition(1.3,1.3,0.11) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTimeSOTM(), AutoStates.SCORE2_SOTM,true);
                 break;

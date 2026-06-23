@@ -80,7 +80,7 @@ public class CloseConstants18Playoff {
     public static double clearXInter = -5, clearYInter = 51, clearHeadingInter = 4.71;
     public Pose clearInter;
 
-    public static double clearGateTime = 1500;
+    public static double clearGateTime = 1750;
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
@@ -89,8 +89,8 @@ public class CloseConstants18Playoff {
 
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
-    public static double clearStack2Timer = 250;
-    public static double timeBeforePreloadSOTM = 500;
+    public static double clearStack2Timer = 850;
+    public static double timeBeforePreloadSOTM = 570;
     public static double preloadVel = 1550;
     public static double preloadHood = 0.11;
     public Pose parkPose;
