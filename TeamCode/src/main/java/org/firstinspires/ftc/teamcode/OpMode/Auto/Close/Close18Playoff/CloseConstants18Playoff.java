@@ -14,8 +14,8 @@ public class CloseConstants18Playoff {
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
     public static double shootingTime = 250;
-    public static double shootingTimeSOTM = 220;
-    public static double shootingTimeSOTMdelay = 70;
+    public static double shootingTimeSOTM = 150;
+    public static double shootingTimeSOTMdelay = 100;
     public static double preloadWait = 100;
     public static double shootingPercentage = 0.8;
     public static double turretPositionRed = 0.315;
@@ -24,7 +24,8 @@ public class CloseConstants18Playoff {
     public static double pickUp3Percentage = 0.8;
     public static double pickUp1Percentage = 0.8;
     public static double turretPositionBlue = 0.636;
-    public static double failSafeDtTime = 1500;
+    public static double failSafeDtTime = 1250;
+    public static double goToGateTimer = 800;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
@@ -59,17 +60,17 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 850;
+    public static long failSafePickupTime = 1100;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
-    public static double failSafeGateTime = 1000;
+    public static double failSafeGateTime = 900;
     public static int gateClearCount1 = 1;
     public static int gateClearCount2 = 2;
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 14, gatePickupY = 56.5, gatePickupHeading = 4.34019301402063;
+    public static double gatePickupX = 14.5, gatePickupY = 57.4, gatePickupHeading = 4.2519301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -132,6 +133,9 @@ public class CloseConstants18Playoff {
 
     public double getLauncherVelocity() {
         return launcherVelocity;
+    }
+    public double getGoToGateTimer() {
+        return goToGateTimer;
     }
 
     public double getTurretPosition() {
