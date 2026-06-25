@@ -137,7 +137,8 @@ public class Launcher implements Module {
     public static double target_tilt = 0.5;
     public static double power;
 
-    public static double hood_offset = -0.035;
+    public static double hood_offset_close = -0.035;
+    public static double hood_offset_far = 0;
     public static double offsetTicks = 0;
 
     public double getHoodPosition() {
@@ -373,7 +374,7 @@ public class Launcher implements Module {
                 motor2.setPower(power);
                 break;
         }
-        tilt.setPosition(target_tilt + hood_offset);
+        tilt.setPosition(target_tilt + pickHoodOffset());
     }
 
     public void snapshotVoltage() {
@@ -445,4 +446,11 @@ public class Launcher implements Module {
     public void setUseAdaptiveVel(boolean val){useAdaptiveVel = val;}
     public void setIdleVelocityClose(double val){idleVelocityClose = val;}
     public void setTargetTilt(double tilt){target_tilt = tilt;}
+    public double pickHoodOffset(){
+        if(closeMode){
+            return hood_offset_close;
+        } else {
+            return hood_offset_far;
+        }
+    }
 }
