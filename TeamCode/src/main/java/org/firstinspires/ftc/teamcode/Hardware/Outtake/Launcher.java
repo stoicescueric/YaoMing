@@ -353,8 +353,8 @@ public class Launcher implements Module {
                             robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);
                             break;
                         }
-                        target_tilt = hood.get(targetDistance);
                     }
+                    target_tilt = hood.get(targetDistance);
                 }
 
 
