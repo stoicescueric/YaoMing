@@ -138,6 +138,10 @@ public class Robot {
         TelemetryUtil.packet.put("Launcher Velocity ", outtake.launcher.currentVel);
 
         TelemetryUtil.packet.put("Intake amps",intakeTransfer.intake.getCurrent(CurrentUnit.AMPS));
+        TelemetryUtil.packet.put("Shooter1 amps", outtake.launcher.getMotor1Amps());
+        TelemetryUtil.packet.put("Shooter2 amps", outtake.launcher.getMotor2Amps());
+        TelemetryUtil.packet.put("Shooter1 mAh", outtake.launcher.getMotor1mAh());
+        TelemetryUtil.packet.put("Shooter2 mAh", outtake.launcher.getMotor2mAh());
 
         TelemetryUtil.packet.put("Current X", sensors.getX());
         TelemetryUtil.packet.put("Current Y", sensors.getY());

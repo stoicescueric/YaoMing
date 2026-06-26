@@ -31,7 +31,7 @@ public class CloseConstants30 {
     public static double launcherVelocity = 1000;
     public static double waitBeforeClear = 500;
     public static double clearTimeAfterCycle = 550;
-    public static double startX = -56.19205985482283, startY = 44.60143562376968, headingStartRed = -4.054268299733297; //TODO
+    public static double startX = -57.14066633089322, startY = 43.2188019039124, headingStartRed = -4.0555341879474085; //TODO
     public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
     public Pose startPose;
     public static double shootingX = -9, shootingY = 20, shootingHeading = Math.toRadians(300);

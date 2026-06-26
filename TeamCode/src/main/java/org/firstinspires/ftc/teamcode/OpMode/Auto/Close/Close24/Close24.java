@@ -70,7 +70,7 @@ public class Close24 extends OpMode {
 
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
-        robot.sensors.setPoseAlign(false);
+        robot.sensors.setPoseAlign(true);
 
 
     }

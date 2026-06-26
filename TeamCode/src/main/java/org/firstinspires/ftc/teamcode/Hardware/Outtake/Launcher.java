@@ -8,7 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Module;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
@@ -72,6 +74,10 @@ public class Launcher implements Module {
     Robot robot;
     LowPassFilter filter;
 
+    private double motor1mAh = 0;
+    private double motor2mAh = 0;
+    private final ElapsedTime mAhTimer = new ElapsedTime();
+
     public Launcher(Robot robot, Sensors sensors) {
         this.robot = robot;
         this.motor1 = new CachingDcMotorEx(robot.hw.get(DcMotorEx.class, "shooter1"), 0.002);
@@ -93,6 +99,7 @@ public class Launcher implements Module {
         this.sensors = sensors;
         velocityController.reset();
         velocityController254.reset();
+        mAhTimer.reset();
     }
 
 
@@ -138,7 +145,7 @@ public class Launcher implements Module {
     public static double power;
 
     public static double hood_offset_close = -0.035;
-    public static double hood_offset_far = 0;
+    public static double hood_offset_far = -0.05;
     public static double offsetTicks = 0;
 
     public double getHoodPosition() {
@@ -196,6 +203,10 @@ public class Launcher implements Module {
 
     @Override
     public void update() {
+
+        updateEnergyUsage();
+
+        robot.sensors.setFixedTOF(!closeMode);
 
         if (launcherState != LauncherState.LAUNCHING && launcherState != LauncherState.SHOOT_STARTED) {
             velController.shooting = false;
@@ -375,6 +386,35 @@ public class Launcher implements Module {
                 break;
         }
         tilt.setPosition(target_tilt + pickHoodOffset());
+    }
+
+    private void updateEnergyUsage() {
+        double dtHours = mAhTimer.seconds() / 3600.0;
+        mAhTimer.reset();
+        motor1mAh += motor1.getCurrent(CurrentUnit.MILLIAMPS) * dtHours;
+        motor2mAh += motor2.getCurrent(CurrentUnit.MILLIAMPS) * dtHours;
+    }
+
+    public double getMotor1mAh() {
+        return motor1mAh;
+    }
+
+    public double getMotor2mAh() {
+        return motor2mAh;
+    }
+
+    public double getMotor1Amps() {
+        return motor1.getCurrent(CurrentUnit.AMPS);
+    }
+
+    public double getMotor2Amps() {
+        return motor2.getCurrent(CurrentUnit.AMPS);
+    }
+
+    public void resetEnergyUsage() {
+        motor1mAh = 0;
+        motor2mAh = 0;
+        mAhTimer.reset();
     }
 
     public void snapshotVoltage() {
