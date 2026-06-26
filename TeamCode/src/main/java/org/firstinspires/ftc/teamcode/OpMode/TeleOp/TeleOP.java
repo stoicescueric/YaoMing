@@ -89,6 +89,7 @@ public class TeleOP extends LinearOpMode
         while(opModeIsActive())
         {
             gg.update();
+            gg2.update();
             updateDrive();
 
 

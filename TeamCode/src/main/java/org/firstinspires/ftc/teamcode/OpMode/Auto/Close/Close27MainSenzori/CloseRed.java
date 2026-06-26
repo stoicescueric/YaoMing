@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 public class CloseRed extends Close27MainSensors {
     @Override
     public void init() {
-        Info.alliance = Alliance.BLUE;
+        Info.alliance = Alliance.RED;
 
         super.init();
     }

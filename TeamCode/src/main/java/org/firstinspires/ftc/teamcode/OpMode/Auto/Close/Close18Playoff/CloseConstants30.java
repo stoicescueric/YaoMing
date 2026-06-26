@@ -32,9 +32,9 @@ public class CloseConstants30 {
     public static double waitBeforeClear = 500;
     public static double clearTimeAfterCycle = 550;
     public static double startX = -57.14066633089322, startY = 43.2188019039124, headingStartRed = -4.0555341879474085; //TODO
-    public static double startXBlue = -57.2, startYBlue = -43.8, headingStartBlue = -2.229; //TODO
+    public static double startXBlue = -57.342159241203255, startYBlue = -43.25824407141979, headingStartBlue = -2.1819510618792933; //TODO
     public Pose startPose;
-    public static double shootingX = -9, shootingY = 20, shootingHeading = Math.toRadians(300);
+    public static double shootingX = -9, shootingY = 18, shootingHeading = Math.toRadians(300);
     public static double shootingS1X = -10, shootingS1Y = 22, shootingS1Heading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 16,shootPreloadH = Math.toRadians(220);
     public static double rotatePreloadX = -14.5,rotatePreloadY = 12,rotatePreloadH = Math.toRadians(270);
@@ -70,7 +70,7 @@ public class CloseConstants30 {
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 14.6, gatePickupY = 58, gatePickupHeading = 4.2519301402063;
+    public static double gatePickupX = 12.3, gatePickupY = 56.1, gatePickupHeading = 4.34019301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -85,7 +85,7 @@ public class CloseConstants30 {
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
-    public static double parkX24 = -5.8740, parkY24 = 22.28701, parkHeading24 = -5.29419;
+    public static double parkX24 = -26.55397670475517, parkY24 = 14.614846537432333, parkHeading24 = -5.501498047505514;
 
 
     public static double timerFailsafeGateLastRun = 29500;
@@ -106,7 +106,8 @@ public class CloseConstants30 {
 
         parkPose = new Pose(parkX, parkY * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         parkPose24 = new Pose(parkX24, parkY24 * (Info.alliance == Alliance.RED ? 1 : -1), parkHeading24 * (Info.alliance == Alliance.RED ? 1 : -1));
-        startPose = new Pose(startX, startY * (Info.alliance == Alliance.RED ? 1 : -1), headingStartRed * (Info.alliance == Alliance.RED ? 1 : -1));
+        if(Info.alliance == Alliance.RED){startPose = new Pose(startX, startY, headingStartRed);
+        } else {startPose = new Pose(startXBlue, startYBlue, headingStartBlue);}
 
         scorePose = new Pose(shootingX, shootingY * (Info.alliance == Alliance.RED ? 1 : -1), shootingHeading * (Info.alliance == Alliance.RED ? 1 : -1));
         scoreS1Pose = new Pose(shootingS1X, shootingS1Y * (Info.alliance == Alliance.RED ? 1 : -1), shootingS1Heading * (Info.alliance == Alliance.RED ? 1 : -1));

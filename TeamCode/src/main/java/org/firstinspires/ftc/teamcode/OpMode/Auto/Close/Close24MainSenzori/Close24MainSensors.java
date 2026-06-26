@@ -261,7 +261,8 @@ public class Close24MainSensors extends OpMode {
 //                    setPathState(AutoStates.GO_TO_PARK);
 //                    break;
 //                }
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.OPEN);
                 //robot.drive.followPath(constants.scoreGatePickup, true);
                 robot.blob.maxPower = 1;
                 robot.blob.setTargetPosition(constants.scorePose);

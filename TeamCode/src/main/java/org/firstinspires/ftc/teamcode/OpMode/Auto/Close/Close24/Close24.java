@@ -163,7 +163,7 @@ public class Close24 extends OpMode {
                 setPathState(AutoStates.GO_CLEAR);
                 break;
             case GO_TO_SCORE1:
-                if (!robot.blob.inPosition(2.5,2.5,0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(2,2,0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 //robot.drive.followPath(constants.scorePickup1, true);
                 robot.blob.maxPower = 1;
                 robot.blob.setTargetPosition(constants.scoreS1Pose);
@@ -254,7 +254,8 @@ public class Close24 extends OpMode {
 //                    setPathState(AutoStates.GO_TO_PARK);
 //                    break;
 //                }
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
+                        robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                        robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.OPEN);
                 //robot.drive.followPath(constants.scoreGatePickup, true);
                 robot.blob.maxPower = 1;
                 robot.blob.setTargetPosition(constants.scorePose);
