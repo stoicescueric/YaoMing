@@ -144,7 +144,7 @@ public class Launcher implements Module {
     public static double target_tilt = 0.5;
     public static double power;
 
-    public static double hood_offset_close = -0.035;
+    public static double hood_offset_close = -0.04;
     public static double hood_offset_far = -0.05;
     public static double offsetTicks = 0;
 
@@ -182,7 +182,7 @@ public class Launcher implements Module {
 
     public static double maxFarZone = 2100;
     public static double minFarZone = 1950;
-    public static double distanceOffset = 15;
+    public static double distanceOffset = 10;
     public static double distanceDefault = 0;
 
 
