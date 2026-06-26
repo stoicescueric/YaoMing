@@ -87,7 +87,7 @@ public class CloseConstants30 {
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
     public static double parkX24 = -26.55397670475517, parkY24 = 14.614846537432333, parkHeading24 = -5.501498047505514;
 
-
+//banu o suge rau dtot
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
     public static double clearStack2Timer = 850;
