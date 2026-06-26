@@ -125,6 +125,12 @@ public class Outtake {
         if(updateTurret) turret.update();
     }
 
+    public void primeAimForAuto() {
+        turret.turretState = Turret.TurretState.TRACKING;
+        turret.update();
+        launcher.primeHood();
+    }
+
     public void specificValues(double vel,double hood) {
         launcher.goToSpecificValues(vel,hood);
     }

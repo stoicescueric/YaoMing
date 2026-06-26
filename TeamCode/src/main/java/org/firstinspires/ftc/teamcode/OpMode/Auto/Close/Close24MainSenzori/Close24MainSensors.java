@@ -76,6 +76,15 @@ public class Close24MainSensors extends OpMode {
     }
 
     @Override
+    public void init_loop() {
+
+        robot.blob.odo.setPose(constants.startPose);
+        robot.blob.odo.update();
+        robot.sensors.update();
+        robot.outtake.primeAimForAuto();
+    }
+
+    @Override
     public void start() {
         //robot.sensors.setPoseAlign(true);
         robot.blob.odo.setPose(constants.startPose);

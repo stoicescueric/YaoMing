@@ -31,7 +31,7 @@ public class CloseConstants18Playoff {
     public static double waitBeforeClear = 500;
     public static double clearTimeAfterCycle = 550;
     public static double startX = -57.14066633089322, startY = 43.2188019039124, headingStartRed = -4.0555341879474085; //TODO
-    public static double startXBlue = -57.342159241203255, startYBlue = -43.25824407141979, headingStartBlue = -2.2319510618792933; //TODO
+    public static double startXBlue = -57.342159241203255, startYBlue = -43.25824407141979, headingStartBlue = -2.1819510618792933; //TODO
     public Pose startPose;
     public static double shootingX = -9, shootingY = 20, shootingHeading = Math.toRadians(300);
     public static double shootingS1X = -10, shootingS1Y = 22, shootingS1Heading = Math.toRadians(270);

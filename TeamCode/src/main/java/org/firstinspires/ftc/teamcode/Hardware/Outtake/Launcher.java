@@ -416,6 +416,15 @@ public class Launcher implements Module {
         motor2mAh = 0;
         mAhTimer.reset();
     }
+    public void primeHood() {
+        try {
+            double dist = robot.sensors.getShooterDistanceToBackboard() + distanceOffset + distanceDefault;
+            target_tilt = hood.get(Utils.minMaxClip(dist, Distances[0], Distances[hoodValues.length - 1]));
+        } catch (Exception ignored) {
+            target_tilt = 0.3;
+        }
+        tilt.setPosition(target_tilt + pickHoodOffset());
+    }
 
     public void snapshotVoltage() {
         shootingVoltage = sensors.getVoltage();
