@@ -49,21 +49,25 @@ public class CloseConstants18Playoff {
     public static double max_power_pickUp = 1;
     public static double pickUp2X = 8.6,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
     public static double pickUp2X2 = 9.3 ,pickUp2Y2 = 52, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X2MainSenzori = 10.2 ,pickUp2Y2MainSenzori = 52, pickUp2Heading2MainSenzori = Math.toRadians(270);
+
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
+    public Pose pickUpPose2_2MainSenzori;
 
     public static double pickUp3X = 36,pickUp3Y = 24, pickUp3Heading = Math.toRadians(270);
     public static double pickUp3X2 = 36,pickUp3Y2 = 53, pickUp3Heading2 = Math.toRadians(270);
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 950;
+    public static long failSafePickupTime = 1200 ;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
-    public static double failSafeGateTime = 1200;
+    public static double failSafeGateTime = 1550;
+    public static double failSafeGateTimeMainSenzori = 2000;
     public static int gateClearCount1 = 1;
     public static int gateClearCount2 = 2;
     public static int gateClearCount3 = 3;
@@ -119,6 +123,7 @@ public class CloseConstants18Playoff {
         pickUpPose1_Inter = new Pose(InterpickUp1X, InterpickUp1Y * (Info.alliance == Alliance.RED ? 1 : -1), InterpickUp1Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2 = new Pose(pickUp2X, pickUp2Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose2_2 = new Pose(pickUp2X2, pickUp2Y2 * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading2 * (Info.alliance == Alliance.RED ? 1 : -1));
+        pickUpPose2_2MainSenzori = new Pose(pickUp2X2MainSenzori, pickUp2Y2MainSenzori * (Info.alliance == Alliance.RED ? 1 : -1), pickUp2Heading2MainSenzori * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose3 = new Pose(pickUp3X, pickUp3Y * (Info.alliance == Alliance.RED ? 1 : -1), pickUp3Heading * (Info.alliance == Alliance.RED ? 1 : -1));
         pickUpPose3_2 = new Pose(pickUp3X2, pickUp3Y2 * (Info.alliance == Alliance.RED ? 1 : -1), pickUp3Heading2 * (Info.alliance == Alliance.RED ? 1 : -1));
         gatePickupPose = new Pose(gatePickupX, gatePickupY * (Info.alliance == Alliance.RED ? 1 : -1), gatePickupHeading * (Info.alliance == Alliance.RED ? 1 : -1));
@@ -218,5 +223,6 @@ public class CloseConstants18Playoff {
     public double getPreloadVel(){return preloadVel;}
     public double getPreloadHood(){return preloadHood;}
     public double getClearGateTime(){return clearGateTime;}
+    public double getFailSafeGateTimeMainSenzori(){return failSafeGateTimeMainSenzori;}
 
 }

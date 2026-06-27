@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.Util.Globals.Alliance;
 import org.firstinspires.ftc.teamcode.Util.Info;
 
-@Autonomous(name = "Auto Blue 30 la shto")
+//@Autonomous(name = "Auto Blue 30 la shto")
 public class CloseBlue extends Close30 {
     @Override
     public void init() {

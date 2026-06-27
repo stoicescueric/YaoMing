@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18Playoff.CloseConstants30;
+import org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close18Playoff.CloseConstants18Playoff;
 import org.firstinspires.ftc.teamcode.Util.Globals.Phase;
 import org.firstinspires.ftc.teamcode.Util.Info;
 import org.firstinspires.ftc.teamcode.Util.Wrapper.TelemetryUtil;
@@ -55,7 +55,7 @@ public class Close24MainSensors extends OpMode {
 
     public AutoStates autoStates = AutoStates.IDLE;
     public AutoStates prevAutoStates = AutoStates.IDLE;
-    CloseConstants30 constants;
+    CloseConstants18Playoff constants;
 
     @Override
     public void init() {
@@ -64,7 +64,7 @@ public class Close24MainSensors extends OpMode {
         robot = new Robot(this);
 
 
-        constants = new CloseConstants30();
+        constants = new CloseConstants18Playoff();
         constants.buildPaths();
 
 
@@ -77,7 +77,6 @@ public class Close24MainSensors extends OpMode {
 
     @Override
     public void init_loop() {
-
         robot.blob.odo.setPose(constants.startPose);
         robot.blob.odo.update();
         robot.sensors.update();
@@ -100,7 +99,7 @@ public class Close24MainSensors extends OpMode {
     }
 
     public boolean failSafeGate = false;
-    boolean pickup2 = false,go_pickup2 = false,go_clear_intake = false,go_score2 = false,go_score1 = false;
+    boolean pickup2 = false,go_pickup2 = false,go_clear_intake = false,go_score2 = false;
     @Override
     public void loop() {
         telemetry.addData("auto state",autoStates);
@@ -164,24 +163,14 @@ public class Close24MainSensors extends OpMode {
                 setPathState(AutoStates.GO_TO_SCORE1);
                 break;
             case GO_TO_SCORE1:
-                if (!go_score1 && !robot.blob.inPosition(2.5,2.5,0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(2,2,0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 //robot.drive.followPath(constants.scorePickup1, true);
                 robot.blob.maxPower = 1;
-                if(!go_score1) {
-                    robot.blob.setTargetPosition(constants.scoreS1Pose, 0.0);
-                    go_score1 = true;
-                    break;
-                }
-                if(robot.blob.progress > constants.percentage) {
-                    setPathState(AutoStates.WAIT_SCORE_1);
-                    robot.blob.setTargetPosition(constants.scoreS1Pose);
-                }
+                robot.blob.setTargetPosition(constants.scoreS1Pose);
+                setPathState(AutoStates.WAIT_SCORE_1);
                 break;
             case WAIT_SCORE_1:
-                if(robot.blob.progress > constants.getShootingPercentage()/2) {
-                    robot.outtake.launcher.updateOffssetHood = true;
-                }
-                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP2, true);
@@ -189,10 +178,11 @@ public class Close24MainSensors extends OpMode {
             case GO_PICKUP2_2:
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 if(!robot.blob.inPosition(2.5,2.7,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break; //TEST
                 if(!go_pickup2) {
                     robot.blob.maxPower = 1;
-                    robot.blob.setTargetPosition(constants.pickUpPose2_2);
+                    robot.blob.setTargetPosition(constants.pickUpPose2_2MainSenzori);
                     go_pickup2 = true;
                     break;
                 }
@@ -200,7 +190,12 @@ public class Close24MainSensors extends OpMode {
 //                setPathState(AutoStates.GO_CLEAR_INTER);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
 
-                setPathState(AutoStates.GO_TO_SCORE2);
+                sleep(constants.getClearGate2Time(), AutoStates.GO_TO_SCORE2, false);
+                break;
+            case GO_CLEAR:
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                robot.blob.setTargetPosition(constants.clear);
+                sleep(constants.getClearGateTime(), AutoStates.GO_TO_SCORE1, false);
                 break;
             case GO_TO_SCORE2:
                 //robot.drive.followPath(constants.scorePickup2, true);
@@ -240,19 +235,18 @@ public class Close24MainSensors extends OpMode {
             case GATE_PATH_DONE:
                 if(robot.blob.progress > 0.7) {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                    robot.blob.maxPower = 0.75;
+                    robot.blob.maxPower = 0.7;
                 }
-                if ((!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getGoToGateTimer())) break; ///TEST
+                if ((!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())) break; ///TEST
                 else {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                     failSafeGate = false;
-                    robot.blob.maxPower = 0.75;
                     setPathState(AutoStates.WAIT_GATE_PICKUP);
                 }
                 break;
             case WAIT_GATE_PICKUP:
-                if ((robot.sensors.areAllBeamsLowForTime()) || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
-                    robot.blob.setTargetPosition(constants.scorePose, 30);
+                if ((robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.PRE_OFF_OPEN || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) || pathTimer.getElapsedTime() > constants.getFailSafeGateTimeMainSenzori()) {
+                    robot.blob.setTargetPosition(constants.scorePose, 0.0);
                     setPathState(AutoStates.GO_SCORE_GATE_PICKUP);
                 }
                 break;
@@ -265,14 +259,14 @@ public class Close24MainSensors extends OpMode {
                 robot.intakeTransfer.setBlockerState(IntakeTransfer.BlockerState.OPEN);
                 //robot.drive.followPath(constants.scoreGatePickup, true);
                 robot.blob.maxPower = 1;
-                // Last gate cycle drives straight to park24 and shoots from there; others go to scorePose.
-                if (gateCycleCounter < gateCycleCount - 1) {
-                    robot.blob.setTargetPosition(constants.scorePose);
-                } else {
-                    robot.blob.setTargetPosition(constants.parkPose24);
-                }
+                robot.blob.setTargetPosition(constants.scorePose);
                 if(robot.blob.progress > constants.percentage) {
                     setPathState(AutoStates.WAIT_SCORE_GATE_PICKUP);
+                    if (gateCycleCounter < gateCycleCount) {
+                        robot.blob.setTargetPosition(constants.scorePose);
+                    } else {
+                        robot.blob.setTargetPosition(constants.parkPose24);
+                    }
                 }
 
 
@@ -300,13 +294,13 @@ public class Close24MainSensors extends OpMode {
             case GO_TO_PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);                //robot.drive.followPath(constants.goToPark, true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                robot.blob.setTargetPosition(constants.parkPose24);
+                robot.blob.setTargetPosition(constants.parkPose);
                 setPathState(AutoStates.PARK);
                 break;
             case PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);                //robot.drive.followPath(constants.goToPark, true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                if (!robot.blob.inPosition()) break;
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 requestOpModeStop();
                 break;
             case SLEEP:
