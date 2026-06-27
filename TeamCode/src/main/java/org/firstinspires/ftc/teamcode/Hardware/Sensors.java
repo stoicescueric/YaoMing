@@ -70,8 +70,8 @@ public class Sensors {
     public double targetY = -65;
     public static double targetXRedClose = -67;
     public static double targetYRedClose = 67;
-    public static double targetXBlueClose = -68;
-    public static double targetYBlueClose = -68.5;
+    public static double targetXBlueClose = -69;
+    public static double targetYBlueClose = -67;
 
     public static double targetXRedFar = -72;
     public static double servoPos = 0.4;
@@ -125,7 +125,7 @@ public class Sensors {
     public long firstTrueBeam1, firstTrueBeam2, firstTrueBeam3;
 
     // --- SOTM / TURRET PREDICTION VARIABLES ---
-    public static double ACCEL_COMP_FACTOR = 0.17;     // Multiplier for the 0.5*a*t^2 term
+    public static double ACCEL_COMP_FACTOR = 0;     // Multiplier for the 0.5*a*t^2 term
     public static double ACCEL_COMP_FACTOR_RPM = 0.17;     // Multiplier for the 0.5*a*t^2 term
     public static double SOTM_GAIN = 1.25;            // Multiplier for physical momentum loss
     public static double SHOOTER_FEEDER_DELAY = 0.05; // Sec: Delay from 'fire' to ball exit
@@ -164,7 +164,7 @@ public class Sensors {
     }
 
     public static boolean usePredictivePose = false;
-    public static double timeLatencyTurret = 0.4; //sec
+    public static double timeLatencyTurret = 0.35; //sec
     public static double debouncerTime = 50;
 
     private void initSensors() {
