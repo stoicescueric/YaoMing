@@ -34,7 +34,7 @@ public class CloseConstants30 {
     public static double startX = -57.14066633089322, startY = 43.2188019039124, headingStartRed = -4.0555341879474085; //TODO
     public static double startXBlue = -57.342159241203255, startYBlue = -43.25824407141979, headingStartBlue = -2.1819510618792933; //TODO
     public Pose startPose;
-    public static double shootingX = -9, shootingY = 18, shootingHeading = Math.toRadians(300);
+    public static double shootingX = -7, shootingY = 16, shootingHeading = Math.toRadians(300);
     public static double shootingS1X = -10, shootingS1Y = 22, shootingS1Heading = Math.toRadians(270);
     public static double shootPreloadX = -14.5,shootPreloadY = 16,shootPreloadH = Math.toRadians(220);
     public static double rotatePreloadX = -14.5,rotatePreloadY = 12,rotatePreloadH = Math.toRadians(270);
@@ -70,7 +70,7 @@ public class CloseConstants30 {
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 40;
-    public static double gatePickupX = 12.5, gatePickupY = 55.8, gatePickupHeading = 4.34019301402063;
+    public static double gatePickupX = 12.7, gatePickupY = 55.2, gatePickupHeading = 4.34019301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;

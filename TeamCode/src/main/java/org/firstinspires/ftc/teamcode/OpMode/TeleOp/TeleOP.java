@@ -103,18 +103,18 @@ public class TeleOP extends LinearOpMode
                 telemetry.addData("heading",robot.blob.odo.getHeading());
                 telemetry.addData("x",robot.blob.odo.getX());
                 telemetry.addData("y",robot.blob.odo.getY());
-                telemetry.addData("shooterX",robot.sensors.getShooterX());
-                telemetry.addData("shooterY",robot.sensors.getShooterY());
-                telemetry.addData("dx from center",robot.sensors.getShooterX() - robot.blob.odo.getX());
-                telemetry.addData("dy from center",robot.sensors.getShooterY() - robot.blob.odo.getY());
+                //telemetry.addData("shooterX",robot.sensors.getShooterX());
+                //telemetry.addData("shooterY",robot.sensors.getShooterY());
+                //telemetry.addData("dx from center",robot.sensors.getShooterX() - robot.blob.odo.getX());
+                //telemetry.addData("dy from center",robot.sensors.getShooterY() - robot.blob.odo.getY());
                 telemetry.addData("velocity current",robot.outtake.launcher.currentVel);
                 telemetry.addData("velocity target",robot.outtake.launcher.target);
                 telemetry.addData("target tilt",robot.outtake.launcher.getTarget_tilt());
-                telemetry.addData("intake State",robot.intakeTransfer.intakeState);
-                telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
+                //telemetry.addData("intake State",robot.intakeTransfer.intakeState);
+                //telemetry.addData("launcer State",robot.outtake.launcher.launcherState);
                 telemetry.addData("velocity x",robot.sensors.getVelX());
                 telemetry.addData("velocity y",robot.sensors.getVelY());
-                telemetry.addData("robot speed (in/s)",Math.hypot(robot.sensors.getVelX(), robot.sensors.getVelY()));
+                //telemetry.addData("robot speed (in/s)",Math.hypot(robot.sensors.getVelX(), robot.sensors.getVelY()));
                 telemetry.addData("power shooter",robot.outtake.launcher.getPower());
                 telemetry.addData("timer", motorTimer.seconds());
 

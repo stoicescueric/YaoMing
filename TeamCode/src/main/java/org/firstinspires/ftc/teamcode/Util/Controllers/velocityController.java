@@ -4,13 +4,13 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class velocityController {
-    public static double kP = 0.004; //0.007
-    public static double kPShooting = 0.004; //0.007
+    public static double kP = 0.005; //0.007
+    public static double kPShooting = 0.006; //0.007
     public static double kI = 0;
     public  boolean shooting = true;
-    public static double kD = 0;//0.00012
-    public static double kV = 0.000336; ///0
-    public static double kS = 0.05;
+    public static double kD = 0.00015;//0.00012
+    public static double kV = 0.000335; ///0
+    public static double kS = 0.065;
     public static double kA = 0.7; // accel feedforward
     public static boolean useKa = false;
     public static double KaErrorThreshold = 80;
@@ -24,14 +24,14 @@ public class velocityController {
     public static boolean useVoltageComp = false;
     public static boolean useBB = true;
     public static double bbPower = 1.0;
-    public static double bbPowerMinus = -0.2;
-    public static double bbThreeshold = 80;
-    public static double bbThresholdDown = 80;
+    public static double bbPowerMinus = -0.15;
+    public static double bbThreeshold = 90;
+    public static double bbThresholdDown = 130;
 
     private static double lastError = 0;
     private static double lastPower = 0;
 
-    public static boolean pidPredict = true;
+    public static boolean pidPredict = false;
     public static double predictXThreshold = 36;
     public static double PRED_CLOSEZONE_X1 = -75, PRED_CLOSEZONE_Y1 = 83;   // top-left field corner
     public static double PRED_CLOSEZONE_X2 = -75,  PRED_CLOSEZONE_Y2 = -83;   // top-right field corner
@@ -57,9 +57,7 @@ public class velocityController {
             feedforward += kA * error;
         }
 
-        if (useVoltageComp) {
-            feedforward *= (nominalVoltage / voltage);
-        }
+
         pid.setTargetValue(targetVelocity);
         double power = pid.update(currentVelocity) + feedforward;
 
@@ -75,6 +73,9 @@ public class velocityController {
                     power = bbPowerMinus;
                 }
             }
+        }
+        if (useVoltageComp) {
+            power *= (nominalVoltage / voltage);
         }
         double constrainedPower = Math.max(minPower, Math.min(maxPower, power));
 
