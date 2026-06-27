@@ -22,7 +22,7 @@ public class OuttakePositions {
     public static double recycleSpeed = 300;
 
     /*--PIDF VELOCITY--*/
-    public static double kP = 0.0075;
+    public static double kP = 0.00768;
     public static double kI = 0;
     public static double kD = 0;
     public static double kV = 0.00038;

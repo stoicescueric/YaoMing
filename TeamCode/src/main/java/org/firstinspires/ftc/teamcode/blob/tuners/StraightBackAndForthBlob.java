@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.blob.driveTrain.Blob;
 
 
 @Config
-@Autonomous
+@Autonomous(name = "Straight back and forth blob")
 public class StraightBackAndForthBlob extends LinearOpMode {
 
 
@@ -55,8 +55,10 @@ public class StraightBackAndForthBlob extends LinearOpMode {
             robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
             if(gg.aOnce()) {
                 cs = STATES.FORWARD;
+                firstTime = true;
             }else if(gg.bOnce()) {
                 cs = STATES.BACKWARDS;
+                firstTime = true;
             }
             switch (cs){
 
@@ -74,7 +76,7 @@ public class StraightBackAndForthBlob extends LinearOpMode {
 
                 case BACKWARDS:
                     if(firstTime) {
-                        robot.blob.setTargetPosition(bx, by, bh);
+                        robot.blob.setTargetPosition(bx, by, Math.toRadians(bh));
                         firstTime = false;
                     }
                     else if((robot.blob.inPosition() && !useVelocity) || (robot.blob.inPositionVelocity(velocityError,transError) && useVelocity)) {

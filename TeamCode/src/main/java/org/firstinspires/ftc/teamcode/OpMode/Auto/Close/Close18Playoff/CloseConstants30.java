@@ -25,7 +25,7 @@ public class CloseConstants30 {
     public static double pickUp1Percentage = 0.8;
     public static double turretPositionBlue = 0.636;
     public static double failSafeDtTime = 1250;
-    public static double goToGateTimer = 800;
+    public static double goToGateTimer = 1000;
     public static double hoodPosition = 0.615;
     public static double preloadSotmPerc = 0.35;
     public static double launcherVelocity = 1000;
@@ -69,8 +69,8 @@ public class CloseConstants30 {
     public static int gateClearCount2 = 2;
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
-    public static int headingTheeshold = 50;
-    public static double gatePickupX = 12.3, gatePickupY = 56.1, gatePickupHeading = 4.34019301402063;
+    public static int headingTheeshold = 40;
+    public static double gatePickupX = 12.5, gatePickupY = 55.8, gatePickupHeading = 4.34019301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -87,7 +87,6 @@ public class CloseConstants30 {
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;
     public static double parkX24 = -26.55397670475517, parkY24 = 14.614846537432333, parkHeading24 = -5.501498047505514;
 
-//banu o suge rau dtot
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
     public static double clearStack2Timer = 850;
