@@ -47,10 +47,10 @@ public class IntakeConstants {
     public static double blockerOpen = 0.23;
     public static double blockerClose = 0.03;
 
-    public static double powerArmLow = 0.46;
+    public static double powerArmLow = 0.48;
     public static double powerArmRecycle = 0.84;
-    public static double powerArmIntake = 0.46;
-    public static double powerArmVeryLow = 0.45;
+    public static double powerArmIntake = 0.47;
+    public static double powerArmVeryLow = 0.47;
 
     public static double preciseShotDelay = 400;
     public static double beam3StopDelay = 100;

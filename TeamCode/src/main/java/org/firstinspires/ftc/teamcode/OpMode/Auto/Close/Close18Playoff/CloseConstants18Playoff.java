@@ -13,8 +13,8 @@ public class CloseConstants18Playoff {
 
     //DEFAULT VALUES FOR RED
     public static double turretTargetPos = 0.364;
-    public static double shootingTime = 250;
-    public static double shootingTimeSOTM = 220;
+    public static double shootingTime = 280;
+    public static double shootingTimeSOTM = 280;
     public static double shootingTimeSOTMdelay = 80;
     public static double preloadWait = 100;
     public static double shootingPercentage = 0.8;
@@ -30,8 +30,8 @@ public class CloseConstants18Playoff {
     public static double launcherVelocity = 1000;
     public static double waitBeforeClear = 500;
     public static double clearTimeAfterCycle = 550;
-    public static double startX = -57.14066633089322, startY = 43.2188019039124, headingStartRed = -4.0555341879474085; //TODO
-    public static double startXBlue = -57.342159241203255, startYBlue = -43.25824407141979, headingStartBlue = -2.2319510618792933; //TODO
+    public static double startX = -56.423, startY = 44.323, headingStartRed = -4.026; //TODO
+    public static double startXBlue = -55.991, startYBlue = -44.205, headingStartBlue = -2.252; //TODO
     public Pose startPose;
     public static double shootingX = -9, shootingY = 18, shootingHeading = Math.toRadians(300);
     public static double shootingS1X = -10, shootingS1Y = 22, shootingS1Heading = Math.toRadians(270);
@@ -48,7 +48,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
     public static double pickUp2X = 8.6,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 8.9,pickUp2Y2 = 52, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X2 = 9.3 ,pickUp2Y2 = 52, pickUp2Heading2 = Math.toRadians(270);
     public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
@@ -59,7 +59,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 850;
+    public static long failSafePickupTime = 950;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
@@ -69,7 +69,7 @@ public class CloseConstants18Playoff {
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 12.3, gatePickupY = 56.1, gatePickupHeading = 4.34019301402063;
+    public static double gatePickupX = 12.5, gatePickupY = 56.5, gatePickupHeading = 4.4019301402063;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -80,7 +80,7 @@ public class CloseConstants18Playoff {
     public static double clearXInter = -5, clearYInter = 51, clearHeadingInter = 4.71;
     public Pose clearInter;
 
-    public static double clearGateTime = 1750;
+    public static double clearGateTime = 1550;
 
 
     public static double parkX = -3.5, parkY = 24.7, parkHeading = Math.toRadians(90)-Math.PI;

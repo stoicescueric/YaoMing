@@ -70,7 +70,7 @@ public class Close24 extends OpMode {
 
         robot.outtake.launcher.autoAimOn(true);
         robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
-        robot.sensors.setPoseAlign(true);
+        robot.sensors.setPoseAlign(false);
 
 
     }
@@ -178,6 +178,7 @@ public class Close24 extends OpMode {
             case GO_PICKUP2_2:
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
+                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 if(!robot.blob.inPosition(2.5,2.7,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break; //TEST
                 if(!go_pickup2) {
                     robot.blob.maxPower = 1;
@@ -282,7 +283,7 @@ public class Close24 extends OpMode {
                 if (gateCycleCounter < gateCycleCount) {
                     sleep(constants.getShootingTimeSOTM(), AutoStates.CYCLE_SOTM,true);
                 } else {
-                    sleep(constants.getShootingTime(), AutoStates.PARK,true);
+                    sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK,true);
                 }
                 break;
             case CYCLE_SOTM:
@@ -299,6 +300,7 @@ public class Close24 extends OpMode {
             case PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);                //robot.drive.followPath(constants.goToPark, true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 requestOpModeStop();
                 break;
             case SLEEP:

@@ -71,7 +71,7 @@ public class Sensors {
     public static double targetXRedClose = -67;
     public static double targetYRedClose = 67;
     public static double targetXBlueClose = -68;
-    public static double targetYBlueClose = -68;
+    public static double targetYBlueClose = -68.5;
 
     public static double targetXRedFar = -72;
     public static double servoPos = 0.4;
@@ -125,7 +125,7 @@ public class Sensors {
     public long firstTrueBeam1, firstTrueBeam2, firstTrueBeam3;
 
     // --- SOTM / TURRET PREDICTION VARIABLES ---
-    public static double ACCEL_COMP_FACTOR = 0.18;     // Multiplier for the 0.5*a*t^2 term
+    public static double ACCEL_COMP_FACTOR = 0.17;     // Multiplier for the 0.5*a*t^2 term
     public static double ACCEL_COMP_FACTOR_RPM = 0.17;     // Multiplier for the 0.5*a*t^2 term
     public static double SOTM_GAIN = 1.25;            // Multiplier for physical momentum loss
     public static double SHOOTER_FEEDER_DELAY = 0.05; // Sec: Delay from 'fire' to ball exit
@@ -134,7 +134,7 @@ public class Sensors {
     public static double PHYSICS_SHOT_TIME_EPS = 0.05;// Convergence threshold for the solver
 
     private double lastTurretAngle = 0;
-    public static double weightTOFRadial = 0.75;
+    public static double weightTOFRadial = 0.55;
     private double turretAngleVelo = 0;
     private ElapsedTime turretAngleTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
 
@@ -163,7 +163,7 @@ public class Sensors {
         shotTime.createLUT();
     }
 
-    public static boolean usePredictivePose = true;
+    public static boolean usePredictivePose = false;
     public static double timeLatencyTurret = 0.4; //sec
     public static double debouncerTime = 50;
 
@@ -469,17 +469,13 @@ public class Sensors {
 
         return baseAngle + compensationAngle;
     }
-    public static double weightTOF = 1;
+    public static double weightTOF = 0.7;
 
-    public static double accelFactorLatency = 0.19;
-    public static boolean lookUpTurret = true;
+    public static double accelFactorLatency = 0.0;
+    public static boolean lookUpTurret = false;
     public static boolean poseAlign = false;
     public static double rpmTimeLatency = 0;
 
-    /**
-     * Calculates the predicted turret angle based on current velocity
-     * to compensate for mechanical latency.
-     */
     public double updateTurretPrediction(double baseTurretAngle, double compensationAngle) {
         double turretAngle = baseTurretAngle + compensationAngle;
         double taDt = turretAngleTimer.seconds();
