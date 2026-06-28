@@ -47,11 +47,11 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 8.6,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X = 9.3,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
     public static double pickUp2X2 = 9.3 ,pickUp2Y2 = 52, pickUp2Heading2 = Math.toRadians(270);
-    public static double pickUp2X2MainSenzori = 10.2 ,pickUp2Y2MainSenzori = 52, pickUp2Heading2MainSenzori = Math.toRadians(270);
+    public static double pickUp2X2MainSenzori = 9.3,pickUp2Y2MainSenzori = 52, pickUp2Heading2MainSenzori = Math.toRadians(270);
 
-    public static double clearGateX = 5, clearGateY = 52, clearGateHeading = Math.toRadians(270);
+    public static double clearGateX = 5, clearGateY = 52.6, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
     public Pose pickUpPose2;
     public Pose pickUpPose2_2;
@@ -62,7 +62,7 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose3;
     public Pose pickUpPose3_2;
     //gate
-    public static long failSafePickupTime = 1200 ;
+    public static long failSafePickupTime = 1400 ;
     public static int gateCycleCount = 5;
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
@@ -73,7 +73,7 @@ public class CloseConstants18Playoff {
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 12.5, gatePickupY = 56.5, gatePickupHeading = 4.3019301402063;
+    public static double gatePickupX = 12.5, gatePickupY = 56.5, gatePickupHeading = 4.1705407311116354;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
@@ -93,7 +93,7 @@ public class CloseConstants18Playoff {
 
     public static double timerFailsafeGateLastRun = 29500;
     public static double parkFailSafe = 30000;
-    public static double clearStack2Timer = 850;
+    public static double clearStack2Timer = 800;
     public static double timeBeforePreloadSOTM = 570;
     public static double preloadVel = 1550;
     public static double preloadHood = 0.11;

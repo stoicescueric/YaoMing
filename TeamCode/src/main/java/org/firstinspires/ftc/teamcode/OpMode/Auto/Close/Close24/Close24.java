@@ -283,7 +283,7 @@ public class Close24 extends OpMode {
                 if (gateCycleCounter < gateCycleCount) {
                     sleep(constants.getShootingTimeSOTM(), AutoStates.CYCLE_SOTM,true);
                 } else {
-                    sleep(constants.getShootingTime(), AutoStates.GO_TO_PARK,true);
+                    sleep(constants.getShootingTime(), AutoStates.PARK,true);
                 }
                 break;
             case CYCLE_SOTM:
@@ -300,7 +300,7 @@ public class Close24 extends OpMode {
             case PARK:
                 robot.outtake.setOuttakeState(Outtake.OuttakeState.IDLE);                //robot.drive.followPath(constants.goToPark, true);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                //if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
                 requestOpModeStop();
                 break;
             case SLEEP:

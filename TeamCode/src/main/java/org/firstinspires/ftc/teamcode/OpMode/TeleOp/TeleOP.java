@@ -212,6 +212,7 @@ public class TeleOP extends LinearOpMode
             if (Info.alliance == Alliance.RED) {
                 robot.blob.odo.setPose(resetPoseRed);
                 robot.outtake.turret.resetOffset();
+                robot.outtake.launcher.manualOffset = 0;
 
             }else {
                 robot.blob.odo.setPose(resetPoseBlue);
@@ -269,10 +270,10 @@ public class TeleOP extends LinearOpMode
         }
 
         if (gg.dpadUpOnce() || gg2.dpadUpOnce()) {
-            robot.outtake.launcher.setOffsetInch(3);
+            robot.outtake.launcher.manualOffset = robot.outtake.launcher.manualOffset + 0.01;
         }
         if (gg.dpadDownOnce() || gg2.dpadDownOnce()) {
-            robot.outtake.launcher.setOffsetInch(-3);
+            robot.outtake.launcher.manualOffset = robot.outtake.launcher.manualOffset - 0.01;
         }
 
 

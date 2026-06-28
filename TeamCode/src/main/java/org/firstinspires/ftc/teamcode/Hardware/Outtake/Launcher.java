@@ -495,9 +495,10 @@ public class Launcher implements Module {
     public void setUseAdaptiveVel(boolean val){useAdaptiveVel = val;}
     public void setIdleVelocityClose(double val){idleVelocityClose = val;}
     public void setTargetTilt(double tilt){target_tilt = tilt;}
+    public double manualOffset = 0;
     public double pickHoodOffset(){
         if(closeMode){
-            return hood_offset_close;
+            return hood_offset_close + manualOffset;
         } else {
             return hood_offset_far;
         }
