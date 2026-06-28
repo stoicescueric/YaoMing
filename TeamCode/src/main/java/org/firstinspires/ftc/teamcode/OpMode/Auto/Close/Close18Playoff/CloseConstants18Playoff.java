@@ -47,9 +47,9 @@ public class CloseConstants18Playoff {
     public Pose pickUpPose;
     public Pose pickUpPose1_Inter;
     public static double max_power_pickUp = 1;
-    public static double pickUp2X = 9.3,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
-    public static double pickUp2X2 = 9.3 ,pickUp2Y2 = 52, pickUp2Heading2 = Math.toRadians(270);
-    public static double pickUp2X2MainSenzori = 9.3,pickUp2Y2MainSenzori = 52, pickUp2Heading2MainSenzori = Math.toRadians(270);
+    public static double pickUp2X = 10,pickUp2Y = 21.5, pickUp2Heading = Math.toRadians(270);
+    public static double pickUp2X2 = 10 ,pickUp2Y2 = 52, pickUp2Heading2 = Math.toRadians(270);
+    public static double pickUp2X2MainSenzori = 10,pickUp2Y2MainSenzori = 52, pickUp2Heading2MainSenzori = Math.toRadians(270);
 
     public static double clearGateX = 5, clearGateY = 52.6, clearGateHeading = Math.toRadians(270);
     public Pose clearGateAfterCycle;
@@ -67,13 +67,13 @@ public class CloseConstants18Playoff {
     public static double turretPreloadRed = 0.49;
     public static double turretPreloadBlue = 0.455;
     public static double failSafeGateTime = 1550;
-    public static double failSafeGateTimeMainSenzori = 2000;
+    public static double failSafeGateTimeMainSenzori = 2500;
     public static int gateClearCount1 = 1;
     public static int gateClearCount2 = 2;
     public static int gateClearCount3 = 3;
     public static int gateClearCount4 = 0;
     public static int headingTheeshold = 50;
-    public static double gatePickupX = 12.5, gatePickupY = 56.5, gatePickupHeading = 4.1705407311116354;
+    public static double gatePickupX = 13.6, gatePickupY = 57.9, gatePickupHeading = 4.1705407311116354;
     public static double gatePickupXFailSafe = 14.5, gatePickupYFailSafe = 56.7, gatePickupHeadingFailSafe = 4.350019301402063;
     public Pose gatePickupPose;
     public static double percentage = 0.75;
