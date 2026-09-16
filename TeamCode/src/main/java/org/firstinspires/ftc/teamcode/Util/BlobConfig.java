@@ -131,26 +131,28 @@ public class BlobConfig {
     public static double lateralMultiplier = 1.4;
     public static double voltageConstant = 12;
 
-    // Localization: NEW ROBOT, OctoQuad MK2.
+    // Localization: OctoQuad MK2.
     //
-    // The offsets were measured in PINPOINT convention, which is pod offsets in inches, so that is
-    // what is written here and it is the only place either number appears. sync() derives the
-    // board's TCP offsets from them with octoQuadOffsetsFromPinpoint(), which does
+    // These are the measured offsets for this chassis, in PINPOINT convention: pod offsets in
+    // inches. They happen to coincide with blob's library defaults, which is a coincidence and not
+    // a sign they were never set.
+    //
+    //   xOffset  the FORWARD pod, inches LEFT of the centre of rotation
+    //   yOffset  the STRAFE pod, inches AHEAD of the centre of rotation
+    //
+    // This is the only place either number appears. sync() derives the board's TCP offsets with
+    // octoQuadOffsetsFromPinpoint():
     //
     //     octoQuadTcpOffsetMM_X = -yOffset * 25.4
     //     octoQuadTcpOffsetMM_Y = -xOffset * 25.4
     //
-    // The axes swap AND both signs flip, so this is not a unit conversion and is not worth doing by
-    // hand. One source of truth on purpose: the old config set the millimetre values directly and
-    // ALSO derived them, so editing either one silently lost.
+    // The axes swap AND both signs flip, so it is not a unit conversion and not worth doing by
+    // hand. Deriving rather than storing is the point: the config used to set the millimetre values
+    // directly and ALSO derive them, so editing either one silently lost.
     //
-    // FILL THESE IN. They are the library defaults, which is to say they describe nobody's robot.
-    // Measure off the chassis, then CHECK with blob: Rotation Offset Tuner turning the robot BY
-    // HAND: spin in place and the reported position should stay a dot rather than trace a circle.
-    // The tuner reports its correction in these same inches, so it can be added directly.
-    //
-    //   xOffset  the FORWARD pod, inches LEFT of the centre of rotation
-    //   yOffset  the STRAFE pod, inches AHEAD of the centre of rotation
+    // Worth re-checking on a new chassis even though the numbers carried over: blob: Rotation
+    // Offset Tuner, turning the robot BY HAND. Spin in place and the reported position should stay
+    // a dot rather than trace a circle. Its correction is in these same inches.
     public static double xOffset = -3.24803;
     public static double yOffset = 4.30527;
 
