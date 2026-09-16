@@ -94,7 +94,7 @@ public class BlobConfig {
     public static double defaultTransThresh = 2;
 
     // PID. kI and hI are ignored: Blob.update() forces the integral term to zero.
-    public static double kP = 0.12, kI = 0, kD = 0.01;
+    public static double kP = 0.05, kI = 0, kD = 0.006;
     public static double hP = 1.2, hI = 0, hD = 0.11;
 
     // Deceleration, from the deceleration tuner
@@ -170,8 +170,8 @@ public class BlobConfig {
 
     // OctoQuad geometry. Ignored unless localizerMode is one of the OCTOQUAD_ ones.
     public static String octoQuadName = "octoquad";
-    public static int octoQuadPortX = 0;   // forward-reading pod
-    public static int octoQuadPortY = 1;   // strafe-reading pod
+    public static int octoQuadPortX = 7;   // forward-reading pod
+    public static int octoQuadPortY = 0;   // strafe-reading pod
     /**
      * Counts per mm of pod travel. The Quickstart guide recommends MEASURING this by pushing the
      * robot a known distance rather than trusting the spec figure, because it depends on the wheel
@@ -184,7 +184,7 @@ public class BlobConfig {
      * count up, and pushing it LEFT must make the Y pod count up. Expect to flip at least one.
      */
     public static GoBildaPinpointDriver.EncoderDirection octoQuadXDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
-    public static GoBildaPinpointDriver.EncoderDirection octoQuadYDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
+    public static GoBildaPinpointDriver.EncoderDirection octoQuadYDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
 
     /**
      * Corrects the IMU reporting more or less rotation than actually happened. A wrong scalar does
@@ -194,7 +194,7 @@ public class BlobConfig {
      * <p><b>Still a placeholder, not a measurement.</b> Run {@code blob: Heading Scalar Tuner},
      * turn the robot by hand through ten full turns, and put the number it gives you here.
      */
-    public static double octoQuadImuHeadingScalar = 1.0;
+    public static double octoQuadImuHeadingScalar = 1.0221;
 
     /** Hardware velocity averaging window, ms. Longer is smoother with more lag. */
     public static int octoQuadVelocityIntervalMS = 25;
@@ -368,7 +368,7 @@ public class BlobConfig {
      * Records paths for {@code pusher visualiser}. Only does anything on the dev artifact; the
      * competition one has no recorder to switch on.
      */
-    public static boolean recordTrace = true;
+    public static boolean recordTrace = false;
 
     /**
      * Logs every stage of every follower loop to /sdcard/FIRST/blob-follower.
