@@ -77,7 +77,7 @@ public class BlobConfig {
     }
 
     /** Which of the above to build. The only line to change when swapping odometry hardware. */
-    public static LocalizerMode localizerMode = LocalizerMode.PINPOINT_SDK;
+    public static LocalizerMode localizerMode = LocalizerMode.OCTOQUAD_MK2_FWV3;
 
     // HardwareMap
     public static String leftFrontName = "fl";
@@ -131,16 +131,23 @@ public class BlobConfig {
     public static double lateralMultiplier = 1.4;
     public static double voltageConstant = 12;
 
-    // Localization: NEW ROBOT, goBILDA Pinpoint.
+    // Localization: NEW ROBOT, OctoQuad MK2.
     //
-    // Pinpoint means the offsets are pod offsets in INCHES and go straight in. No TCP conversion,
-    // no millimetres, no axis swap, no sign flip. That whole round trip existed only for the
-    // OctoQuad and is gone with it, along with three chances to get it wrong.
+    // The offsets were measured in PINPOINT convention, which is pod offsets in inches, so that is
+    // what is written here and it is the only place either number appears. sync() derives the
+    // board's TCP offsets from them with octoQuadOffsetsFromPinpoint(), which does
+    //
+    //     octoQuadTcpOffsetMM_X = -yOffset * 25.4
+    //     octoQuadTcpOffsetMM_Y = -xOffset * 25.4
+    //
+    // The axes swap AND both signs flip, so this is not a unit conversion and is not worth doing by
+    // hand. One source of truth on purpose: the old config set the millimetre values directly and
+    // ALSO derived them, so editing either one silently lost.
     //
     // FILL THESE IN. They are the library defaults, which is to say they describe nobody's robot.
-    // Measure them off the chassis, then CHECK them with blob: Rotation Offset Tuner, turning the
-    // robot BY HAND: spin in place and the reported position should stay a dot rather than trace a
-    // circle. The tuner reports its correction in the same inches these are written in.
+    // Measure off the chassis, then CHECK with blob: Rotation Offset Tuner turning the robot BY
+    // HAND: spin in place and the reported position should stay a dot rather than trace a circle.
+    // The tuner reports its correction in these same inches, so it can be added directly.
     //
     //   xOffset  the FORWARD pod, inches LEFT of the centre of rotation
     //   yOffset  the STRAFE pod, inches AHEAD of the centre of rotation
@@ -187,17 +194,6 @@ public class BlobConfig {
      */
     public static double octoQuadImuHeadingScalar = 1.0;
 
-    /**
-     * MK2 TCP offset, millimetres. Only read in the OCTOQUAD_MK2 modes, so unused on a Pinpoint.
-     *
-     * <p>Library defaults, kept so switching localizerMode back still compiles and so nothing here
-     * carries the old robot's geometry. If this robot ever moves to an OctoQuad, derive them with
-     * octoQuadOffsetsFromPinpoint() rather than by hand: the conversion swaps the axes and flips
-     * both signs, which is three chances to be wrong.
-     */
-    public static double octoQuadTcpOffsetMM_X = -109.354;
-    public static double octoQuadTcpOffsetMM_Y = 82.5;
-
     /** Hardware velocity averaging window, ms. Longer is smoother with more lag. */
     public static int octoQuadVelocityIntervalMS = 25;
 
@@ -212,12 +208,7 @@ public class BlobConfig {
 
     public static boolean octoQuadInvertHeading = false;
 
-    /**
-     * Pinpoint-style pod offsets, in inches. Only read by the Pinpoint localizers, which we do not
-     * use, so changing them does nothing on this robot. The OctoQuad's geometry is
-     * {@link #octoQuadTcpOffsetMM_X} and {@link #octoQuadTcpOffsetMM_Y} above.
-     */
-    /** Two-wheel mode only. Pod offsets in INCHES, same measurements the Pinpoint uses. */
+    /** Two-wheel mode only, so unused here. Counts per INCH rather than per mm. */
     public static double octoQuadTicksPerInch = 19.89436789 * 25.4;
 
     // -----------------------------------------------------------------------------------
@@ -469,8 +460,8 @@ public class BlobConfig {
         p.octoQuadInvertHeading = octoQuadInvertHeading;
         // Set directly rather than derived from xOffset/yOffset. One source of truth, in the units
         // the board actually takes.
-        p.octoQuadTcpOffsetMM_X = octoQuadTcpOffsetMM_X;
-        p.octoQuadTcpOffsetMM_Y = octoQuadTcpOffsetMM_Y;
+        // Derived from the inch offsets above rather than set, so there is one place to edit.
+        p.octoQuadOffsetsFromPinpoint();
         p.octoQuadTicksPerInch = octoQuadTicksPerInch;
         // The two-wheel localizer reuses the Pinpoint's pod geometry, so there is one set to tune.
         p.parallelPodYOffset = xOffset;
