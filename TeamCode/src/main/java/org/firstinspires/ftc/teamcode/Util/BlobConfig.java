@@ -112,11 +112,13 @@ public class BlobConfig {
     //
     // About 73% of measured, which leaves the rest for steering while it stops. 65% held the
     // heading but gave away more of the approach than it needed to.
-    // NEW ROBOT: library defaults, not measured. blob: Autotune measures these now and reports
-    // them with everything else, so they arrive with the constants. Until then the RST profile
-    // brakes on a guess, and a guess on the low side means creeping in from further out than needed.
-    public static double xDeceleration = 80;
-    public static double yDeceleration = 90;
+    // Measured by blob: Autotune, from the stop at the end of every translational run.
+    //
+    // These are a FLOOR, not the limit: they come from braking with the volts off and the motors
+    // shorted, which is less than the drivetrain could manage under power. A profile built on a
+    // floor brakes early rather than late, which is the safe direction. Do not raise them by hand.
+    public static double xDeceleration = 103.36192668078725;
+    public static double yDeceleration = 130.07101355727193;
 
     /**
      * Cap on the rotational command only, 0 to 1. Was exposed on the old robot's branch and is kept.
@@ -153,8 +155,8 @@ public class BlobConfig {
     // Worth re-checking on a new chassis even though the numbers carried over: blob: Rotation
     // Offset Tuner, turning the robot BY HAND. Spin in place and the reported position should stay
     // a dot rather than trace a circle. Its correction is in these same inches.
-    public static double xOffset = -3.24803;
-    public static double yOffset = 4.30527;
+    public static double xOffset = -3.1517784347744198;
+    public static double yOffset = 4.4790201071404985;
 
     public static GoBildaPinpointDriver.EncoderDirection xPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.EncoderDirection yPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
@@ -228,24 +230,36 @@ public class BlobConfig {
     // is not quite first order out there and the earlier fits were extrapolating into exactly the
     // region the follower spends its time in. They also promised a top speed of 71 in/s where the
     // real one is 60.
-    // NEW ROBOT: nothing here has been measured yet, and all zero is the honest way to say so.
+    // Measured on this robot by blob: Autotune. Lane use was 38.7 in along and 2.29 in off, both
+    // inside the envelope, so the runs stayed where they were supposed to.
     //
-    // It is also load-bearing. Blob.State.RST checks these and REFUSES TO DRIVE while they are
-    // zero, putting the reason in blob.rstFault, rather than following a model of a robot that no
-    // longer exists. Carrying the old numbers over would have looked like it worked.
+    //   forward  top 76.0 in/s   tau 0.145s
+    //   lateral  top 65.1 in/s   tau 0.121s
+    //   angular  top 8.82 rad/s (506 deg/s)   tau 0.087s
     //
-    // Run blob: Autotune and paste its output here. The old robot's values, for scale only:
-    // forward 1.027 / 0.1657 / 0.0327, lateral 1.797 / 0.1865 / 0.0312, angular 1.269 / 1.953 /
-    // 0.1143. A new robot will differ by more than you expect.
-    public static double forwardKS = 0, forwardKV = 0, forwardKA = 0;
-    public static double lateralKS = 0, lateralKV = 0, lateralKA = 0;
-    public static double angularKS = 0, angularKV = 0, angularKA = 0;
+    // Note the strafe penalty is almost entirely FRICTION, not back-EMF: lateral kV is only 1.04x
+    // forward while lateral kS is 2.51x. lateralMultiplier models it as a kV ratio, so on the PID
+    // path it corrects for something that is barely there and misses the 1.3V that actually costs.
+    // State.RST handles both terms separately and ignores lateralMultiplier entirely.
+    public static double forwardKS = 0.8660081949863851;
+    public static double forwardKV = 0.15432954439427538;
+    public static double forwardKA = 0.02238380856962927;
+
+    public static double lateralKS = 2.173309217171191;
+    public static double lateralKV = 0.1601648028312494;
+    public static double lateralKA = 0.01940715978169199;
+
+    public static double angularKS = 1.4695597700047904;
+    public static double angularKV = 1.2614630240789948;
+    public static double angularKA = 0.10958105457960919;
 
     /**
      * How fast an RST velocity loop should converge, seconds.
      *
-     * <p>Library default until the autotune derives one. It suggests a value from the slowest axis
-     * time constant it measured, floored at four loop periods.
+     * <p>0.08 is the four-loop FLOOR, not anything about this drivetrain: half the slowest axis tau
+     * would be 0.0725, and the autotune floors at four periods of an assumed 20 ms loop. This robot
+     * runs nearer 60 Hz, where four periods is 0.067, so 0.0725 is reachable. Worth trying once the
+     * follower is behaving, for slightly quicker tracking.
      */
     public static double rstTauClosedLoop = 0.08;
     /**
@@ -299,14 +313,18 @@ public class BlobConfig {
      * authority at speed. The heading loop was starved, not badly tuned, which is why softening its
      * gains did nothing.
      *
-     * <p>What it bought on the OLD robot, for the shape of the trade only. These numbers come out
-     * of that robot's constants and mean nothing until this one has been autotuned:
+     * <p>What it buys on THIS robot, from its own measured constants:
      *
      * <pre>
-     *   0.0 rad/s   cruise 62.8 in/s   heading   0 deg/s
-     *   0.5 rad/s   cruise 50.7 in/s   heading  56 deg/s
-     *   1.0 rad/s   cruise 45.4 in/s   heading  82 deg/s
+     *   0.00 rad/s   cruise 68.4 in/s   heading   0 deg/s
+     *   0.50 rad/s   cruise 56.2 in/s   heading  72 deg/s
+     *   0.75 rad/s   cruise 54.3 in/s   heading  85 deg/s
+     *   1.00 rad/s   cruise 52.5 in/s   heading  98 deg/s
      * </pre>
+     *
+     * <p>A better trade than the old chassis got: this one turns more easily, angular kV being 1.26
+     * against 1.95, so the same reserve buys 72 deg/s here where it bought 56 there, and the speed
+     * given up between 0.5 and 1.0 is only 4 in/s.
      *
      * <p>0.5 to start. Raise it if it still wobbles, lower it for speed once it does not.
      */
