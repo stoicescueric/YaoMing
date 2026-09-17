@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Hardware.Shooting.ShootingSystem;
 import org.firstinspires.ftc.teamcode.Hardware.Sensors;
 
 @Config
@@ -24,7 +25,6 @@ public class Outtake {
 
     public static boolean updateTurret = true;
     public static boolean updateLauncher = true;
-    public boolean shootingWhileMoving = false;
 
     public enum OuttakeState {
         OFF,
@@ -54,6 +54,23 @@ public class Outtake {
     }
 
     public boolean verify_launcher = true;
+    /** Milliseconds the feed waits for the gate before releasing anyway. */
+    public static double feedTimeoutMs = 1500;
+    private long feedStartMs = 0;
+
+    /**
+     * Whether a ball may be released now. Delegates to the shot gate when the shooting system is
+     * present, and falls back to the old flywheel-only test when it is not, so a solver problem can
+     * never wedge the feed shut.
+     */
+    private boolean shotAllowed() {
+        ShootingSystem shooting = robot.shooting;
+        if (shooting == null) return launcher.isReady();
+        return shooting.allowRelease(
+                turret.azimuthError(),
+                launcher.target - launcher.currentVel,
+                0);
+    }
     public void start_feed_precise(double target,double hood) {
         launcher.setTarget(target,hood);
         outtakeState = OuttakeState.PRECISE_SHOOT_FEEDING;
@@ -73,7 +90,17 @@ public class Outtake {
                 break;
             case START_FEEDING_RAPID_FIRE:
                 turret.forceUpdate = true;
-                if((!verify_launcher || launcher.isReady())  && ((launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
+                if (feedStartMs == 0) feedStartMs = System.currentTimeMillis();
+
+                // The gate replaces the bare flywheel check: it also wants the aim converged and the
+                // solution feasible. Both of those are off by default, so until they are enabled it
+                // asks exactly what isReady() asked.
+                boolean cleared = !verify_launcher || shotAllowed();
+                // Without this an unreachable target parks the state machine here forever, which is
+                // what used to stall an auto when the flywheel could not make its commanded speed.
+                boolean feedTimedOut = System.currentTimeMillis() - feedStartMs > feedTimeoutMs;
+
+                if((cleared || feedTimedOut)  && ((launcher.launcherState == Launcher.LauncherState.SHOOT_STARTED && robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.INTERMEDIARY_TRANSFER) || launcher.launcherState == Launcher.LauncherState.TUNE_PID)){
                     cntTransfer++;
                 }
 
@@ -81,6 +108,10 @@ public class Outtake {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.TRANSFER);
                     outtakeState = OuttakeState.RAPID_FIRE;
                     launcher.launcherState = Launcher.LauncherState.LAUNCHING;
+                    if (robot.shooting != null) {
+                        robot.shooting.logShot(launcher.target, launcher.currentVel, launcher.commandedHood);
+                    }
+                    feedStartMs = 0;
                 }
                 break;
             case RAPID_FIRE:
@@ -154,11 +185,5 @@ public class Outtake {
         return launcher.motor1;
     }
 
-    public boolean isShootingWhileMoving() {
-        return shootingWhileMoving;
-    }
 
-    public void setShootingWhileMoving(boolean enabled) {
-        shootingWhileMoving = enabled;
-    }
 }

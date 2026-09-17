@@ -456,8 +456,6 @@ public class Sensors {
         // Your model: effective TOF = feeder delay + weight * average TOF
         double effectiveTof = SHOOTER_FEEDER_DELAY + tof * weightTOF;
 
-        double speed = Math.hypot(xVelocityRobot, yVelocityRobot);
-
         // Predict sideways drift during the shot window
         double lateralDrift =
                 lateralVel * effectiveTof

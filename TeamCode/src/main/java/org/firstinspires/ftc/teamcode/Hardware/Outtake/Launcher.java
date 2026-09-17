@@ -152,7 +152,6 @@ public class Launcher implements Module {
 
     public static double hood_offset_close = -0.035;
     public static double hood_offset_far = -0.05;
-    public static double offsetTicks = 0;
 
     public double getHoodPosition() {
         return target_tilt;
@@ -173,13 +172,7 @@ public class Launcher implements Module {
     public static double tunePidTarget = 0;
     private double shootingVoltage;
 
-    private double getTargetWithOffset() {
-        return target;
-    }
 
-    public void setOffsetInch(double inch) {
-        distanceOffset += inch;
-    }
 
 
     public static double maxCloseZone = 1640;
@@ -189,6 +182,26 @@ public class Launcher implements Module {
     public static double maxFarZone = 2100;
     public static double minFarZone = 1950;
     public static double distanceOffset = 10;
+
+    // ---- flywheel / hood bandwidth crossover ----
+    /** Seconds. Above this the flywheel stops following range and the hood takes over. 0 = off. */
+    public static double CROSSOVER_TAU = 0.0;
+    /** Servo units of hood per inch of range the flywheel has not caught up with. Measure it. */
+    public static double HOOD_PER_INCH = 0.0;
+    /** Range the flywheel is asked for, after low-passing. Telemetry. */
+    public double flywheelDistance = 0;
+    /** Range the flywheel has not covered, which the hood makes up. Telemetry. */
+    public double hoodRangeResidual = 0;
+    /** Last hood position actually written. Read by the shot gate. */
+    public double commandedHood = 0;
+    private double rangeSlow = 0;
+    private final ElapsedTime crossoverTimer = new ElapsedTime();
+
+    private double loopDt() {
+        double dt = crossoverTimer.seconds();
+        crossoverTimer.reset();
+        return (dt <= 0 || dt > 0.25) ? 0.02 : dt;
+    }
     public static double distanceDefault = 0;
 
 
@@ -196,9 +209,6 @@ public class Launcher implements Module {
     public static double forcedRobotX = 0; //robot coords nu shooter coords; robot angle nu e fortat/
     public static double forcedRobotY = 0;
 
-    public double getOffsetTicks() {
-        return offsetTicks;
-    }
 
     public boolean closeMode = true;
     public boolean updateOffssetHood = false;
@@ -249,6 +259,24 @@ public class Launcher implements Module {
                     + distanceOffset + distanceDefault;
         }
 
+        // When the solver is driving, its virtual distance replaces the live geometry above. That
+        // distance already accounts for the robot's motion during flight, so leaving the old
+        // calculation in would count the same correction twice.
+        if (robot.shooting != null && robot.shooting.solverActive()) {
+            targetDistance = robot.shooting.getSolution().virtualDistance
+                    + distanceOffset + distanceDefault;
+        }
+
+        // Bandwidth split. The flywheel's open-loop time constant is comparable to a flight time, so
+        // it cannot chase range while the robot drives; the hood is a servo and can. The flywheel
+        // therefore follows a low-passed range and the hood makes up the fast residual. Defaults are
+        // inert (tau 0, gain 0) so this does nothing until both numbers are measured.
+        rangeSlow = (CROSSOVER_TAU > 1e-3)
+                ? rangeSlow + (targetDistance - rangeSlow) * (loopDt() / (CROSSOVER_TAU + loopDt()))
+                : targetDistance;
+        flywheelDistance = rangeSlow;
+        hoodRangeResidual = targetDistance - rangeSlow;
+
         switch (launcherState) {
             case OFF:
                 target = 0;
@@ -278,7 +306,7 @@ public class Launcher implements Module {
                             target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
 
                         }
-                        power = flywheelPower(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                        power = flywheelPower(target, currentVel, sensors.getVoltage());
                         target_tilt = hood.get(Utils.minMaxClip(targetDistance, Distances[0], Distances[hoodValues.length - 1]));
                     } else {
                         if (sensors.isFarZone()) {
@@ -307,7 +335,7 @@ public class Launcher implements Module {
                     }
                     target_tilt = hood.get(targetDistance);
                 }
-                power = flywheelPower(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = flywheelPower(target, currentVel, sensors.getVoltage());
                 snapshotVoltage();
                 motor1.setPower(power);
                 motor2.setPower(power);
@@ -316,7 +344,7 @@ public class Launcher implements Module {
                 if (updateOffssetHood) {
                     target_tilt = hood.get(targetDistance);
                 }
-                power = flywheelPower(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = flywheelPower(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
@@ -332,12 +360,12 @@ public class Launcher implements Module {
                     target = OuttakePositions.defaultVel;
                     target_tilt = 0.5;
                 }
-                power = flywheelPower(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = flywheelPower(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
             case SPIN_UP:
-                power = flywheelPower(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = flywheelPower(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 if (auto_aim) {
@@ -364,19 +392,20 @@ public class Launcher implements Module {
                 }
 
 
-                power = flywheelPower(getTargetWithOffset(), currentVel, shootingVoltage);
+                power = flywheelPower(target, currentVel, shootingVoltage);
                 motor1.setPower(power * accelerationWeight);
                 motor2.setPower(power * accelerationWeight);
                 break;
             case RECYCLE:
                 target = recycleVelocity;
                 target_tilt = recycleTilt;
-                power = flywheelPower(getTargetWithOffset(), currentVel, sensors.getVoltage());
+                power = flywheelPower(target, currentVel, sensors.getVoltage());
                 motor1.setPower(power);
                 motor2.setPower(power);
                 break;
         }
-        tilt.setPosition(target_tilt + pickHoodOffset());
+        commandedHood = target_tilt + pickHoodOffset() + hoodRangeResidual * HOOD_PER_INCH;
+        tilt.setPosition(commandedHood);
     }
 
     /**
@@ -469,9 +498,9 @@ public class Launcher implements Module {
 
     public boolean isReady() {
         if (!use254) {
-            return Math.abs(currentVel - getTargetWithOffset()) < OuttakePositions.errorVelThreeshold;
+            return Math.abs(currentVel - target) < OuttakePositions.errorVelThreeshold;
         } else {
-            return velocityController254.isReady(currentVel, getTargetWithOffset());
+            return velocityController254.isReady(currentVel, target);
         }
     }
 

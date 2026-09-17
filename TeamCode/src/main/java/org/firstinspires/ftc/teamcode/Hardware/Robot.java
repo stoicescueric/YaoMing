@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import org.firstinspires.ftc.teamcode.Hardware.Shooting.ShootingSystem;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -43,6 +44,8 @@ public class Robot {
     /** Live config for blob. BlobConfig.sync() refreshes it each loop so dashboard edits apply. */
     public BlobParams blobParams;
     public Limelight limelight;
+    /** Shot solution for the loop: state, solver, gate and shot log. */
+    public ShootingSystem shooting;
     public OpMode op;
     public static boolean showTelemetry = false;
     Telemetry telemetry;
@@ -72,6 +75,7 @@ public class Robot {
         intakeTransfer = new IntakeTransfer(this,sensors);
         outtake = new Outtake(this,sensors);
         limelight = new Limelight(this);
+        shooting = new ShootingSystem(this, sensors);
         TelemetryUtil.setup();
     }
 
@@ -99,6 +103,9 @@ public class Robot {
         t2 = System.nanoTime();
         blobTimeMs = (t2 - t1) / 1_000_000.0;
         sensors.update();
+
+        // Solve the shot before anything consumes it, and after Sensors has a fresh pose.
+        shooting.update();
 
         // Profile Intake
         t3 = System.nanoTime();
@@ -194,6 +201,24 @@ public class Robot {
         field.strokeCircle(sensors.projectedX, sensors.projectedY, 2);
         field.setStroke("#4ef542");
         field.strokeCircle(movingGoalX,movingGoalY,2);
+
+        // Solver's aim point against the legacy one. White line between them is the disagreement.
+        shooting.drawField(field, shootTx, shootTy, shooterX, shooterY);
+        TelemetryUtil.packet.put("aim disagreement (in)", shooting.aimDisagreement(shootTx, shootTy));
+        if (shooting.getSolution() != null) {
+            double tps = outtake.launcher.target;
+            TelemetryUtil.packet.put("exit velocity (in/s)",
+                    org.firstinspires.ftc.teamcode.Hardware.Shooting.BallisticsModel.exitVelocity(tps));
+            TelemetryUtil.packet.put("implied elevation (deg)",
+                    org.firstinspires.ftc.teamcode.Hardware.Shooting.BallisticsModel
+                            .impliedLaunchElevationDeg(shooting.getSolution().virtualDistance,
+                                    shooting.getSolution().timeOfFlight, tps));
+            TelemetryUtil.packet.put("solver dist", shooting.getSolution().virtualDistance);
+            TelemetryUtil.packet.put("solver tof", shooting.getSolution().timeOfFlight);
+            TelemetryUtil.packet.put("turret rate (deg/s)",
+                    Math.toDegrees(shooting.getSolution().requiredTurretRate));
+            TelemetryUtil.packet.put("shot feasible", shooting.getSolution().feasible);
+        }
 
         // pidPredict close-zone triangle + robot projection line (when projecting)
         double[] zoneX = {velocityController.PRED_CLOSEZONE_X1, velocityController.PRED_CLOSEZONE_X2, velocityController.PRED_CLOSEZONE_X3};

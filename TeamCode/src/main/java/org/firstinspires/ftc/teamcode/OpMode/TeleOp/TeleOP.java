@@ -81,6 +81,7 @@ public class TeleOP extends LinearOpMode
 
         telemetry.setMsTransmissionInterval(75);
         waitForStart();
+        robot.shooting.startLogging("teleop");
         robot.outtake.launcher.autoAimOn(true);
         robot.sensors.setUsePredictivePose(true);
         robot.sensors.setPoseAlign(false);
@@ -94,12 +95,12 @@ public class TeleOP extends LinearOpMode
             updateDrive();
 
 
-            robot.outtake.setShootingWhileMoving(shootWhileMoving);
 
             outtakeUpdate();
             intakeUpdate();
 
             if(telemetryEnabled){
+                shootingTelemetry();
                 telemetry.addData("voltage",robot.sensors.getVoltage());
                 telemetry.addData("heading",robot.blob.odo.getHeading());
                 telemetry.addData("x",robot.blob.odo.getX());
@@ -327,5 +328,19 @@ public class TeleOP extends LinearOpMode
         }
 
 
+    }
+
+    /** Solver vs legacy, side by side, so the two can be compared before the cutover. */
+    private void shootingTelemetry() {
+        org.firstinspires.ftc.teamcode.Hardware.Shooting.ShotSolution s = robot.shooting.getSolution();
+        telemetry.addData("solver active", robot.shooting.solverActive());
+        if (s != null) {
+            telemetry.addData("shot", s.toString());
+            telemetry.addData("legacy dist", robot.sensors.getShooterDistanceToBackboard());
+            telemetry.addData("solver dist", s.virtualDistance);
+            telemetry.addData("turret rate deg/s", Math.toDegrees(s.requiredTurretRate));
+        }
+        telemetry.addData("gate", robot.shooting.gate.lastReason);
+        telemetry.addData("shots logged", robot.shooting.getShotCount());
     }
 }

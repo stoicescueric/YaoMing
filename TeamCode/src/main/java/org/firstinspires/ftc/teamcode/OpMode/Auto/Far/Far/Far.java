@@ -98,7 +98,14 @@ public class Far extends OpMode {
         cycleCounter = 0;
         timerAuto = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         timerAuto.startTime();
+        robot.shooting.startLogging("far");
         setPathState(AutoStates.SHOOT_PRELOAD);
+    }
+
+    /** Closes the shot log. Rows are flushed as they are written, so this only releases the file. */
+    @Override
+    public void stop() {
+        if (robot != null) robot.shooting.stopLogging();
     }
 
     @Override

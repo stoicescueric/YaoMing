@@ -396,7 +396,7 @@ public class BlobConfig {
      * code does what we think and the fault is in the robot. Dev artifact only, a row per loop, so
      * turn it off when you are done.
      */
-    public static boolean recordFollower = false;
+    public static boolean recordFollower = true;
 
     /** Builds the localizer for {@link #localizerMode}. */
     public static Localizer localizer(HardwareMap hardwareMap, BlobParams params) {
