@@ -4,6 +4,7 @@ repositories {
     maven { url = 'https://maven.brott.dev/' }
     maven { url = "https://mymaven.bylazar.com/releases" }
     maven { url = 'https://jitpack.io' } // blob path-following library
+    maven { url = 'https://repo.dairy.foundation/releases' } // Sloth, which Pedro's autotune scans with
 
 }
 
@@ -24,6 +25,9 @@ dependencies {
     // was the Pedro tuning OpMode, whose API no longer exists.
     implementation 'com.pedropathing:core:3.0.0'
     implementation 'com.pedropathing:revhub:3.0.0'
+    // Autotune: the @Tuner/Procedure framework plus its browser UI. Discovery is done by Sloth's
+    // class scanner, which the artifact pulls in.
+    implementation 'com.pedropathing:tuning:1.0.0'
 
     implementation 'com.bylazar:fullpanels:1.0.6'
 
