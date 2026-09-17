@@ -7,7 +7,7 @@ import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -731,8 +731,8 @@ public class Sensors {
     }
 
     public double getDistanceFromPose(Pose pose) {
-        double dx = getTargetX() - pose.getX();
-        double dy = getTargetY() - pose.getY();
+        double dx = getTargetX() - pose.x();
+        double dy = getTargetY() - pose.y();
         return Math.sqrt(dx * dx + dy * dy);
     }
 

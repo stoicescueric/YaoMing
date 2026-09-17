@@ -19,8 +19,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.5.1'
 
-    implementation 'com.pedropathing:ftc:2.0.4'
-    implementation 'com.pedropathing:telemetry:1.0.0'
+    // Pedro 3. The old `ftc` artifact has no 3.x: it was split into `core` (platform independent)
+    // and `revhub` (the FTC hardware layer). `telemetry` is dropped with it, since its only consumer
+    // was the Pedro tuning OpMode, whose API no longer exists.
+    implementation 'com.pedropathing:core:3.0.0'
+    implementation 'com.pedropathing:revhub:3.0.0'
 
     implementation 'com.bylazar:fullpanels:1.0.6'
 

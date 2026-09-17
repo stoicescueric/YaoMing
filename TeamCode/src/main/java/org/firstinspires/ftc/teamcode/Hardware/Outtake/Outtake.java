@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.Hardware.Outtake;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 

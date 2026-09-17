@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
@@ -47,7 +47,7 @@ public class TeleOP extends LinearOpMode
 
     Pose startPose;
     Pose startPoseRed = new Pose(-3.5, 24.7, Math.PI/2);
-    Pose startPoseBlue = new Pose(startPoseRed.getX(),startPoseRed.getY() *-1 , - startPoseRed.getHeading());
+    Pose startPoseBlue = new Pose(startPoseRed.x(),startPoseRed.y() *-1 , - startPoseRed.heading());
     Pose resetPoseRed = new Pose(-6.12, 53.40, Math.PI/2); //TODO
     Pose resetPoseRedHuman = new Pose(63.18, -61.7, -Math.PI/2); //TODO
     Pose resetPoseBlue = new Pose(-7.7,-53.39, -Math.PI/2); //TODO

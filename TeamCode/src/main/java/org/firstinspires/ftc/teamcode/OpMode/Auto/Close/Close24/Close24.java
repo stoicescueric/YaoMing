@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpMode.Auto.Close.Close24;
 
-import com.pedropathing.util.Timer;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -121,13 +121,13 @@ public class Close24 extends OpMode {
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case ROTATE_PRELOAD:
-                if (!robot.blob.inPosition(2, 2, 0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(2, 2, 0.16) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.sensors.toggleSOTM(false);
                 setPathState(AutoStates.WAIT_SCORE_PRELOAD);
                 break;
             case WAIT_SCORE_PRELOAD:
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
-                if (!robot.blob.inPosition(3.8, 3.8, 0.15) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(3.8, 3.8, 0.15) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.blob.maxPower=1;
                 setPathState(AutoStates.GO_PICKUP1_0);
                 break;
@@ -145,7 +145,7 @@ public class Close24 extends OpMode {
             case GO_PICKUP1_0:
                 robot.blob.setTargetPosition(constants.pickUpPose1_Inter);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.getOverPercentage(constants.getPickUp1Percentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())
+                if (!robot.blob.getOverPercentage(constants.getPickUp1Percentage()) && pathTimer.milliseconds() < constants.getFailSafeDtTime())
                     break;
                 robot.sensors.toggleSOTM(false);
                 setPathState(AutoStates.GO_PICKUP1);
@@ -163,14 +163,14 @@ public class Close24 extends OpMode {
                 setPathState(AutoStates.GO_CLEAR);
                 break;
             case GO_TO_SCORE1:
-                if (!robot.blob.inPosition(2,2,0.16) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(2,2,0.16) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 //robot.drive.followPath(constants.scorePickup1, true);
                 robot.blob.maxPower = 1;
                 robot.blob.setTargetPosition(constants.scoreS1Pose);
                 setPathState(AutoStates.WAIT_SCORE_1);
                 break;
             case WAIT_SCORE_1:
-                if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6, 1.6, 0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP2, true);
@@ -179,21 +179,21 @@ public class Close24 extends OpMode {
                 robot.outtake.outtakeState = Outtake.OuttakeState.IDLE;
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if(!robot.blob.inPosition(2.5,2.7,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break; //TEST
+                if(!robot.blob.inPosition(2.5,2.7,0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break; //TEST
                 if(!go_pickup2) {
                     robot.blob.maxPower = 1;
                     robot.blob.setTargetPosition(constants.pickUpPose2_2);
                     go_pickup2 = true;
                     break;
                 }
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
 //                setPathState(AutoStates.GO_CLEAR_INTER);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
 
                 sleep(constants.getClearGate2Time(), AutoStates.GO_TO_SCORE2, false);
                 break;
             case GO_CLEAR:
-                if (!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition() && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.blob.setTargetPosition(constants.clear);
                 sleep(constants.getClearGateTime(), AutoStates.GO_TO_SCORE1, false);
                 break;
@@ -215,7 +215,7 @@ public class Close24 extends OpMode {
                     robot.outtake.launcher.updateOffssetHood = true;
                 }
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTimeSOTM(), AutoStates.SCORE2_SOTM,true);
                 break;
@@ -237,7 +237,7 @@ public class Close24 extends OpMode {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                     robot.blob.maxPower = 0.7;
                 }
-                if ((!robot.blob.inPosition() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime())) break; ///TEST
+                if ((!robot.blob.inPosition() && pathTimer.milliseconds() < constants.getFailSafeDtTime())) break; ///TEST
                 else {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                     failSafeGate = false;
@@ -245,7 +245,7 @@ public class Close24 extends OpMode {
                 }
                 break;
             case WAIT_GATE_PICKUP:
-                if ((robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.PRE_OFF_OPEN || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
+                if ((robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.PRE_OFF_OPEN || robot.intakeTransfer.intakeState == IntakeTransfer.IntakeState.OFF_OPEN) || pathTimer.milliseconds() > constants.getFailSafePickupTime()) {
                     robot.blob.setTargetPosition(constants.scorePose, 0.0);
                     setPathState(AutoStates.GO_SCORE_GATE_PICKUP);
                 }
@@ -277,7 +277,7 @@ public class Close24 extends OpMode {
                     robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF_OPEN);
                 }
 
-                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.getOverPercentage(constants.getShootingPercentage()) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 gateCycleCounter++;
                 if (gateCycleCounter < gateCycleCount) {
@@ -336,6 +336,6 @@ public class Close24 extends OpMode {
 
     public void setPathState(AutoStates pState) {
         autoStates = pState;
-        pathTimer.resetTimer();
+        pathTimer.reset();
     }
 }

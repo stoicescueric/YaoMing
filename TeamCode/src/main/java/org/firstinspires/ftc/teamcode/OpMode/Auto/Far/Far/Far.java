@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode.Auto.Far.Far;
 
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.util.Timer;
+import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -125,12 +125,12 @@ public class Far extends OpMode {
                 break;
 
             case SHOOT_PRELOAD:
-                robot.blob.setTargetPosition(constants.startPose.getX(), constants.startPose.getY());
+                robot.blob.setTargetPosition(constants.startPose.x(), constants.startPose.y());
                 robot.outtake.turret.turretState = Turret.TurretState.TRACKING;
 
                 robot.outtake.specificValues(constants.startPose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                if (!robot.outtake.launcher.isReady() && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.outtake.launcher.isReady() && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 robot.outtake.start_feed_rapid(constants.getLauncherVelocity(), constants.getHoodPosition());
                 sleep(constants.getShootingTime(), AutoStates.GO_PICKUP3_INTER, true);
                 break;
@@ -139,11 +139,11 @@ public class Far extends OpMode {
                 robot.outtake.specificValues(constants.scorePose);
                 robot.blob.setTargetPosition(constants.humanPlayerPose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.WAIT_PICKUP_HP);
                 break;
             case WAIT_PICKUP_HP:
-                if (robot.sensors.areAllBeamsLowForTime() || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
+                if (robot.sensors.areAllBeamsLowForTime() || pathTimer.milliseconds() > constants.getFailSafePickupTime()) {
                     setPathState(AutoStates.GO_SCORE_HP);
                 }
                 break;
@@ -169,17 +169,17 @@ public class Far extends OpMode {
                 robot.outtake.specificValues(constants.scorePose);
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
                 robot.blob.setTargetPosition(constants.pickUpPose3Intermediary);
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.GO_PICKUP3);
                 break;
             case GO_PICKUP3:
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 robot.blob.setTargetPosition(constants.pickUpPose3);
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.WAIT_PICKUP3);
                 break;
             case WAIT_PICKUP3:
-                if (robot.sensors.areAllBeamsLowForTime() || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
+                if (robot.sensors.areAllBeamsLowForTime() || pathTimer.milliseconds() > constants.getFailSafePickupTime()) {
                     setPathState(AutoStates.GO_SCORE_SPIKE3);
                 }
                 break;
@@ -198,7 +198,7 @@ public class Far extends OpMode {
 
             case DECIDE_ZONE:
                 chosenZone = robot.limelight.getZone();
-                if (chosenZone < 0 && pathTimer.getElapsedTime() < constants.getZoneDecideTimeout()) break;
+                if (chosenZone < 0 && pathTimer.milliseconds() < constants.getZoneDecideTimeout()) break;
                 int poseIdx = constants.poseIndexFor(chosenZone);
                 if (chosenZone >= 0 && robot.limelight.getAvgZoneSpeed() > constants.getZoneSpeedThreshold()) {
                     poseIdx = Math.max(0, Math.min(constants.zonePoses.length - 1,
@@ -210,11 +210,11 @@ public class Far extends OpMode {
                 break;
             case GO_ZONE_PICKUP:
                 commandZonePickupDrive();
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.milliseconds() < constants.getFailSafeDtTime()) break;
                 setPathState(AutoStates.WAIT_ZONE_PICKUP);
                 break;
             case WAIT_ZONE_PICKUP:
-                if (robot.sensors.areAllBeamsLowForTime() || pathTimer.getElapsedTime() > constants.getFailSafePickupTime()) {
+                if (robot.sensors.areAllBeamsLowForTime() || pathTimer.milliseconds() > constants.getFailSafePickupTime()) {
                     setPathState(AutoStates.GO_SCORE_CYCLE);
                 }
                 break;
@@ -289,14 +289,14 @@ public class Far extends OpMode {
 
     public void setPathState(AutoStates pState) {
         autoStates = pState;
-        pathTimer.resetTimer();
+        pathTimer.reset();
         scoreReachedTime = 0;
     }
 
     private long scoreReachedTime = 0;
 
     private boolean readyToShoot(boolean inPos) {
-        if (pathTimer.getElapsedTime() >= constants.getScoreFailSafeDtTime()) return true;
+        if (pathTimer.milliseconds() >= constants.getScoreFailSafeDtTime()) return true;
         if (!inPos) {
             scoreReachedTime = 0;
             return false;
@@ -307,12 +307,12 @@ public class Far extends OpMode {
 
     private double pathFraction(Pose start, Pose end) {
         if (start == null || end == null) return 1.0;
-        double dx = end.getX() - start.getX();
-        double dy = end.getY() - start.getY();
+        double dx = end.x() - start.x();
+        double dy = end.y() - start.y();
         double lenSq = dx * dx + dy * dy;
         if (lenSq < 1e-6) return 1.0;
-        double px = robot.blob.odo.getX() - start.getX();
-        double py = robot.blob.odo.getY() - start.getY();
+        double px = robot.blob.odo.getX() - start.x();
+        double py = robot.blob.odo.getY() - start.y();
         double t = (px * dx + py * dy) / lenSq;
         return Math.max(0.0, Math.min(1.0, t));
     }
@@ -338,8 +338,8 @@ public class Far extends OpMode {
             if (rgt > ctr && rgt >= lft) { veerOx = rX * sRight; veerOy = rY * sRight; veerSide = 1; veerDecided = true; }
             else if (lft > ctr && lft > rgt) { veerOx = -rX * sLeft; veerOy = -rY * sLeft; veerSide = -1; veerDecided = true; }
         }
-        double baseX = (veerSide > 0) ? robot.blob.odo.getX() : chosenZonePose.getX();
-        robot.blob.setTargetPosition(new Pose(baseX + veerOx, chosenZonePose.getY() + veerOy,
-                chosenZonePose.getHeading()));
+        double baseX = (veerSide > 0) ? robot.blob.odo.getX() : chosenZonePose.x();
+        robot.blob.setTargetPosition(new Pose(baseX + veerOx, chosenZonePose.y() + veerOy,
+                chosenZonePose.heading()));
     }
 }

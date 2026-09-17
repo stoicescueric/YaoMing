@@ -3,16 +3,15 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import com.acmerobotics.dashboard.config.Config;
 import com.blob.Blob;
 import com.blob.BlobParams;
-import com.blob.geometry.PedroAdapter;
 import org.firstinspires.ftc.teamcode.Util.BlobConfig;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * Our {@link Blob}, with the two things the in-project copy had that the library does not.
  *
- * <p><b>Pedro poses.</b> Every auto stores its waypoints as {@code com.pedropathing.geometry.Pose},
+ * <p><b>Pedro poses.</b> Every auto stores its waypoints as {@code com.pedropathing.math.Pose},
  * because the same constants feed Pedro. The library speaks {@code com.blob.geometry.Pose}. Rather
  * than wrapping 140-odd call sites in a converter, the overloads live here and the autos are
  * untouched.
@@ -44,34 +43,46 @@ public class BlobDrive extends Blob {
         return flEncoder.getVelocity() * shooterSign;
     }
 
+    /**
+     * Pedro pose to blob pose.
+     *
+     * <p>Replaces {@code com.blob.geometry.PedroAdapter}, which is compiled into blob's aar against
+     * Pedro 2's {@code com.pedropathing.geometry.Pose}. That class does not exist in Pedro 3, so
+     * calling the adapter would fail to resolve. Converting here keeps blob's aar untouched and
+     * leaves that one stale class simply unreferenced.
+     */
+    private static com.blob.geometry.Pose toBlob(Pose p) {
+        return new com.blob.geometry.Pose(p.x(), p.y(), p.heading());
+    }
+
     public void setTargetPosition(Pose target) {
-        setTargetPosition(PedroAdapter.fromPedro(target));
+        setTargetPosition(toBlob(target));
     }
 
     public void setTargetPosition(Pose target, double headingThresholdPercent) {
-        setTargetPosition(PedroAdapter.fromPedro(target), headingThresholdPercent);
+        setTargetPosition(toBlob(target), headingThresholdPercent);
     }
 
     /** Curves through {@code intercept} on the way to {@code target}. */
     public void setTargetPosition(Pose target, Pose intercept) {
-        setTargetPosition(PedroAdapter.fromPedro(target), PedroAdapter.fromPedro(intercept));
+        setTargetPosition(toBlob(target), toBlob(intercept));
     }
 
     public void setTargetPosition(Pose target, Pose intercept, double headingThresholdPercent) {
-        setTargetPosition(PedroAdapter.fromPedro(target), PedroAdapter.fromPedro(intercept),
+        setTargetPosition(toBlob(target), toBlob(intercept),
                 headingThresholdPercent);
     }
 
     /** Convenience for the autos, which all seed the pose from a Pedro constant. */
     public void setPose(Pose pose) {
-        odo.setPose(PedroAdapter.fromPedro(pose));
+        odo.setPose(toBlob(pose));
     }
 
     /** One smooth path through every waypoint, from Pedro poses. */
     public void setPath(Pose... waypoints) {
         com.blob.geometry.Pose[] converted = new com.blob.geometry.Pose[waypoints.length];
         for (int i = 0; i < waypoints.length; i++) {
-            converted[i] = PedroAdapter.fromPedro(waypoints[i]);
+            converted[i] = toBlob(waypoints[i]);
         }
         setPath(converted);
     }

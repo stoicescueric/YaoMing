@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Launcher;
@@ -24,7 +23,6 @@ import org.firstinspires.ftc.teamcode.Util.Info;
 import com.blob.Blob;
 import com.blob.BlobParams;
 import org.firstinspires.ftc.teamcode.Util.BlobConfig;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Intake.IntakeTransfer;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Outtake;
 import org.firstinspires.ftc.teamcode.Hardware.Outtake.Turret;
