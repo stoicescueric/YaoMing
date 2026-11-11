@@ -117,8 +117,8 @@ public class BlobConfig {
     // These are a FLOOR, not the limit: they come from braking with the volts off and the motors
     // shorted, which is less than the drivetrain could manage under power. A profile built on a
     // floor brakes early rather than late, which is the safe direction. Do not raise them by hand.
-    public static double xDeceleration = 103.36192668078725;
-    public static double yDeceleration = 130.07101355727193;
+    public static double xDeceleration = 121.35937514723729;
+    public static double yDeceleration = 137.47625330154807;
 
     /**
      * Cap on the rotational command only, 0 to 1. Was exposed on the old robot's branch and is kept.
@@ -143,7 +143,7 @@ public class BlobConfig {
     //   yOffset  the STRAFE pod, inches AHEAD of the centre of rotation
     //
     // This is the only place either number appears. sync() derives the board's TCP offsets with
-    // octoQuadOffsetsFromPinpoint():
+    // octoQuadOffsets():
     //
     //     octoQuadTcpOffsetMM_X = -yOffset * 25.4
     //     octoQuadTcpOffsetMM_Y = -xOffset * 25.4
@@ -155,8 +155,8 @@ public class BlobConfig {
     // Worth re-checking on a new chassis even though the numbers carried over: blob: Rotation
     // Offset Tuner, turning the robot BY HAND. Spin in place and the reported position should stay
     // a dot rather than trace a circle. Its correction is in these same inches.
-    public static double xOffset = -3.1517784347744198;
-    public static double yOffset = 4.4790201071404985;
+    public static double xOffset = -2.662835196013599;
+    public static double yOffset = 4.1588998157881845;
 
     public static GoBildaPinpointDriver.EncoderDirection xPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
     public static GoBildaPinpointDriver.EncoderDirection yPodDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
@@ -241,17 +241,17 @@ public class BlobConfig {
     // forward while lateral kS is 2.51x. lateralMultiplier models it as a kV ratio, so on the PID
     // path it corrects for something that is barely there and misses the 1.3V that actually costs.
     // State.RST handles both terms separately and ignores lateralMultiplier entirely.
-    public static double forwardKS = 0.8660081949863851;
-    public static double forwardKV = 0.15432954439427538;
-    public static double forwardKA = 0.02238380856962927;
+    public static double forwardKS = 0.9616930255415781;
+    public static double forwardKV = 0.14672729804295104;
+    public static double forwardKA = 0.02229431499686133;
 
-    public static double lateralKS = 2.173309217171191;
-    public static double lateralKV = 0.1601648028312494;
-    public static double lateralKA = 0.01940715978169199;
+    public static double lateralKS = 2.1635965509134607;
+    public static double lateralKV = 0.1627960440624019;
+    public static double lateralKA = 0.01971687722807262;
 
-    public static double angularKS = 1.4695597700047904;
-    public static double angularKV = 1.2614630240789948;
-    public static double angularKA = 0.10958105457960919;
+    public static double angularKS = 1.4461469042360031;
+    public static double angularKV = 1.2593284322857945;
+    public static double angularKA = 0.1044055098441858;
 
     /**
      * How fast an RST velocity loop should converge, seconds.
@@ -267,7 +267,7 @@ public class BlobConfig {
      * under braking that happens: the wheels slip, the heading does not come back, the integrator
      * winds, and when grip returns the stored command arrives all at once.
      */
-    public static double rstTauIntegral = 0.4;
+    public static double rstTauIntegral = 0.32;
     /**
      * Final approach time constant, seconds. Larger settles gentler, smaller arrives sooner.
      *
@@ -481,7 +481,7 @@ public class BlobConfig {
         // Set directly rather than derived from xOffset/yOffset. One source of truth, in the units
         // the board actually takes.
         // Derived from the inch offsets above rather than set, so there is one place to edit.
-        p.octoQuadOffsetsFromPinpoint();
+        p.octoQuadOffsets();
         p.octoQuadTicksPerInch = octoQuadTicksPerInch;
         // The two-wheel localizer reuses the Pinpoint's pod geometry, so there is one set to tune.
         p.parallelPodYOffset = xOffset;

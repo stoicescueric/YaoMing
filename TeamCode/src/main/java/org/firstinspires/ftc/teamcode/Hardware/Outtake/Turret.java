@@ -85,8 +85,15 @@ public class Turret implements Module {
     public double lastPos = 0;
     public double launchingMaxError = 0.01;
     public boolean forceUpdate = false;
+    /**
+     * The turret servos are flashed in continuous rotation mode, so any setPosition spins them.
+     * The turret is zip-tied in place; while this is true no command is ever sent, which leaves the
+     * PWM on those ports disabled. azimuthError() stays 0, so the shot gate is not held shut.
+     */
+    public static boolean DISABLED = false;
     @Override
     public void update() {
+        if (DISABLED) return;
         switch (turretState){
             case OFF:
                 servoLeft.setPosition(0);

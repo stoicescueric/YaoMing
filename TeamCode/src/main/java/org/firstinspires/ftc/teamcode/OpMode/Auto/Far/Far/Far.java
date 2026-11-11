@@ -166,12 +166,12 @@ public class Far extends OpMode {
                 break;
 
             case GO_PICKUP3_INTER:
-                robot.outtake.specificValues(constants.scorePose);
-                robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
-                robot.blob.setTargetPosition(constants.pickUpPose3Intermediary);
-                if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
-                setPathState(AutoStates.GO_PICKUP3);
-                break;
+                    robot.outtake.specificValues(constants.scorePose);
+                    robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.OFF);
+                    robot.blob.setTargetPosition(constants.pickUpPose3Intermediary);
+                    if (!robot.blob.inPosition(1.6,1.6,0.12) && pathTimer.getElapsedTime() < constants.getFailSafeDtTime()) break;
+                    setPathState(AutoStates.GO_PICKUP3);
+                    break;
             case GO_PICKUP3:
                 robot.intakeTransfer.setIntakeState(IntakeTransfer.IntakeState.INTAKE);
                 robot.blob.setTargetPosition(constants.pickUpPose3);
