@@ -2,7 +2,7 @@
 
 Robot code for **Quantum Robotics #14270** (Bucharest, Romania) in the 2025–2026 FIRST Tech Challenge season, DECODE.
 
-![YaoMing, the Quantum Robotics DECODE robot](doc/media/yaoming.png)
+![YaoMing, the Quantum Robotics DECODE robot](doc/media/yaoming.jpg)
 
 ## Abstract
 
@@ -30,7 +30,7 @@ The team is run by high-school students, from robot design to software to fundra
 
 Official match data: [FIRST event results for team 14270](https://ftc-events.firstinspires.org/2025/team/14270).
 
-![YaoMing shooting on the Ross Division field at the FIRST Championship](doc/media/yaoming-ross-field.png)
+![YaoMing shooting on the Ross Division field at the FIRST Championship](doc/media/yaoming-ross-field.jpg)
 
 *YaoMing mid-burst on the Ross Division field in Houston.*
 
